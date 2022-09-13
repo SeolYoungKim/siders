@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect:
+          nodeValue:
+            org.hibernate.dialect.MySQL5InnoDBDialect
+          storage_engine: innodb
+        show_sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL
