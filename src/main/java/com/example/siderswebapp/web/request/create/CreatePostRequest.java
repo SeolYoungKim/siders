@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request;
+package com.example.siderswebapp.web.request.create;
 
 import lombok.*;
 
@@ -21,14 +21,14 @@ public class CreatePostRequest {
     private String recruitIntroduction;
 
     @NotBlank
-    private List<CreateFieldsRequest> fieldsRequests;
+    private List<CreateFieldsRequest> fieldsList;
 
     @Builder
-    public CreatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<CreateFieldsRequest> fieldsRequests) {
+    public CreatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<CreateFieldsRequest> fieldsList) {
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
         this.recruitIntroduction = recruitIntroduction;
-        this.fieldsRequests = fieldsRequests;
+        this.fieldsList = fieldsList;
     }
 }

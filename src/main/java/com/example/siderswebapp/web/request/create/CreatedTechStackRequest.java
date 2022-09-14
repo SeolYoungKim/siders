@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request;
+package com.example.siderswebapp.web.request.create;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -4,15 +4,17 @@ import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.post.PostRepository;
-import com.example.siderswebapp.web.request.CreateFieldsRequest;
-import com.example.siderswebapp.web.request.CreatePostRequest;
-import com.example.siderswebapp.web.request.CreatedTechStackRequest;
+import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
+import com.example.siderswebapp.web.request.create.CreatePostRequest;
+import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
+import com.example.siderswebapp.web.request.search.PostSearch;
 import com.example.siderswebapp.web.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.siderswebapp.domain.RecruitType.PROJECT;
 import static com.example.siderswebapp.domain.RecruitType.STUDY;
@@ -35,8 +37,7 @@ public class PostService {
                 .recruitIntroduction(postDto.getRecruitIntroduction())
                 .build();
 
-        //techStackDto랑 Field랑 어떻게 매칭하지..
-        List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsRequests();
+        List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsList();
         for (CreateFieldsRequest fieldsRequest : fieldsRequests) {
             Fields fields = Fields.builder()
                     .post(post)
@@ -45,7 +46,7 @@ public class PostService {
                     .totalAbility(fieldsRequest.getTotalAbility())
                     .build();
 
-            List<CreatedTechStackRequest> techStackRequests = fieldsRequest.getTechStackRequests();
+            List<CreatedTechStackRequest> techStackRequests = fieldsRequest.getStacks();
             for (CreatedTechStackRequest techStackRequest : techStackRequests) {
                 TechStack.builder()
                         .fields(fields)
@@ -57,5 +58,16 @@ public class PostService {
         postRepository.save(post);
 
         return new PostResponse(post);
+    }
+
+    public PostResponse readPost(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("없는 아이디"));
+        return new PostResponse(post);
+    }
+
+    public List<PostResponse> getPostList(PostSearch postSearch) {
+        return postRepository.getPostList(postSearch).stream()
+                .map(PostResponse::new)
+                .collect(Collectors.toList());
     }
 }

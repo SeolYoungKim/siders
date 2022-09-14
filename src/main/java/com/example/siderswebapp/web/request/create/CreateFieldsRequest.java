@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request;
+package com.example.siderswebapp.web.request.create;
 
 import lombok.*;
 
@@ -18,13 +18,13 @@ public class CreateFieldsRequest {
     private Integer totalAbility;
 
     @NotBlank
-    private List<CreatedTechStackRequest> techStackRequests;
+    private List<CreatedTechStackRequest> stacks;
 
     @Builder
-    public CreateFieldsRequest(String fieldsName, Integer recruitCount, Integer totalAbility, List<CreatedTechStackRequest> techStackRequests) {
+    public CreateFieldsRequest(String fieldsName, Integer recruitCount, Integer totalAbility, List<CreatedTechStackRequest> stacks) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;
-        this.techStackRequests = techStackRequests;
+        this.stacks = stacks;
     }
 }
