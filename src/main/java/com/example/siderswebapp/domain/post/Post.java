@@ -2,19 +2,17 @@ package com.example.siderswebapp.domain.post;
 
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.RecruitType;
-import com.example.siderswebapp.domain.fields.BackEnd;
-import com.example.siderswebapp.domain.fields.Design;
-import com.example.siderswebapp.domain.fields.DevOps;
-import com.example.siderswebapp.domain.fields.FrontEnd;
+import com.example.siderswebapp.domain.fields.Fields;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.CascadeType.*;
-import static javax.persistence.FetchType.*;
 
 @Getter
 @Entity(name = "recruit_post")
@@ -38,31 +36,18 @@ public class Post extends BaseTimeEntity {
     @Column
     private String recruitIntroduction;
 
-    @Column(name = "design_id")
-    @OneToOne(fetch = LAZY, cascade = ALL) // 글이랑 같이하는 정보라서 CRUD 함께해야함.
-    private Design design;
-
-    @Column(name = "frontEnd_id")
-    @OneToOne(fetch = LAZY, cascade = ALL)
-    private FrontEnd frontEnd;
-
-    @Column(name = "backEnd_id")
-    @OneToOne(fetch = LAZY, cascade = ALL)
-    private BackEnd backEnd;
-
-    @Column(name = "devops_id")
-    @OneToOne(fetch = LAZY, cascade = ALL)
-    private DevOps devOps;
+    @OneToMany(mappedBy = "post", cascade = ALL)
+    private final List<Fields> fieldsList = new ArrayList<>();
 
     @Builder
-    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction, Design design, FrontEnd frontEnd, BackEnd backEnd, DevOps devOps) {
+    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction) {
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
         this.recruitIntroduction = recruitIntroduction;
-        this.design = design;
-        this.frontEnd = frontEnd;
-        this.backEnd = backEnd;
-        this.devOps = devOps;
+    }
+
+    public void addFields(Fields fields) {
+        fieldsList.add(fields);
     }
 }

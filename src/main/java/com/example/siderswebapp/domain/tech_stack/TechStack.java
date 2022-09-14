@@ -1,6 +1,6 @@
 package com.example.siderswebapp.domain.tech_stack;
 
-import com.example.siderswebapp.domain.fields.BackEnd;
+import com.example.siderswebapp.domain.fields.Fields;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +11,9 @@ import javax.persistence.*;
 import static javax.persistence.CascadeType.ALL;
 
 @Getter
-@Entity(name = "tech_stack_backend")
+@Entity(name = "tech_stack")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BackEndStack {
+public class TechStack {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +22,16 @@ public class BackEndStack {
     @Column
     private String stackName;
 
-    @Column(name = "backend_id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = ALL)
-    private BackEnd backend;
+    @JoinColumn(name = "fields_id")
+    private Fields fields;
 
     @Builder
-    public BackEndStack(String stackName, BackEnd backend) {
+    public TechStack(String stackName, Fields fields) {
         this.stackName = stackName;
-        this.backend = backend;
+        this.fields = fields;
+
+        //이거 되나
+        this.fields.addStack(this);
     }
 }
