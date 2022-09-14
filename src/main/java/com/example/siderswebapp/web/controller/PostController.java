@@ -1,6 +1,7 @@
 package com.example.siderswebapp.web.controller;
 
 import com.example.siderswebapp.service.post.PostService;
+import com.example.siderswebapp.web.request.CreatePostRequest;
 import com.example.siderswebapp.web.response.PostResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,7 @@ public class PostController {
     }
 
     @PostMapping("/recruitment")
-    public PostResponse recruitmentWrite(@RequestBody String json) {
-        log.info("이거 되긴 할까??????? >>>>>> " + json);
-        return null;
+    public PostResponse recruitmentWrite(@RequestBody CreatePostRequest postDto) {
+        return postService.createPost(postDto);
     }
 }

@@ -1,15 +1,23 @@
 package com.example.siderswebapp.service.post;
 
+import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
+import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.post.PostRepository;
+import com.example.siderswebapp.web.request.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.CreatePostRequest;
+import com.example.siderswebapp.web.request.CreatedTechStackRequest;
 import com.example.siderswebapp.web.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.example.siderswebapp.domain.RecruitType.PROJECT;
 import static com.example.siderswebapp.domain.RecruitType.STUDY;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -28,7 +36,23 @@ public class PostService {
                 .build();
 
         //techStackDto랑 Field랑 어떻게 매칭하지..
-        //동시에 다른 DTO로 받아오지 않는 이상 동시 처리가 불가능할 것 같다. List -> Map으로 바꿔보자
+        List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsRequests();
+        for (CreateFieldsRequest fieldsRequest : fieldsRequests) {
+            Fields fields = Fields.builder()
+                    .post(post)
+                    .fieldsName(fieldsRequest.getFieldsName())
+                    .recruitCount(fieldsRequest.getRecruitCount())
+                    .totalAbility(fieldsRequest.getTotalAbility())
+                    .build();
+
+            List<CreatedTechStackRequest> techStackRequests = fieldsRequest.getTechStackRequests();
+            for (CreatedTechStackRequest techStackRequest : techStackRequests) {
+                TechStack.builder()
+                        .fields(fields)
+                        .stackName(techStackRequest.getStackName())
+                        .build();
+            }
+        }
 
         postRepository.save(post);
 

@@ -1,28 +1,27 @@
 package com.example.siderswebapp.web.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreatePostRequest {
     @NotBlank
-    private final String title;
+    private String title;
 
     @NotBlank
-    private final String recruitType;
+    private String recruitType;
 
     @NotBlank
-    private final String contact;
+    private String contact;
 
     @NotBlank
-    private final String recruitIntroduction;
+    private String recruitIntroduction;
 
     @NotBlank
-    private final List<CreateFieldsRequest> fieldsRequests;
+    private List<CreateFieldsRequest> fieldsRequests;
 
     @Builder
     public CreatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<CreateFieldsRequest> fieldsRequests) {
