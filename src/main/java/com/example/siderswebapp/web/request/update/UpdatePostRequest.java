@@ -1,7 +1,10 @@
-package com.example.siderswebapp.web.request.create;
+package com.example.siderswebapp.web.request.update;
 
 import com.example.siderswebapp.domain.RecruitType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -11,7 +14,8 @@ import static com.example.siderswebapp.domain.RecruitType.STUDY;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreatePostRequest {
+public class UpdatePostRequest {
+
     @NotBlank
     private String title;
 
@@ -25,10 +29,10 @@ public class CreatePostRequest {
     private String recruitIntroduction;
 
     @NotBlank
-    private List<CreateFieldsRequest> fieldsList;
+    private List<UpdateFieldsRequest> fieldsList;
 
     @Builder
-    public CreatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<CreateFieldsRequest> fieldsList) {
+    public UpdatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<UpdateFieldsRequest> fieldsList) {
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
@@ -39,4 +43,5 @@ public class CreatePostRequest {
     public RecruitType recruitTypeToEnum() {
         return recruitType.equals("스터디") ? STUDY : PROJECT;
     }
+
 }

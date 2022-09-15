@@ -3,6 +3,7 @@ package com.example.siderswebapp.domain.post;
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.web.request.update.UpdatePostRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,8 @@ public class Post extends BaseTimeEntity {
     @Column
     private String recruitIntroduction;
 
+    //TODO: 모집 완료 여부 true, false로 넣기. 이걸까먹었네 ㅠ.
+
     @OneToMany(mappedBy = "post", cascade = ALL)
     private final List<Fields> fieldsList = new ArrayList<>();
 
@@ -48,6 +51,25 @@ public class Post extends BaseTimeEntity {
     }
 
     public void addFields(Fields fields) {
-        fieldsList.add(fields);
+        fieldsList.add(fields);  //여기서 add 해버림..;
+    }
+
+    public void updatePost(UpdatePostRequest postDto) {
+        this.title
+                = postDto.getTitle() != null ? postDto.getTitle() : title;
+
+        this.recruitType
+                = postDto.recruitTypeToEnum() != null ? postDto.recruitTypeToEnum() : recruitType;
+
+        this.contact
+                = postDto.getContact() != null ? postDto.getContact() : contact;
+
+        this.recruitIntroduction
+                = postDto.getRecruitIntroduction() != null ? postDto.getRecruitIntroduction() : recruitIntroduction;
     }
 }
+
+
+
+
+

@@ -1,26 +1,31 @@
 package com.example.siderswebapp.web.request.search;
 
+import com.example.siderswebapp.domain.RecruitType;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import static java.lang.Math.*;
+import static com.example.siderswebapp.domain.RecruitType.*;
 
+/**
+ * 검색용 DTO로 사용하자.
+ */
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostSearch {
-    private Integer page;  // 1
-    private Integer size;  // 10
+    private String recruitType;
+    private String fieldsName;
+    private String stackName;
 
     @Builder
-    public PostSearch(Integer page, Integer size) {
-        this.page = page;
-        this.size = size;
+    public PostSearch(String recruitType, String fieldsName, String stackName) {
+        this.recruitType = recruitType;
+        this.fieldsName = fieldsName;
+        this.stackName = stackName;
     }
 
-    public Integer getOffset() {
-        page = page == null? 1 : page;
-        size = size == null? 10 : size;
-
-        return (max(page, 1) - 1) * min(size, 100);
+    public RecruitType recruitTypeToEnum() {
+        return recruitType.equals("스터디") ? STUDY : PROJECT;
     }
-
 }

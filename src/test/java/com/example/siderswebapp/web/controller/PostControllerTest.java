@@ -10,6 +10,9 @@ import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
+import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
+import com.example.siderswebapp.web.request.update.UpdatePostRequest;
+import com.example.siderswebapp.web.request.update.UpdateTechStackRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -176,9 +178,9 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @DisplayName("글이 페이징되어 여러건 조회된다. 쿼리 파라미터를 넘기지 않아도 기본값이 적용된다.")
+    @DisplayName("페이징 테스트")
     @Test
-    void getPostList() throws Exception {
+    void testPaging() throws Exception {
         List<Post> postList = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder()
                         .title("title " + i)
@@ -193,8 +195,101 @@ class PostControllerTest {
         mockMvc.perform(get("/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].title").value("title 30"))
-                .andExpect(jsonPath("$.[9].title").value("title 21"))
+                .andExpect(jsonPath("$.content.[0].title").value("title 30"))
+                .andExpect(jsonPath("$.content.[9].title").value("title 21"))
+                .andDo(print());
+    }
+
+    @DisplayName("글이 잘 수정 된다.")
+    @Test
+    void updateTest() throws Exception {
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        UpdateTechStackRequest node = UpdateTechStackRequest.builder()
+                .id(spring.getId())
+                .stackName("node.js")
+                .build();
+
+        UpdateTechStackRequest mysql = UpdateTechStackRequest.builder()
+                .stackName("mysql")
+                .build();
+
+        UpdateTechStackRequest react = UpdateTechStackRequest.builder()
+                .stackName("react")
+                .build();
+
+        // TODO:원래 있던 백엔드 필드를 프론트엔드로 변경..은 안되게 하자..
+        // 분야, 스택 필드 삭제? 원래 필드가 값이 null로 바뀌면?
+        // 영속성 전이때문에 완전 삭제는 위험함 (그냥 null이면 노출이 안되게 해야하는건지..)
+        UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
+                .fieldsName("프론트엔드")
+                .recruitCount(50)
+                .totalAbility(10)
+                .stacks(new ArrayList<>())
+                .build();
+
+        newField.getStacks().add(react);
+
+        UpdateFieldsRequest updateForBack = UpdateFieldsRequest.builder()
+                .id(back.getId())
+                .fieldsName("야 장난하냐!")
+                .recruitCount(3)
+                .totalAbility(5)
+                .stacks(new ArrayList<>())
+                .build();
+
+        updateForBack.getStacks().add(node);
+        updateForBack.getStacks().add(mysql);
+
+        UpdatePostRequest updateForPost = UpdatePostRequest.builder()
+                .title("titleeeee")
+                .recruitType("프로젝트")
+                .contact("email")
+                .recruitIntroduction("Study nono Project gogo")
+                .fieldsList(new ArrayList<>())
+                .build();
+
+        updateForPost.getFieldsList().add(newField);
+        updateForPost.getFieldsList().add(updateForBack);
+
+        mockMvc.perform(patch("/post/{id}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateForPost)))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

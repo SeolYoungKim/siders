@@ -1,6 +1,7 @@
 package com.example.siderswebapp.domain.tech_stack;
 
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.web.request.update.UpdateTechStackRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,5 +34,9 @@ public class TechStack {
 
         //이거 되나
         this.fields.addStack(this);
+    }
+
+    public void updateTechStack(UpdateTechStackRequest techStackDto) {
+        this.stackName = techStackDto.getStackName() != null ? techStackDto.getStackName() : stackName;
     }
 }

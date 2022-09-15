@@ -4,6 +4,9 @@ import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.web.request.search.PostSearch;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -15,11 +18,35 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Post> getPostList(PostSearch postSearch) {
-        return jpaQueryFactory.selectFrom(post)
-                .limit(postSearch.getSize() == null? 10 : postSearch.getSize())
-                .offset(postSearch.getOffset())
+    public Page<Post> pagingPost(Pageable pageable) {
+        //postSearch에는 가변 값이 담겨있다. (검색 정보.. 등)
+        //pageable에는 기본적인 페이징을 위한 값이 담겨있다.
+        //혼용해서 사용해보자.
+        List<Post> totalList = jpaQueryFactory.selectFrom(post)
+                .fetch();
+
+        List<Post> postList = jpaQueryFactory.selectFrom(post)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .orderBy(post.createdDate.desc())
                 .fetch();
+
+        return new PageImpl<>(postList, pageable, totalList.size());
     }
+
+    @Override
+    public Page<Post> searchByRecruitType(PostSearch postSearch, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<Post> searchByFieldsName(PostSearch postSearch, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<Post> searchByStackName(PostSearch postSearch, Pageable pageable) {
+        return null;
+    }
+
 }

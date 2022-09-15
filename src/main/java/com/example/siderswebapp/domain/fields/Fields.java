@@ -2,6 +2,7 @@ package com.example.siderswebapp.domain.fields;
 
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
+import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,11 +48,23 @@ public class Fields {
         this.post = post;
 
         //이거 되나
-        this.post.addFields(this);
+        this.post.addFields(this);  // 이 때 post에 한번 넘어감 (모두 null인게)
     }
 
     public void addStack(TechStack stack) {
         stacks.add(stack);
+    }
+
+    public void updateFields(UpdateFieldsRequest fieldsDto) {
+        this.fieldsName
+                = fieldsDto.getFieldsName() != null ? fieldsDto.getFieldsName() : fieldsName;
+
+        this.recruitCount
+                = fieldsDto.getRecruitCount() != null ? fieldsDto.getRecruitCount() : recruitCount;
+
+        this.totalAbility
+                = fieldsDto.getTotalAbility() != null ? fieldsDto.getTotalAbility() : totalAbility;
+
     }
 
 }

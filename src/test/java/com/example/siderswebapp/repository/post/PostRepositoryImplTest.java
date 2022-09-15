@@ -1,69 +1,83 @@
 package com.example.siderswebapp.repository.post;
 
 import com.example.siderswebapp.domain.RecruitType;
+import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
-import com.example.siderswebapp.web.request.search.PostSearch;
-import org.junit.jupiter.api.DisplayName;
+import com.example.siderswebapp.repository.fields.FieldsRepository;
+import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
+import com.example.siderswebapp.web.request.update.UpdatePostRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 class PostRepositoryImplTest {
     @Autowired
     private PostRepository postRepository;
 
-    @DisplayName("페이징이 잘 된다.")
+    @Autowired
+    private FieldsRepository fieldsRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+
     @Test
-    void pagingOk() {
-        List<Post> postList = IntStream.range(1, 31)
-                .mapToObj(i -> Post.builder()
-                        .title("title " + i)
-                        .recruitType(RecruitType.STUDY)
-                        .contact("email")
-                        .recruitIntroduction("content " + i)
-                        .build())
-                .collect(Collectors.toList());
+    void jpaTest() {
 
-        postRepository.saveAll(postList);
-
-        PostSearch postSearch = PostSearch.builder()
-                .page(1)
-                .size(10)
+        //given
+        Post posts = Post.builder()
+                .contact("123")
+                .title("q1e")
+                .recruitType(RecruitType.STUDY)
+                .recruitIntroduction("sdfsdf")
                 .build();
 
-        List<Post> pagingList = postRepository.getPostList(postSearch);
-        assertThat(pagingList.size()).isEqualTo(10);
-        assertThat(pagingList.get(0).getTitle()).isEqualTo("title 30");
-        assertThat(pagingList.get(9).getTitle()).isEqualTo("title 21");
-    }
 
-    @DisplayName("page = null, size = null 이어도 NPE가 터지지 않고 페이징이 잘 된다.")
-    @Test
-    void nullPagingOk() {
-        List<Post> postList = IntStream.range(1, 31)
-                .mapToObj(i -> Post.builder()
-                        .title("title " + i)
-                        .recruitType(RecruitType.STUDY)
-                        .contact("email")
-                        .recruitIntroduction("content " + i)
-                        .build())
-                .collect(Collectors.toList());
+        Fields fields = fieldsRepository.findById(-1L)
+                .orElse(Fields.builder()
+                        .post(posts)
+                        .recruitCount(1)
+                        .totalAbility(5)
+                        .fieldsName("name")
+                        .build());
 
-        postRepository.saveAll(postList);
+        postRepository.save(posts);
 
-        PostSearch postSearch = PostSearch.builder()
+        Post post = postRepository.findById(posts.getId()).orElse(null);
+
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .fieldsList(new ArrayList<>())
+                .recruitType("스터디")
+                .contact("email")
+                .recruitIntroduction("ssss")
+                .title("tttt")
                 .build();
 
-        List<Post> pagingList = postRepository.getPostList(postSearch);
-        assertThat(pagingList.size()).isEqualTo(10);
-        assertThat(pagingList.get(0).getTitle()).isEqualTo("title 30");
-        assertThat(pagingList.get(9).getTitle()).isEqualTo("title 21");
+        UpdateFieldsRequest dto = UpdateFieldsRequest.builder()
+                .stacks(new ArrayList<>())
+                .id(fields.getId())
+                .totalAbility(3)
+                .recruitCount(1)
+                .fieldsName("34")
+                .build();
+
+        updatePostRequest.getFieldsList().add(dto);
+
+        post.updatePost(updatePostRequest);
+        fields.updateFields(dto);
+
+        //when
+        postRepository.save(post);
+
+        //then
+        assertThat(post.getFieldsList().size()).isEqualTo(1);
     }
 }
