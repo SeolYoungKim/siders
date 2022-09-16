@@ -34,10 +34,10 @@ public class Fields {
     private Integer totalAbility;
 
     @JoinColumn(name = "post_id")
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = LAZY)
     private Post post;
 
-    @OneToMany(mappedBy = "fields", cascade = ALL)
+    @OneToMany(mappedBy = "fields", cascade = ALL, orphanRemoval = true)
     private final List<TechStack> stacks = new ArrayList<>();
 
     @Builder

@@ -39,7 +39,7 @@ public class Post extends BaseTimeEntity {
 
     //TODO: 모집 완료 여부 true, false로 넣기. 이걸까먹었네 ㅠ.
 
-    @OneToMany(mappedBy = "post", cascade = ALL)
+    @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private final List<Fields> fieldsList = new ArrayList<>();
 
     @Builder

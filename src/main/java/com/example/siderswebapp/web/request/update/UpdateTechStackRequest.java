@@ -11,14 +11,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateTechStackRequest {
 
-    private Long id;
-
     @NotBlank
     private String stackName;
 
     @Builder
-    public UpdateTechStackRequest(Long id, String stackName) {
-        this.id = id;
+    public UpdateTechStackRequest(String stackName) {
         this.stackName = stackName;
     }
 }

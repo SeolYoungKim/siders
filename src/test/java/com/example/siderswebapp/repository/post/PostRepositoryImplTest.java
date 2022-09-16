@@ -51,7 +51,13 @@ class PostRepositoryImplTest {
 
         postRepository.save(posts);
 
-        Post post = postRepository.findById(posts.getId()).orElse(null);
+        Post post = postRepository.findById(posts.getId())
+                .orElseGet(() -> Post.builder()
+                        .contact("123")
+                        .title("q1e")
+                        .recruitType(RecruitType.STUDY)
+                        .recruitIntroduction("sdfsdf")
+                        .build());
 
         UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
                 .fieldsList(new ArrayList<>())

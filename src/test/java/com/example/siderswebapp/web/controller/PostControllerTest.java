@@ -225,7 +225,6 @@ class PostControllerTest {
         postRepository.save(post);
 
         UpdateTechStackRequest node = UpdateTechStackRequest.builder()
-                .id(spring.getId())
                 .stackName("node.js")
                 .build();
 
@@ -241,21 +240,24 @@ class PostControllerTest {
         // 분야, 스택 필드 삭제? 원래 필드가 값이 null로 바뀌면?
         // 영속성 전이때문에 완전 삭제는 위험함 (그냥 null이면 노출이 안되게 해야하는건지..)
         // 추가는 가능
+        // 스택, 분야 삭제 보다는 빈값으로 바꾸는 것은 가능. 하지만 일단 validation을 notblank를 걸어놔서.. 하나라도 있어야된다. 로 바꾸면 안될까
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
                 .totalAbility(10)
                 .stacks(new ArrayList<>())
+                .isDelete(false)
                 .build();
 
         newField.getStacks().add(react);
 
         UpdateFieldsRequest updateForBack = UpdateFieldsRequest.builder()
                 .id(back.getId())
-                .fieldsName("야 장난하냐!")
+                .fieldsName("기술 스택도 수정이 되어야 합니다.")
                 .recruitCount(3)
                 .totalAbility(5)
                 .stacks(new ArrayList<>())
+                .isDelete(false)
                 .build();
 
         updateForBack.getStacks().add(node);
@@ -272,6 +274,7 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(newField);
         updateForPost.getFieldsList().add(updateForBack);
 
+        // TODO: JSON Path 확인 로직 작성.
         mockMvc.perform(patch("/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
@@ -279,6 +282,110 @@ class PostControllerTest {
                 .andDo(print());
     }
 
+    @DisplayName("글이 삭제 될 필드는 삭제가 잘 되고, 나머지는 잘 수정(혹은 추가) 된다.")
+    @Test
+    void updateTest2() throws Exception {
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack figma = TechStack.builder()
+                .stackName("figma")
+                .fields(design)
+                .build();
+
+        postRepository.save(post);
+
+        UpdateTechStackRequest node = UpdateTechStackRequest.builder()
+                .stackName("node.js")
+                .build();
+
+        UpdateTechStackRequest mysql = UpdateTechStackRequest.builder()
+                .stackName("mysql")
+                .build();
+
+        UpdateTechStackRequest react = UpdateTechStackRequest.builder()
+                .stackName("react")
+                .build();
+
+        UpdateTechStackRequest zeplin = UpdateTechStackRequest.builder()
+                .stackName("zeplin")
+                .build();
+
+        UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
+                .fieldsName("프론트엔드")
+                .recruitCount(50)
+                .totalAbility(10)
+                .stacks(new ArrayList<>())
+                .isDelete(false)
+                .build();
+
+        newField.getStacks().add(react);
+
+        UpdateFieldsRequest updateField = UpdateFieldsRequest.builder()
+                .id(design.getId())
+                .fieldsName("디자인")
+                .recruitCount(50)
+                .totalAbility(10)
+                .stacks(new ArrayList<>())
+                .isDelete(false)
+                .build();
+
+        updateField.getStacks().add(zeplin);
+
+        UpdateFieldsRequest updateForBack = UpdateFieldsRequest.builder()
+                .id(back.getId())
+                .fieldsName("삭제가 되어 나타나지 않아야 합니다.")
+                .recruitCount(3)
+                .totalAbility(5)
+                .stacks(new ArrayList<>())
+                .isDelete(true)
+                .build();
+
+        updateForBack.getStacks().add(node);
+        updateForBack.getStacks().add(mysql);
+
+        UpdatePostRequest updateForPost = UpdatePostRequest.builder()
+                .title("titleeeee")
+                .recruitType("프로젝트")
+                .contact("email")
+                .recruitIntroduction("Study nono Project gogo")
+                .fieldsList(new ArrayList<>())
+                .build();
+
+        updateForPost.getFieldsList().add(newField);
+        updateForPost.getFieldsList().add(updateField);
+        updateForPost.getFieldsList().add(updateForBack);
+
+        // TODO: JSON Path 확인 로직 작성.
+        mockMvc.perform(patch("/post/{id}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateForPost)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
     @DisplayName("글이 삭제된다.")
     @Test

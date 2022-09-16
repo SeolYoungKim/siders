@@ -1,15 +1,12 @@
 package com.example.siderswebapp.domain.tech_stack;
 
 import com.example.siderswebapp.domain.fields.Fields;
-import com.example.siderswebapp.web.request.update.UpdateTechStackRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @Entity(name = "tech_stack")
@@ -23,7 +20,7 @@ public class TechStack {
     @Column
     private String stackName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fields_id")
     private Fields fields;
 
@@ -36,7 +33,7 @@ public class TechStack {
         this.fields.addStack(this);
     }
 
-    public void updateTechStack(UpdateTechStackRequest techStackDto) {
-        this.stackName = techStackDto.getStackName() != null ? techStackDto.getStackName() : stackName;
-    }
+//    public void updateTechStack(UpdateTechStackRequest techStackDto) {
+//        this.stackName = techStackDto.getStackName() != null ? techStackDto.getStackName() : stackName;
+//    }
 }

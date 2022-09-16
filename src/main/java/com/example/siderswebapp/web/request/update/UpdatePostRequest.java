@@ -28,8 +28,9 @@ public class UpdatePostRequest {
     @NotBlank
     private String recruitIntroduction;
 
-    @NotBlank
+    @NotBlank(message = "모집 분야는 한개 이상 있어야 합니다.")
     private List<UpdateFieldsRequest> fieldsList;
+
 
     @Builder
     public UpdatePostRequest(String title, String recruitType, String contact, String recruitIntroduction, List<UpdateFieldsRequest> fieldsList) {

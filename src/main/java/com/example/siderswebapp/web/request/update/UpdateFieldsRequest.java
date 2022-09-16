@@ -23,15 +23,18 @@ public class UpdateFieldsRequest {
     @NotBlank
     private Integer totalAbility;
 
-    @NotBlank
+    private Boolean isDelete;
+
+    @NotBlank(message = "기술 스택은 한개 이상 있어야 합니다.")
     private List<UpdateTechStackRequest> stacks;
 
     @Builder
-    public UpdateFieldsRequest(Long id, String fieldsName, Integer recruitCount, Integer totalAbility, List<UpdateTechStackRequest> stacks) {
+    public UpdateFieldsRequest(Long id, String fieldsName, Integer recruitCount, Integer totalAbility, Boolean isDelete,List<UpdateTechStackRequest> stacks) {
         this.id = id;
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;
         this.stacks = stacks;
+        this.isDelete = isDelete;
     }
 }

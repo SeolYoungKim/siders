@@ -156,4 +156,124 @@ class PostTest {
         assertThat(techStackRepository.findAll().size()).isEqualTo(0);
 
     }
+
+    @DisplayName("필드 삭제는 글에 영향을 주지 않는다.")
+    @Test
+    void mappingTestField() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(6)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(3)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        //when
+        post.getFieldsList().remove(design);
+
+        //then
+        assertThat(postRepository.findAll().size()).isEqualTo(1);
+        assertThat(fieldsRepository.findAll().size()).isEqualTo(2);
+        assertThat(postRepository.findAll().get(0).getFieldsList().size()).isEqualTo(2);
+        assertThat(techStackRepository.findAll().size()).isEqualTo(2);
+    }
+
+    @DisplayName("기술 스택 삭제는 글과 필드에 영향을 주지 않는다.")
+    @Test
+    void mappingTestStack() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(6)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(3)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        //when
+        design.getStacks().remove(zeplin);
+        front.getStacks().remove(react);
+
+        //then
+        assertThat(postRepository.findAll().size()).isEqualTo(1);
+        assertThat(fieldsRepository.findAll().size()).isEqualTo(3);
+        assertThat(postRepository.findAll().get(0).getFieldsList().size()).isEqualTo(3);
+        assertThat(techStackRepository.findAll().size()).isEqualTo(1);
+    }
+
 }

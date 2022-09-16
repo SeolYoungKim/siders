@@ -11,7 +11,6 @@ import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
 import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.update.UpdatePostRequest;
-import com.example.siderswebapp.web.request.update.UpdateTechStackRequest;
 import com.example.siderswebapp.web.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,8 +81,10 @@ public class PostService {
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
         post.updatePost(postDto);
 
+        // TODO: field를 유저가 삭제할 경우 어떻게 처리할지 생각
         List<UpdateFieldsRequest> fieldsDtoList = postDto.getFieldsList();
         for (UpdateFieldsRequest fieldDto : fieldsDtoList) {
+
             Fields fields = fieldsRepository.findById(fieldDto.getId() != null ? fieldDto.getId() : -1L)  // id가 없는 경우, -1L로 찾으므로써 null 유도.
                     .orElseGet(() -> Fields.builder()
                             .post(post)
@@ -92,20 +93,25 @@ public class PostService {
                             .totalAbility(fieldDto.getTotalAbility())
                             .build());
 
+            // 찾았는데 Dto의 isDelete가 true야 그럼 필드 삭제해버리고 다음필드 탐색 ㄱ
+            if (fieldDto.getIsDelete()) {
+                post.getFieldsList().remove(fields);
+                continue;
+            }
+
             fields.updateFields(fieldDto);
 
-            List<UpdateTechStackRequest> stacks = fieldDto.getStacks();
-            for (UpdateTechStackRequest stackDto : stacks) {
+            // 기술 스택을 수정 데이터로 새로 갈아끼우기 위해 Fields의 List<TechStack>을 비운다
+            fields.getStacks().clear();
 
-                TechStack techStack = techStackRepository.findById(stackDto.getId() != null ? stackDto.getId() : -1L)
-                        .orElseGet(() -> TechStack.builder()
-                                .fields(fields)
-                                .stackName(stackDto.getStackName())
-                                .build());
+            // 비운 List<TechStack>을 dto가 가져온 값으로 싹 갈아끼운다.
+            fieldDto.getStacks()
+                    .forEach(stackDto ->
+                            TechStack.builder()
+                                    .stackName(stackDto.getStackName())
+                                    .fields(fields)
+                                    .build());
 
-                    techStack.updateTechStack(stackDto);
-
-            }
         }
 
         postRepository.save(post);  // 새로운 필드나 스택이 추가될 수 있기 때문에 저장
