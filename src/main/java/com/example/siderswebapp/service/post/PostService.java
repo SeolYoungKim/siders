@@ -32,7 +32,7 @@ public class PostService {
     private final TechStackRepository techStackRepository;
 
     // 모집 글 작성
-    // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함.
+    // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!
     public PostResponse createPost(CreatePostRequest postDto) {
 
         Post post = Post.builder()
@@ -65,11 +65,13 @@ public class PostService {
         return new PostResponse(post);
     }
 
+    @Transactional(readOnly = true)
     public PostResponse readPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("없는 아이디"));
         return new PostResponse(post);  // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
     }
 
+    @Transactional(readOnly = true)
     public Page<PostResponse> getPostList(Pageable pageable) {
         return postRepository.pagingPost(pageable).map(PostResponse::new);
     }
@@ -109,6 +111,13 @@ public class PostService {
         postRepository.save(post);  // 새로운 필드나 스택이 추가될 수 있기 때문에 저장
 
         return new PostResponse(post);
+    }
+
+    public void deletePost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("없는 아이디"));
+
+        postRepository.delete(post);
     }
 }
 

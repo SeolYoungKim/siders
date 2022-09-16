@@ -240,6 +240,7 @@ class PostControllerTest {
         // TODO:원래 있던 백엔드 필드를 프론트엔드로 변경..은 안되게 하자..
         // 분야, 스택 필드 삭제? 원래 필드가 값이 null로 바뀌면?
         // 영속성 전이때문에 완전 삭제는 위험함 (그냥 null이면 노출이 안되게 해야하는건지..)
+        // 추가는 가능
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
@@ -277,6 +278,66 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+
+    @DisplayName("글이 삭제된다.")
+    @Test
+    void deletePostTest() throws Exception {
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(6)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(3)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        mockMvc.perform(delete("/post/{id}", savedPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        assertThat(postRepository.findAll().size()).isEqualTo(0);
+        assertThat(fieldsRepository.findAll().size()).isEqualTo(0);
+        assertThat(techStackRepository.findAll().size()).isEqualTo(0);
+    }
+
 }
 
 
