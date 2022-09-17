@@ -3,12 +3,12 @@ package com.example.siderswebapp.service.post;
 import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
+import com.example.siderswebapp.exception.PostNotExistException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
 import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.update.UpdatePostRequest;
 import com.example.siderswebapp.web.response.PostResponse;
@@ -39,6 +39,7 @@ public class PostService {
                 .recruitType(postDto.recruitTypeToEnum())
                 .contact(postDto.getContact())
                 .recruitIntroduction(postDto.getRecruitIntroduction())
+                .isCompleted(false)
                 .build();
 
         List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsList();
@@ -50,13 +51,11 @@ public class PostService {
                     .totalAbility(fieldsRequest.getTotalAbility())
                     .build();
 
-            List<CreatedTechStackRequest> techStackRequests = fieldsRequest.getStacks();
-            for (CreatedTechStackRequest techStackRequest : techStackRequests) {
-                TechStack.builder()
-                        .fields(fields)
-                        .stackName(techStackRequest.getStackName())
-                        .build();
-            }
+            fieldsRequest.getStacks()
+                    .forEach(techStackDto -> TechStack.builder()
+                            .fields(fields)
+                            .stackName(techStackDto.getStackName())
+                            .build());
         }
 
         postRepository.save(post);
@@ -66,7 +65,9 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostResponse readPost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("없는 아이디"));
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotExistException::new);
+
         return new PostResponse(post);  // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
     }
 
@@ -76,7 +77,8 @@ public class PostService {
     }
 
     public PostResponse updatePost(Long id, UpdatePostRequest postDto) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("없는 아이디"));
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotExistException::new);
 
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
         post.updatePost(postDto);
@@ -93,7 +95,7 @@ public class PostService {
                             .totalAbility(fieldDto.getTotalAbility())
                             .build());
 
-            // 찾았는데 Dto의 isDelete가 true야 그럼 필드 삭제해버리고 다음필드 탐색 ㄱ
+            // 찾았는데 Dto의 isDelete가 true면 필드 삭제해버리고 다음필드 탐색 ㄱ
             if (fieldDto.getIsDelete()) {
                 post.getFieldsList().remove(fields);
                 continue;
@@ -121,7 +123,7 @@ public class PostService {
 
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("없는 아이디"));
+                .orElseThrow(PostNotExistException::new);
 
         postRepository.delete(post);
     }

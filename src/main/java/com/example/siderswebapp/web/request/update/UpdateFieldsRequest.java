@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -17,15 +20,16 @@ public class UpdateFieldsRequest {
     @NotBlank
     private String fieldsName;
 
-    @NotBlank
+    @NotNull
     private Integer recruitCount;
 
-    @NotBlank
+    @NotNull
     private Integer totalAbility;
 
     private Boolean isDelete;
 
-    @NotBlank(message = "기술 스택은 한개 이상 있어야 합니다.")
+    @Valid
+    @NotEmpty(message = "기술 스택은 한개 이상 있어야 합니다.")
     private List<UpdateTechStackRequest> stacks;
 
     @Builder

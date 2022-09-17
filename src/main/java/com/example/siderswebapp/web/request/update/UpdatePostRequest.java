@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 import static com.example.siderswebapp.domain.RecruitType.PROJECT;
@@ -28,7 +30,8 @@ public class UpdatePostRequest {
     @NotBlank
     private String recruitIntroduction;
 
-    @NotBlank(message = "모집 분야는 한개 이상 있어야 합니다.")
+    @Valid
+    @NotEmpty(message = "모집 분야는 한개 이상 있어야 합니다.")
     private List<UpdateFieldsRequest> fieldsList;
 
 

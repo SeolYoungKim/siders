@@ -127,6 +127,7 @@ class PostControllerTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .isCompleted(false)
                 .build();
 
         Fields design = Fields.builder()
@@ -178,7 +179,7 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @DisplayName("페이징 테스트")
+    @DisplayName("페이징 테스트 - 모집이 완료되지 않은 글만 노출된다.")
     @Test
     void testPaging() throws Exception {
         List<Post> postList = IntStream.range(1, 31)
@@ -187,6 +188,40 @@ class PostControllerTest {
                         .recruitType(RecruitType.STUDY)
                         .contact("email")
                         .recruitIntroduction("content " + i)
+                        .isCompleted(false)
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(postList);
+
+        Post post = Post.builder()
+                .isCompleted(true)
+                .recruitType(RecruitType.PROJECT)
+                .contact("333")
+                .recruitIntroduction("intro")
+                .title("title")
+                .build();
+
+        postRepository.save(post);
+
+        mockMvc.perform(get("/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.[0].title").value("title 30"))
+                .andExpect(jsonPath("$.content.[9].title").value("title 21"))
+                .andDo(print());
+    }
+
+    @DisplayName("페이징 테스트 - 모집 완료 글만 있을 경우 전혀 노출되지 않는다.")
+    @Test
+    void testPaging2() throws Exception {
+        List<Post> postList = IntStream.range(1, 31)
+                .mapToObj(i -> Post.builder()
+                        .title("title " + i)
+                        .recruitType(RecruitType.STUDY)
+                        .contact("email")
+                        .recruitIntroduction("content " + i)
+                        .isCompleted(true)
                         .build())
                 .collect(Collectors.toList());
 
@@ -195,9 +230,9 @@ class PostControllerTest {
         mockMvc.perform(get("/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.[0].title").value("title 30"))
-                .andExpect(jsonPath("$.content.[9].title").value("title 21"))
+                .andExpect(jsonPath("$.content.[0]").doesNotExist())
                 .andDo(print());
+
     }
 
     @DisplayName("글이 잘 수정 된다.")
@@ -445,6 +480,32 @@ class PostControllerTest {
         assertThat(techStackRepository.findAll().size()).isEqualTo(0);
     }
 
+    @DisplayName("검증이 올바르게 작동한다.")
+    @Test
+    void validationTest() throws Exception {
+
+        CreateFieldsRequest forValidation = CreateFieldsRequest.builder()
+                .fieldsName("")
+                .stacks(new ArrayList<>())
+                .build();
+
+        CreatePostRequest post = CreatePostRequest.builder()
+                .title("")
+                .recruitType("")
+                .contact("")
+                .recruitIntroduction("")
+                .fieldsList(new ArrayList<>())
+                .build();
+
+        post.getFieldsList().add(forValidation);
+
+        mockMvc.perform(post("/recruitment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(post)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+    }
 }
 
 

@@ -2,7 +2,6 @@ package com.example.siderswebapp.web.controller;
 
 import com.example.siderswebapp.service.post.PostService;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.search.PostSearch;
 import com.example.siderswebapp.web.request.update.UpdatePostRequest;
 import com.example.siderswebapp.web.response.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -26,7 +27,7 @@ public class PostController {
 
     // 글 등록
     @PostMapping("/recruitment")
-    public PostResponse recruitmentWrite(@RequestBody CreatePostRequest postDto) {
+    public PostResponse recruitmentWrite(@Valid @RequestBody CreatePostRequest postDto) {
         return postService.createPost(postDto);
     }
 
@@ -37,15 +38,15 @@ public class PostController {
     }
 
     // 여러 건 조회 + 페이징 (쿼리 파라미터 사용)
-    // PostSearch는 나중에 검색용으로 사용하자. (DTO)
+    // PostSearch는 나중에 검색용으로 사용하자. (DTO) @ModelAttribute PostSearch postSearch
     @GetMapping("/")
-    public Page<PostResponse> test(@ModelAttribute PostSearch postSearch, Pageable pageable) {
+    public Page<PostResponse> test(Pageable pageable) {
         return postService.getPostList(pageable);
     }
 
     // 글 수정
     @PatchMapping("/post/{id}")
-    public PostResponse updatePost(@PathVariable Long id, @RequestBody UpdatePostRequest postDto) {
+    public PostResponse updatePost(@PathVariable Long id, @Valid @RequestBody UpdatePostRequest postDto) {
         return postService.updatePost(id, postDto);
     }
 

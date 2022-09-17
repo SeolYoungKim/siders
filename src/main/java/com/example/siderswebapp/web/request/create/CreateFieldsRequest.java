@@ -1,8 +1,14 @@
 package com.example.siderswebapp.web.request.create;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -11,13 +17,14 @@ public class CreateFieldsRequest {
     @NotBlank
     private String fieldsName;
 
-    @NotBlank
+    @NotNull
     private Integer recruitCount;
 
-    @NotBlank
+    @NotNull
     private Integer totalAbility;
 
-    @NotBlank
+    @Valid
+    @NotEmpty(message = "기술 스택은 1개 이상 입력되어야 합니다.")
     private List<CreatedTechStackRequest> stacks;
 
     @Builder

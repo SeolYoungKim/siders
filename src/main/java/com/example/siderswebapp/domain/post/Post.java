@@ -37,21 +37,24 @@ public class Post extends BaseTimeEntity {
     @Column
     private String recruitIntroduction;
 
-    //TODO: 모집 완료 여부 true, false로 넣기. 이걸까먹었네 ㅠ.
+    //모집 완료 여부 -> 이에 따라 글 노출 여부 결정 (true - 글 목록에는 노출X, 마이페이지 노출O | false - 둘 다 노출)
+    @Column
+    private Boolean isCompleted;
 
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private final List<Fields> fieldsList = new ArrayList<>();
 
     @Builder
-    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction) {
+    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction, Boolean isCompleted) {
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
         this.recruitIntroduction = recruitIntroduction;
+        this.isCompleted = isCompleted;
     }
 
     public void addFields(Fields fields) {
-        fieldsList.add(fields);  //여기서 add 해버림..;
+        fieldsList.add(fields);
     }
 
     public void updatePost(UpdatePostRequest postDto) {
