@@ -83,7 +83,6 @@ public class PostService {
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
         post.updatePost(postDto);
 
-        // TODO: field를 유저가 삭제할 경우 어떻게 처리할지 생각
         List<UpdateFieldsRequest> fieldsDtoList = postDto.getFieldsList();
         for (UpdateFieldsRequest fieldDto : fieldsDtoList) {
 

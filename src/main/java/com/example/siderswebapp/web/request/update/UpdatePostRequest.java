@@ -18,20 +18,20 @@ import static com.example.siderswebapp.domain.RecruitType.STUDY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdatePostRequest {
 
-    @NotBlank
+    @NotBlank(message = "제목을 입력해주세요.")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "모집 분야를 선택해주세요.")
     private String recruitType;
 
-    @NotBlank
+    @NotBlank(message = "연락처를 입력해주세요.")
     private String contact;
 
-    @NotBlank
+    @NotBlank(message = "내용을 입력해주세요.")
     private String recruitIntroduction;
 
     @Valid
-    @NotEmpty(message = "모집 분야는 한개 이상 있어야 합니다.")
+    @NotEmpty(message = "모집 분야는 1개 이상 선택해야 합니다.")
     private List<UpdateFieldsRequest> fieldsList;
 
 

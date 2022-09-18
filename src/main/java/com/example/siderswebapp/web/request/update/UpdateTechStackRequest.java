@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateTechStackRequest {
 
-    @NotBlank
+    @NotBlank(message = "기술 스택 이름을 입력해주세요.")
     private String stackName;
 
     @Builder

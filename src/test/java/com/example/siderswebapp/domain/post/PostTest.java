@@ -2,6 +2,7 @@ package com.example.siderswebapp.domain.post;
 
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.post.PostRepository;

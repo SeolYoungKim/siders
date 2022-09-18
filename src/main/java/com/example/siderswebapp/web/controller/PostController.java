@@ -55,6 +55,8 @@ public class PostController {
     public void deletePost(@PathVariable Long id) {
         postService.deletePost(id);
     }
+
+    //TODO: 모집 종료 기능 추가 -> isCompleted 전용 DTO 생성. isCompleted JSON 노출이 필요할까? 고민 ㄱㄱ
 }
 
 

@@ -1,0 +1,99 @@
+= Siders API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:prettify-theme:
+
+== 공통 필드
+
+- 요청 및 응답에 대한 공통 필드 정보입니다.
+
+=== 요청 | 글 작성 & 글 수정
+
+- 요청 정보는 "글 작성", "글 수정"에 대해 아래의 공통 필드가 존재합니다.
+- 글 작성의 경우, 아래의 요청 필드가 글 작성의 요청 필드와 동일합니다.
+
+include::{snippets}/commonRequest/request-body.adoc[]
+include::{snippets}/commonRequest/request-fields.adoc[]
+
+=== 응답 | 글 작성 & 글 수정 & 글 조회
+
+- 응답 정보는 "글 작성", "글 수정" 및 "글 조회"에서 전부 동일하게 아래 공통 필드가 존재합니다.
+
+include::{snippets}/commonResponse/response-body.adoc[]
+include::{snippets}/commonResponse/response-fields.adoc[]
+
+== 홈 화면 & 글 여러 건 조회
+
+=== 요청
+
+include::{snippets}/pagingPosts/http-request.adoc[]
+include::{snippets}/pagingPosts/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/pagingPosts/http-response.adoc[]
+include::{snippets}/pagingPosts/response-fields.adoc[]
+
+
+== 글 단건 조회
+
+=== 요청
+
+include::{snippets}/readPost/http-request.adoc[]
+include::{snippets}/readPost/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/readPost/http-response.adoc[]
+
+
+== 글 작성
+
+=== 요청
+
+include::{snippets}/recruitment/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/recruitment/http-response.adoc[]
+
+
+== 글 수정
+
+=== 요청
+
+include::{snippets}/updatePost/http-request.adoc[]
+include::{snippets}/updatePost/request-fields.adoc[]
+
+- 글 수정 시, 공통 필드의 "요청" 필드에 더해, 위 필드가 추가적으로 요구됩니다.
+
+=== 응답
+
+include::{snippets}/updatePost/http-response.adoc[]
+
+
+== 필드 검증 | 글 작성 & 글 수정
+
+=== 요청
+
+include::{snippets}/validation/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/validation/http-response.adoc[]
+include::{snippets}/validation/response-fields.adoc[]
+
+- 모든 필드에 대한 검증 로직이 존재합니다.
+
+== 예외
+
+=== PostNotExistException
+
+include::{snippets}/exception/http-response.adoc[]
+include::{snippets}/exception/response-fields.adoc[]
+
+- 에러 코드는 `{Object Name}-ERR-{Response Code}` 와 같이 구성하였습니다.

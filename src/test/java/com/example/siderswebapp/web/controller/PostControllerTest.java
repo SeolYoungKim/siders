@@ -242,7 +242,7 @@ class PostControllerTest {
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
-                .recruitIntroduction("공부할사람")
+                .recruitIntroduction("공부할사람을 모집합니다.")
                 .build();
 
         Fields back = Fields.builder()
@@ -271,11 +271,6 @@ class PostControllerTest {
                 .stackName("react")
                 .build();
 
-        // TODO:원래 있던 백엔드 필드를 프론트엔드로 변경..은 안되게 하자..
-        // 분야, 스택 필드 삭제? 원래 필드가 값이 null로 바뀌면?
-        // 영속성 전이때문에 완전 삭제는 위험함 (그냥 null이면 노출이 안되게 해야하는건지..)
-        // 추가는 가능
-        // 스택, 분야 삭제 보다는 빈값으로 바꾸는 것은 가능. 하지만 일단 validation을 notblank를 걸어놔서.. 하나라도 있어야된다. 로 바꾸면 안될까
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
@@ -288,7 +283,7 @@ class PostControllerTest {
 
         UpdateFieldsRequest updateForBack = UpdateFieldsRequest.builder()
                 .id(back.getId())
-                .fieldsName("기술 스택도 수정이 되어야 합니다.")
+                .fieldsName("백엔드를 이 분야로 수정")
                 .recruitCount(3)
                 .totalAbility(5)
                 .stacks(new ArrayList<>())
@@ -309,12 +304,21 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(newField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        // TODO: JSON Path 확인 로직 작성.
         mockMvc.perform(patch("/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("titleeeee"))
+                .andExpect(jsonPath("$.recruitType").value("PROJECT"))
+                .andExpect(jsonPath("$.contact").value("email"))
+                .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
+                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("백엔드를 이 분야로 수정"))
+                .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(3))
+                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(5))
+                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("node.js"))
+                .andExpect(jsonPath("$.fieldsList.[0].stacks.[1].stackName").value("mysql"))
                 .andDo(print());
+
     }
 
     @DisplayName("글이 삭제 될 필드는 삭제가 잘 되고, 나머지는 잘 수정(혹은 추가) 된다.")
@@ -324,7 +328,7 @@ class PostControllerTest {
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
-                .recruitIntroduction("공부할사람")
+                .recruitIntroduction("공부할 사람을 모집합니다.")
                 .build();
 
         Fields back = Fields.builder()
@@ -414,12 +418,22 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        // TODO: JSON Path 확인 로직 작성.
         mockMvc.perform(patch("/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("titleeeee"))
+                .andExpect(jsonPath("$.recruitType").value("PROJECT"))
+                .andExpect(jsonPath("$.contact").value("email"))
+                .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
+                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
+                .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(50))
+                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(10))
+                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
                 .andDo(print());
+
+        assertThat(fieldsRepository.findAll().size()).isEqualTo(2);
+        assertThat(techStackRepository.findAll().size()).isEqualTo(2);
     }
 
     @DisplayName("글이 삭제된다.")
@@ -503,8 +517,23 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.code").value("FIELDS-ERR-400"))
+                .andExpect(jsonPath("$.errors.size()").value(8))
                 .andDo(print());
 
+    }
+
+    @DisplayName("없는 글 조회 시 PostNotExistException이 발생한다.")
+    @Test
+    void exceptionTest() throws Exception {
+        mockMvc.perform(get("/post/{id}", Integer.MAX_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 글입니다."))
+                .andExpect(jsonPath("$.code").value("POST-ERR-404"))
+                .andDo(print());
     }
 }
 

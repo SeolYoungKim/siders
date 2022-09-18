@@ -14,17 +14,17 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateFieldsRequest {
-    @NotBlank
+    @NotBlank(message = "필드명을 입력해주세요.")
     private String fieldsName;
 
-    @NotNull
+    @NotNull(message = "모집 인원을 입력해주세요.")
     private Integer recruitCount;
 
-    @NotNull
+    @NotNull(message = "종합 요구 능력치를 입력해주세요.")
     private Integer totalAbility;
 
     @Valid
-    @NotEmpty(message = "기술 스택은 1개 이상 입력되어야 합니다.")
+    @NotEmpty(message = "기술 스택은 1개 이상 선택해야 합니다.")
     private List<CreatedTechStackRequest> stacks;
 
     @Builder

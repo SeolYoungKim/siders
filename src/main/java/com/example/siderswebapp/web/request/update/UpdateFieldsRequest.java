@@ -17,19 +17,19 @@ public class UpdateFieldsRequest {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "필드명을 입력해주세요.")
     private String fieldsName;
 
-    @NotNull
+    @NotNull(message = "모집 인원을 입력해주세요.")
     private Integer recruitCount;
 
-    @NotNull
+    @NotNull(message = "종합 요구 능력치를 입력해주세요.")
     private Integer totalAbility;
 
     private Boolean isDelete;
 
     @Valid
-    @NotEmpty(message = "기술 스택은 한개 이상 있어야 합니다.")
+    @NotEmpty(message = "기술 스택은 1개 이상 선택해야 합니다.")
     private List<UpdateTechStackRequest> stacks;
 
     @Builder
