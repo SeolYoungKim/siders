@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TechStack {
 
-    @Id
+    @Id @Column(name = "tech_stack_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

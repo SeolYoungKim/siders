@@ -20,7 +20,7 @@ import static javax.persistence.FetchType.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Fields {
 
-    @Id
+    @Id @Column(name = "fields_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

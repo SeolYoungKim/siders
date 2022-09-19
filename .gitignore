@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### oauth ###
+application-oauth.yml
+jwt.properties
