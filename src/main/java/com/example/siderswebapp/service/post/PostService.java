@@ -7,6 +7,7 @@ import com.example.siderswebapp.exception.PostNotExistException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
+import com.example.siderswebapp.web.request.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
@@ -39,6 +40,7 @@ public class PostService {
                 .recruitType(postDto.recruitTypeToEnum())
                 .contact(postDto.getContact())
                 .recruitIntroduction(postDto.getRecruitIntroduction())
+                .expectedPeriod(postDto.getExpectedPeriod())
                 .isCompleted(false)
                 .build();
 
@@ -116,6 +118,15 @@ public class PostService {
         }
 
         postRepository.save(post);  // 새로운 필드나 스택이 추가될 수 있기 때문에 저장
+
+        return new PostResponse(post);
+    }
+
+    public PostResponse changeCompletion(Long id, IsCompletedDto isCompletedDto) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotExistException::new);
+
+        post.changeCompletion(isCompletedDto.getIsCompleted());
 
         return new PostResponse(post);
     }

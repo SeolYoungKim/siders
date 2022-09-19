@@ -1,6 +1,7 @@
 package com.example.siderswebapp.web.controller;
 
 import com.example.siderswebapp.service.post.PostService;
+import com.example.siderswebapp.web.request.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.update.UpdatePostRequest;
 import com.example.siderswebapp.web.response.PostResponse;
@@ -40,14 +41,20 @@ public class PostController {
     // 여러 건 조회 + 페이징 (쿼리 파라미터 사용)
     // PostSearch는 나중에 검색용으로 사용하자. (DTO) @ModelAttribute PostSearch postSearch
     @GetMapping("/")
-    public Page<PostResponse> test(Pageable pageable) {
+    public Page<PostResponse> paging(Pageable pageable) {
         return postService.getPostList(pageable);
     }
 
     // 글 수정
-    @PatchMapping("/post/{id}")
+    @PutMapping("/post/{id}")
     public PostResponse updatePost(@PathVariable Long id, @Valid @RequestBody UpdatePostRequest postDto) {
         return postService.updatePost(id, postDto);
+    }
+
+    // 모집 완료 여부 변경
+    @PatchMapping("/post/{id}")
+    public PostResponse completedPost(@PathVariable Long id, @RequestBody IsCompletedDto isCompletedDto) {
+        return postService.changeCompletion(id, isCompletedDto);
     }
 
     // 글 삭제
@@ -56,7 +63,6 @@ public class PostController {
         postService.deletePost(id);
     }
 
-    //TODO: 모집 종료 기능 추가 -> isCompleted 전용 DTO 생성. isCompleted JSON 노출이 필요할까? 고민 ㄱㄱ
 }
 
 

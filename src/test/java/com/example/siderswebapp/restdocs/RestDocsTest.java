@@ -5,6 +5,7 @@ import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.post.PostRepository;
+import com.example.siderswebapp.web.request.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
@@ -77,6 +78,7 @@ public class RestDocsTest {
                 .recruitType("스터디")
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -94,9 +96,10 @@ public class RestDocsTest {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("title").type(STRING).description("모집글 제목"),
-                                fieldWithPath("recruitType").type(STRING).description("모집 구분"),
+                                fieldWithPath("recruitType").type(STRING).description("모집 구분 - 스터디 or 프로젝트"),
                                 fieldWithPath("contact").type(STRING).description("연락처"),
                                 fieldWithPath("recruitIntroduction").type(STRING).description("모집글 내용"),
+                                fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
                                 fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
                                 fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
                                 fieldWithPath("fieldsList[].totalAbility").type(NUMBER).description("모집 분야 별 요구 능력치"),
@@ -113,6 +116,7 @@ public class RestDocsTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .isCompleted(false)
                 .build();
 
@@ -142,6 +146,10 @@ public class RestDocsTest {
                                 fieldWithPath("recruitType").type(STRING).description("모집 구분"),
                                 fieldWithPath("contact").type(STRING).description("연락처"),
                                 fieldWithPath("recruitIntroduction").type(STRING).description("모집글 내용"),
+                                fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
+                                fieldWithPath("isCompleted").type(BOOLEAN).description("모집 완료 여부"),
+                                fieldWithPath("createdDate").type(STRING).description("모집글 최초 작성 시간"),
+                                fieldWithPath("modifiedDate").type(STRING).description("모집글 마지막 수정 시간"),
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
                                 fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
                                 fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
@@ -161,6 +169,7 @@ public class RestDocsTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .isCompleted(false)
                 .build();
 
@@ -209,6 +218,7 @@ public class RestDocsTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .isCompleted(false)
                 .build();
 
@@ -257,6 +267,7 @@ public class RestDocsTest {
                 .recruitType("스터디")
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -283,6 +294,7 @@ public class RestDocsTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .build();
 
         Fields back = Fields.builder()
@@ -365,6 +377,7 @@ public class RestDocsTest {
                 .recruitType("프로젝트")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
+                .expectedPeriod("3개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -372,7 +385,7 @@ public class RestDocsTest {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/post/{id}", post.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/post/{id}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
@@ -381,9 +394,58 @@ public class RestDocsTest {
                 .andDo(document("updatePost",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("모집글 ID")
+                        ),
                         relaxedRequestFields(
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("수정할 필드의 ID (필드 새로 추가 시 null)").optional(),
                                 fieldWithPath("fieldsList[].isDelete").type(BOOLEAN).description("true면 삭제O | false면 삭제X")
+                        )
+                ));
+    }
+
+
+    @DisplayName("모집 완료 여부 변경 문서화")
+    @Test
+    void changeCompletionTest() throws Exception {
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
+                .isCompleted(false)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        IsCompletedDto isCompletedDto = new IsCompletedDto(true);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/post/{id}", savedPost.getId())
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(isCompletedDto)))
+                .andExpect(status().isOk())
+                .andDo(document("changeCompletion",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("모집글 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("isCompleted").type(BOOLEAN).description("true면 모집 마감 | false면 모집 중")
                         )
                 ));
     }
@@ -456,6 +518,7 @@ public class RestDocsTest {
                                 fieldWithPath("recruitType").description("모집 구분을 반드시 선택해야 합니다.(스터디 || 프로젝트)"),
                                 fieldWithPath("contact").description("연락처는 빈 값이거나 null이면 안됩니다."),
                                 fieldWithPath("recruitIntroduction").description("글 내용은 빈 값이거나 null이면 안됩니다."),
+                                fieldWithPath("expectedPeriod").description("예상 소요 기간은 반드시 선택해야 합니다."),
                                 fieldWithPath("fieldsList").description("모집 분야는 1개 이상 선택해야 합니다."),
                                 fieldWithPath("fieldsList[].fieldsName").description("필드명은 빈 값이거나 null이면 안됩니다."),
                                 fieldWithPath("fieldsList[].recruitCount").description("모집 인원은 null이면 안됩니다."),

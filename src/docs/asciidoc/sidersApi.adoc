@@ -76,6 +76,19 @@ include::{snippets}/updatePost/request-fields.adoc[]
 include::{snippets}/updatePost/http-response.adoc[]
 
 
+== 모집 완료 여부 변경
+
+=== 요청
+
+include::{snippets}/changeCompletion/http-request.adoc[]
+include::{snippets}/changeCompletion/request-fields.adoc[]
+
+
+=== 응답
+
+include::{snippets}/changeCompletion/http-response.adoc[]
+
+
 == 필드 검증 | 글 작성 & 글 수정
 
 === 요청

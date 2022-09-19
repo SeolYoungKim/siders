@@ -7,6 +7,7 @@ import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
+import com.example.siderswebapp.web.request.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.create.CreatePostRequest;
 import com.example.siderswebapp.web.request.create.CreatedTechStackRequest;
@@ -90,6 +91,7 @@ class PostControllerTest {
                 .recruitType("스터디")
                 .contact("010-0000-1111")
                 .recruitIntroduction("스터디 구하니까 오셈ㅋ")
+                .expectedPeriod("1개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -110,6 +112,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.recruitType").value("STUDY"))
                 .andExpect(jsonPath("$.contact").value("010-0000-1111"))
                 .andExpect(jsonPath("$.recruitIntroduction").value("스터디 구하니까 오셈ㅋ"))
+                .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("디자인스택1"))
                 .andDo(print());
@@ -127,6 +130,7 @@ class PostControllerTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
                 .isCompleted(false)
                 .build();
 
@@ -174,6 +178,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.recruitType").value("STUDY"))
                 .andExpect(jsonPath("$.recruitIntroduction").value("공부할사람"))
+                .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
                 .andDo(print());
@@ -188,6 +193,7 @@ class PostControllerTest {
                         .recruitType(RecruitType.STUDY)
                         .contact("email")
                         .recruitIntroduction("content " + i)
+                        .expectedPeriod(i + "개월")
                         .isCompleted(false)
                         .build())
                 .collect(Collectors.toList());
@@ -221,6 +227,7 @@ class PostControllerTest {
                         .recruitType(RecruitType.STUDY)
                         .contact("email")
                         .recruitIntroduction("content " + i)
+                        .expectedPeriod(i + "개월")
                         .isCompleted(true)
                         .build())
                 .collect(Collectors.toList());
@@ -243,6 +250,7 @@ class PostControllerTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .build();
 
         Fields back = Fields.builder()
@@ -298,13 +306,14 @@ class PostControllerTest {
                 .recruitType("프로젝트")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
+                .expectedPeriod("300개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
         updateForPost.getFieldsList().add(newField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(patch("/post/{id}", post.getId())
+        mockMvc.perform(put("/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
@@ -312,6 +321,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.recruitType").value("PROJECT"))
                 .andExpect(jsonPath("$.contact").value("email"))
                 .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
+                .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("백엔드를 이 분야로 수정"))
                 .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(3))
                 .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(5))
@@ -329,6 +339,7 @@ class PostControllerTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .expectedPeriod("1개월")
                 .build();
 
         Fields back = Fields.builder()
@@ -411,6 +422,7 @@ class PostControllerTest {
                 .recruitType("프로젝트")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
+                .expectedPeriod("300개월")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -418,7 +430,7 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(patch("/post/{id}", post.getId())
+        mockMvc.perform(put("/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
@@ -426,6 +438,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.recruitType").value("PROJECT"))
                 .andExpect(jsonPath("$.contact").value("email"))
                 .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
+                .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
                 .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(50))
                 .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(10))
@@ -436,6 +449,42 @@ class PostControllerTest {
         assertThat(techStackRepository.findAll().size()).isEqualTo(2);
     }
 
+    @DisplayName("모집 완료 여부가 변경된다.")
+    @Test
+    void changeCompletedTest() throws Exception {
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(RecruitType.STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .isCompleted(false)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(2)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        IsCompletedDto isCompletedDto = new IsCompletedDto(true);
+
+        mockMvc.perform(patch("/post/{id}", savedPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(isCompletedDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isCompleted").value(true))
+                .andDo(print());
+    }
+
     @DisplayName("글이 삭제된다.")
     @Test
     void deletePostTest() throws Exception {
@@ -444,6 +493,7 @@ class PostControllerTest {
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .expectedPeriod("3000개")
                 .build();
 
         Fields design = Fields.builder()
@@ -508,6 +558,7 @@ class PostControllerTest {
                 .recruitType("")
                 .contact("")
                 .recruitIntroduction("")
+                .expectedPeriod("")
                 .fieldsList(new ArrayList<>())
                 .build();
 
@@ -519,7 +570,7 @@ class PostControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.code").value("FIELDS-ERR-400"))
-                .andExpect(jsonPath("$.errors.size()").value(8))
+                .andExpect(jsonPath("$.errors.size()").value(9))
                 .andDo(print());
 
     }

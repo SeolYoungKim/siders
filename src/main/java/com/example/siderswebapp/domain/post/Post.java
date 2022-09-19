@@ -37,7 +37,12 @@ public class Post extends BaseTimeEntity {
     @Column
     private String recruitIntroduction;
 
+    // 예상 소요 기간
+    @Column
+    private String expectedPeriod;
+
     //모집 완료 여부 -> 이에 따라 글 노출 여부 결정 (true - 글 목록에는 노출X, 마이페이지 노출O | false - 둘 다 노출)
+    //TODO: 나중에는 isCompleted를 DB 컬럼 따로 빼서 적용해보자.
     @Column
     private Boolean isCompleted;
 
@@ -45,11 +50,13 @@ public class Post extends BaseTimeEntity {
     private final List<Fields> fieldsList = new ArrayList<>();
 
     @Builder
-    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction, Boolean isCompleted) {
+    public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction,
+                String expectedPeriod, Boolean isCompleted) {
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
         this.recruitIntroduction = recruitIntroduction;
+        this.expectedPeriod = expectedPeriod;
         this.isCompleted = isCompleted;
     }
 
@@ -69,6 +76,13 @@ public class Post extends BaseTimeEntity {
 
         this.recruitIntroduction
                 = postDto.getRecruitIntroduction() != null ? postDto.getRecruitIntroduction() : recruitIntroduction;
+
+        this.expectedPeriod
+                = postDto.getExpectedPeriod() != null ? postDto.getExpectedPeriod() : expectedPeriod;
+    }
+
+    public void changeCompletion(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 }
 
