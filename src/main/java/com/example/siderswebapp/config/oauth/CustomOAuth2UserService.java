@@ -1,6 +1,5 @@
 package com.example.siderswebapp.config.oauth;
 
-import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -40,20 +40,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes
                 .of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        Member member = saveOrUpdate(attributes);
+        Map<String, Object> memberAttr = attributes.convertToMap();
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey());
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                memberAttr,
+                "email");
     }
 
-    private Member saveOrUpdate(OAuthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail())
-                .map(findMember -> findMember.update(attributes.getProfileImg()))
-                .orElseGet(attributes::toEntity);
-
-        return memberRepository.save(member);
-    }
+//    private Member saveOrUpdate(OAuthAttributes attributes) {
+//        Member member = memberRepository.findByEmail(attributes.getEmail())
+//                .map(findMember -> findMember.update(attributes.getProfileImg()))
+//                .orElseGet(attributes::toEntity);
+//
+//        return memberRepository.save(member);
+//    }
 
 }

@@ -5,6 +5,7 @@ import com.example.siderswebapp.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -96,5 +97,16 @@ public class OAuthAttributes {
                 .profileImg(profileImg)
                 .role(Role.USER)
                 .build();
+    }
+
+    public Map<String, Object> convertToMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", nameAttributeKey);
+        map.put("key", nameAttributeKey);
+        map.put("name", nickName);
+        map.put("email", email);
+        map.put("profileImg", profileImg);
+
+        return map;
     }
 }
