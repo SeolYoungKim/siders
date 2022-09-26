@@ -80,3 +80,7 @@ bootJar {
 		into "src/main/resources/static/docs"
 	}
 }
+
+jar {
+	enabled = false
+}
