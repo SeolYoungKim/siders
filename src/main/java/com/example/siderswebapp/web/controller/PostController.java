@@ -21,8 +21,6 @@ public class PostController {
 
     @GetMapping("/recruitment")
     public String recruitmentView() {
-        //TODO: FieldsType이랑, RecruitType을 내려준다. (Front에서 사용해야 됨)
-        // 해당 컨트롤러는 글 작성 페이지를 나타내기 위한 정보를 전달
         return "";
     }
 
@@ -32,7 +30,7 @@ public class PostController {
         return postService.createPost(postDto);
     }
 
-    // 단건 조회
+    // 단건 조회 TODO: 단건조회 시 유저 정보를 내려줌으로써 Post 객체에 저장된 유저 정보와 비교하여 버튼이 노출되도록 수정
     @GetMapping("/post/{id}")
     public PostResponse readPost(@PathVariable Long id) {
         return postService.readPost(id);
@@ -47,13 +45,15 @@ public class PostController {
 
     // 글 수정
     @PutMapping("/post/{id}")
-    public PostResponse updatePost(@PathVariable Long id, @Valid @RequestBody UpdatePostRequest postDto) {
+    public PostResponse updatePost(@PathVariable Long id,
+                                   @Valid @RequestBody UpdatePostRequest postDto) {
         return postService.updatePost(id, postDto);
     }
 
     // 모집 완료 여부 변경
     @PatchMapping("/post/{id}")
-    public PostResponse completedPost(@PathVariable Long id, @RequestBody IsCompletedDto isCompletedDto) {
+    public PostResponse completedPost(@PathVariable Long id,
+                                      @RequestBody IsCompletedDto isCompletedDto) {
         return postService.changeCompletion(id, isCompletedDto);
     }
 

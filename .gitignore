@@ -40,3 +40,4 @@ out/
 ### oauth ###
 application-oauth.yml
 jwt.properties
+application-ec2-db.yml

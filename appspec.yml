@@ -1,0 +1,26 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/app/web-app/zip
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+
+hooks:
+  AfterInstall:
+    - location: stop.sh
+      timeout: 60
+      runas: ec2-user
+  ApplicationStart:
+    - location: start.sh
+      timeout: 60
+      runas: ec2-user
+  ValidateService:
+    - location: health.sh
+      timeout: 60
+      runas: ec2-user

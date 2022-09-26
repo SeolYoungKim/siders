@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         long MAX_AGE_SECS = 3600;
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("https://admirable-starburst-00d6a9.netlify.app/")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
