@@ -36,7 +36,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew clean -x test build --exclude-task asciidoctor
+        run: ./gradlew clean -x test build --exclude-task asciidoctor  # build task에서 asciidoctor 제외
         shell: bash
 
       - name: Get current time
