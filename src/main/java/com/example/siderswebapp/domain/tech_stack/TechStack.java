@@ -1,5 +1,6 @@
 package com.example.siderswebapp.domain.tech_stack;
 
+import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.fields.Fields;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity(name = "tech_stack")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TechStack {
+public class TechStack extends BaseTimeEntity {
 
     @Id @Column(name = "tech_stack_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

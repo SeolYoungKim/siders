@@ -1,5 +1,6 @@
 package com.example.siderswebapp.domain.fields;
 
+import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
@@ -18,7 +19,7 @@ import static javax.persistence.FetchType.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Fields {
+public class Fields extends BaseTimeEntity {
 
     @Id @Column(name = "fields_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
