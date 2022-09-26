@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ http GET 'https://api.siders.com/post/3' \
-    'Accept:application/json'
-----

@@ -1,8 +1,0 @@
-.+/post/{id}+
-|===
-|Parameter|Description
-
-|`+id+`
-|모집글 ID
-
-|===

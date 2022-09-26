@@ -16,7 +16,7 @@ import java.util.List;
 import static javax.persistence.CascadeType.*;
 
 @Getter
-@Entity(name = "recruit_post")
+@Entity(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
 

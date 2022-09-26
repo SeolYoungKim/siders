@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ curl 'https://api.siders.com/?page=1&size=10' -i -X GET \
-    -H 'Accept: application/json'
-----

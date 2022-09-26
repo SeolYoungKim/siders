@@ -1,9 +1,0 @@
-[source,bash]
-----
-$ curl 'https://api.siders.com/post/1' -i -X PATCH \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Accept: application/json' \
-    -d '{
-  "isCompleted" : true
-}'
-----

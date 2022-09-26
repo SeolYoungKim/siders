@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ curl 'https://api.siders.com/post/8' -i -X DELETE \
-    -H 'Accept: application/json'
-----
