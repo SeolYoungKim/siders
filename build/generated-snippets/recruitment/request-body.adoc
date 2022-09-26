@@ -1,0 +1,22 @@
+[source,options="nowrap"]
+----
+{
+  "title" : "제목",
+  "recruitType" : "스터디",
+  "contact" : "010.0000.0000",
+  "recruitIntroduction" : "공부할 사람을 모집합니다.",
+  "expectedPeriod" : "1개월",
+  "fieldsList" : [ {
+    "fieldsName" : "백엔드",
+    "recruitCount" : 1,
+    "totalAbility" : 9,
+    "stacks" : [ {
+      "stackName" : "백엔드스택1"
+    }, {
+      "stackName" : "백엔드스택2"
+    }, {
+      "stackName" : "백엔드스택3"
+    } ]
+  } ]
+}
+----

@@ -35,6 +35,10 @@ jobs:
         run: chmod +x ./gradlew  # gradlew에 대한 권한설정 명령어 (runner에서 실행)
         shell: bash
 
+      - name: Build docs
+        id: adocbuild
+        uses: equinor/asciidoctor-action@main
+
       - name: Build with Gradle
         run: ./gradlew clean -x test build
         shell: bash

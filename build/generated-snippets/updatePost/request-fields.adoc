@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+fieldsList[].id+`
+|`+Number+`
+|수정할 필드의 ID (필드 새로 추가 시 null)
+
+|`+fieldsList[].isDelete+`
+|`+Boolean+`
+|true면 삭제O \| false면 삭제X
+
+|===

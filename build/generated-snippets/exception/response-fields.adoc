@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+status+`
+|`+Number+`
+|Response status
+
+|`+message+`
+|`+String+`
+|에러 메세지
+
+|`+code+`
+|`+String+`
+|에러 코드
+
+|===

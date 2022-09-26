@@ -1,0 +1,31 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 489
+
+{
+  "id" : 7,
+  "title" : "제목",
+  "recruitType" : "STUDY",
+  "contact" : "010.0000.0000",
+  "recruitIntroduction" : "공부할 사람을 모집합니다.",
+  "expectedPeriod" : "1개월",
+  "isCompleted" : false,
+  "createdDate" : "2022-09-26 15:14",
+  "modifiedDate" : "2022-09-26 15:14",
+  "fieldsList" : [ {
+    "id" : 9,
+    "fieldsName" : "백엔드",
+    "recruitCount" : 1,
+    "totalAbility" : 2,
+    "stacks" : [ {
+      "id" : 14,
+      "stackName" : "spring"
+    } ]
+  } ]
+}
+----

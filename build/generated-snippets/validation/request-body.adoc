@@ -1,0 +1,16 @@
+[source,options="nowrap"]
+----
+{
+  "title" : "",
+  "recruitType" : "",
+  "contact" : "",
+  "recruitIntroduction" : "",
+  "expectedPeriod" : null,
+  "fieldsList" : [ {
+    "fieldsName" : "",
+    "recruitCount" : null,
+    "totalAbility" : null,
+    "stacks" : [ ]
+  } ]
+}
+----

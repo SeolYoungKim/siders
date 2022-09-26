@@ -1,0 +1,10 @@
+|===
+|Parameter|Description
+
+|`+page+`
+|페이지 파라미터
+
+|`+size+`
+|페이지 사이즈 파라미터
+
+|===

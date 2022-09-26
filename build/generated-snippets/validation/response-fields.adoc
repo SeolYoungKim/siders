@@ -1,0 +1,24 @@
+|===
+|Path|Type|Description
+
+|`+status+`
+|`+Number+`
+|응답 상태 값
+
+|`+code+`
+|`+String+`
+|에러 코드
+
+|`+errors+`
+|`+Array+`
+|에러가 발생한 필드 리스트
+
+|`+errors[].fieldsName+`
+|`+String+`
+|에러가 발생한 필드 이름
+
+|`+errors[].message+`
+|`+String+`
+|에러가 발생한 필드의 검증 메세지
+
+|===

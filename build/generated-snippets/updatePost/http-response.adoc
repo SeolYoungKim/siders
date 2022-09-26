@@ -1,0 +1,40 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 655
+
+{
+  "id" : 6,
+  "title" : "titleeeee",
+  "recruitType" : "PROJECT",
+  "contact" : "email",
+  "recruitIntroduction" : "Study nono Project gogo",
+  "expectedPeriod" : "3개월",
+  "isCompleted" : null,
+  "createdDate" : "2022-09-26 15:14",
+  "modifiedDate" : "2022-09-26 15:14",
+  "fieldsList" : [ {
+    "id" : 7,
+    "fieldsName" : "디자인",
+    "recruitCount" : 50,
+    "totalAbility" : 10,
+    "stacks" : [ {
+      "id" : 12,
+      "stackName" : "zeplin"
+    } ]
+  }, {
+    "id" : 8,
+    "fieldsName" : "프론트엔드",
+    "recruitCount" : 50,
+    "totalAbility" : 10,
+    "stacks" : [ {
+      "id" : 13,
+      "stackName" : "react"
+    } ]
+  } ]
+}
+----

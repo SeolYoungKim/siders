@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http DELETE 'https://api.siders.com/post/8' \
+    'Accept:application/json'
+----

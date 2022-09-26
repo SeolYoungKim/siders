@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "isCompleted" : true
+}' | http PATCH 'https://api.siders.com/post/1' \
+    'Content-Type:application/json;charset=UTF-8' \
+    'Accept:application/json'
+----

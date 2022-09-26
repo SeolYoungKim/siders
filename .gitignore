@@ -2,7 +2,7 @@ HELP.md
 .gradle
 build/**
 !build/generated-snippets
-!build/generated-snippets/*
+!build/generated-snippets/**
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
