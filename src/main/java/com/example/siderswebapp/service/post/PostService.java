@@ -50,7 +50,7 @@ public class PostService {
                     .post(post)
                     .fieldsName(fieldsRequest.getFieldsName())
                     .recruitCount(fieldsRequest.getRecruitCount())
-                    .totalAbility(fieldsRequest.getTotalAbility())
+                    .totalAbility(fieldsRequest.totalAbilityToEnum())
                     .build();
 
             fieldsRequest.getStacks()
@@ -93,7 +93,7 @@ public class PostService {
                             .post(post)
                             .fieldsName(fieldDto.getFieldsName())
                             .recruitCount(fieldDto.getRecruitCount())
-                            .totalAbility(fieldDto.getTotalAbility())
+                            .totalAbility(fieldDto.totalAbilityToEnum())
                             .build());
 
             // 찾았는데 Dto의 isDelete가 true면 필드 삭제해버리고 다음필드 탐색 ㄱ

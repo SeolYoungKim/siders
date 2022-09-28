@@ -1,5 +1,6 @@
 package com.example.siderswebapp.repository.post;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
@@ -45,7 +46,7 @@ class PostRepositoryImplTest {
                 .orElse(Fields.builder()
                         .post(posts)
                         .recruitCount(1)
-                        .totalAbility(5)
+                        .totalAbility(Ability.LOW)
                         .fieldsName("name")
                         .build());
 
@@ -70,7 +71,7 @@ class PostRepositoryImplTest {
         UpdateFieldsRequest dto = UpdateFieldsRequest.builder()
                 .stacks(new ArrayList<>())
                 .id(fields.getId())
-                .totalAbility(3)
+                .totalAbility("High")
                 .recruitCount(1)
                 .fieldsName("34")
                 .build();

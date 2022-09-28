@@ -1,5 +1,6 @@
 package com.example.siderswebapp.web.request.update;
 
+import com.example.siderswebapp.domain.Ability;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -24,7 +26,7 @@ public class UpdateFieldsRequest {
     private Integer recruitCount;
 
     @NotNull(message = "종합 요구 능력치를 입력해주세요.")
-    private Integer totalAbility;
+    private String totalAbility;
 
     private Boolean isDelete;
 
@@ -33,12 +35,19 @@ public class UpdateFieldsRequest {
     private List<UpdateTechStackRequest> stacks;
 
     @Builder
-    public UpdateFieldsRequest(Long id, String fieldsName, Integer recruitCount, Integer totalAbility, Boolean isDelete,List<UpdateTechStackRequest> stacks) {
+    public UpdateFieldsRequest(Long id, String fieldsName, Integer recruitCount, String totalAbility, Boolean isDelete,List<UpdateTechStackRequest> stacks) {
         this.id = id;
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;
         this.stacks = stacks;
         this.isDelete = isDelete;
+    }
+
+    public Ability totalAbilityToEnum() {
+        return Arrays.stream(Ability.values())
+                .filter(ability -> ability.name().equals(totalAbility.toUpperCase()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("종합 요구 능력치가 누락되었습니다."));
     }
 }

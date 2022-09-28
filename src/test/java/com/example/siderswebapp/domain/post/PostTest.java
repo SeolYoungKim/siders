@@ -1,8 +1,8 @@
 package com.example.siderswebapp.domain.post;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
-import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
@@ -43,21 +43,21 @@ class PostTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.HIGH)
                 .post(post)
                 .build();
 
@@ -113,21 +113,21 @@ class PostTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -172,21 +172,21 @@ class PostTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -231,21 +231,21 @@ class PostTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 

@@ -1,5 +1,6 @@
 package com.example.siderswebapp.restdocs;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
@@ -69,7 +70,7 @@ public class RestDocsTest {
         CreateFieldsRequest backend = CreateFieldsRequest.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(9)
+                .totalAbility("Low")
                 .stacks(new ArrayList<>())
                 .build();
 
@@ -102,7 +103,7 @@ public class RestDocsTest {
                                 fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
                                 fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
                                 fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
-                                fieldWithPath("fieldsList[].totalAbility").type(NUMBER).description("모집 분야 별 요구 능력치"),
+                                fieldWithPath("fieldsList[].totalAbility").type(STRING).description("모집 분야 별 요구 능력치"),
                                 fieldWithPath("fieldsList[].stacks[].stackName").type(STRING).description("기술 스택 이름")
                         )
                 ));
@@ -123,7 +124,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -153,7 +154,7 @@ public class RestDocsTest {
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
                                 fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
                                 fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
-                                fieldWithPath("fieldsList[].totalAbility").type(NUMBER).description("모집 분야 별 요구 능력치"),
+                                fieldWithPath("fieldsList[].totalAbility").type(STRING).description("모집 분야 별 요구 능력치"),
                                 fieldWithPath("fieldsList[].stacks[].id").type(NUMBER).description("기술 스택 ID"),
                                 fieldWithPath("fieldsList[].stacks[].stackName").type(STRING).description("기술 스택 이름")
                         )
@@ -176,7 +177,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -225,7 +226,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -258,7 +259,7 @@ public class RestDocsTest {
         CreateFieldsRequest backend = CreateFieldsRequest.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(9)
+                .totalAbility("Low")
                 .stacks(new ArrayList<>())
                 .build();
 
@@ -300,7 +301,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -312,7 +313,7 @@ public class RestDocsTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -342,7 +343,7 @@ public class RestDocsTest {
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
-                .totalAbility(10)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -353,7 +354,7 @@ public class RestDocsTest {
                 .id(design.getId())
                 .fieldsName("디자인")
                 .recruitCount(50)
-                .totalAbility(10)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -364,7 +365,7 @@ public class RestDocsTest {
                 .id(back.getId())
                 .fieldsName("삭제가 되어 나타나지 않아야 합니다.")
                 .recruitCount(3)
-                .totalAbility(5)
+                .totalAbility("Low")
                 .stacks(new ArrayList<>())
                 .isDelete(true)
                 .build();
@@ -420,7 +421,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -464,7 +465,7 @@ public class RestDocsTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 

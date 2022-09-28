@@ -1,5 +1,6 @@
 package com.example.siderswebapp.web.request.create;
 
+import com.example.siderswebapp.domain.Ability;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -21,17 +23,24 @@ public class CreateFieldsRequest {
     private Integer recruitCount;
 
     @NotNull(message = "종합 요구 능력치를 입력해주세요.")
-    private Integer totalAbility;
+    private String totalAbility;
 
     @Valid
     @NotEmpty(message = "기술 스택은 1개 이상 선택해야 합니다.")
     private List<CreatedTechStackRequest> stacks;
 
     @Builder
-    public CreateFieldsRequest(String fieldsName, Integer recruitCount, Integer totalAbility, List<CreatedTechStackRequest> stacks) {
+    public CreateFieldsRequest(String fieldsName, Integer recruitCount, String totalAbility, List<CreatedTechStackRequest> stacks) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;
         this.stacks = stacks;
+    }
+
+    public Ability totalAbilityToEnum() {
+        return Arrays.stream(Ability.values())
+                .filter(ability -> ability.name().equals(totalAbility.toUpperCase()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("종합 요구 능력치가 누락되었습니다."));
     }
 }

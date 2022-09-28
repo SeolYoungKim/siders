@@ -1,5 +1,6 @@
 package com.example.siderswebapp.web.controller;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.post.Post;
@@ -68,21 +69,21 @@ class PostControllerTest {
         CreateFieldsRequest design = CreateFieldsRequest.builder()
                 .fieldsName("디자인")
                 .recruitCount(2)
-                .totalAbility(4)
+                .totalAbility("Low")
                 .stacks(new ArrayList<>())
                 .build();
 
         CreateFieldsRequest frontend = CreateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility("Mid")
                 .stacks(new ArrayList<>())
                 .build();
 
         CreateFieldsRequest backend = CreateFieldsRequest.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(9)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .build();
 
@@ -137,21 +138,21 @@ class PostControllerTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.MID)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.HIGH)
                 .post(post)
                 .build();
 
@@ -256,7 +257,7 @@ class PostControllerTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -282,7 +283,7 @@ class PostControllerTest {
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
-                .totalAbility(10)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -293,7 +294,7 @@ class PostControllerTest {
                 .id(back.getId())
                 .fieldsName("백엔드를 이 분야로 수정")
                 .recruitCount(3)
-                .totalAbility(5)
+                .totalAbility("Mid")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -324,7 +325,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("백엔드를 이 분야로 수정"))
                 .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(3))
-                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(5))
+                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value("MID"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("node.js"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[1].stackName").value("mysql"))
                 .andDo(print());
@@ -345,7 +346,7 @@ class PostControllerTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -357,7 +358,7 @@ class PostControllerTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -387,7 +388,7 @@ class PostControllerTest {
         UpdateFieldsRequest newField = UpdateFieldsRequest.builder()
                 .fieldsName("프론트엔드")
                 .recruitCount(50)
-                .totalAbility(10)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -398,7 +399,7 @@ class PostControllerTest {
                 .id(design.getId())
                 .fieldsName("디자인")
                 .recruitCount(50)
-                .totalAbility(10)
+                .totalAbility("High")
                 .stacks(new ArrayList<>())
                 .isDelete(false)
                 .build();
@@ -409,7 +410,7 @@ class PostControllerTest {
                 .id(back.getId())
                 .fieldsName("삭제가 되어 나타나지 않아야 합니다.")
                 .recruitCount(3)
-                .totalAbility(5)
+                .totalAbility("Low")
                 .stacks(new ArrayList<>())
                 .isDelete(true)
                 .build();
@@ -441,7 +442,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
                 .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(50))
-                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value(10))
+                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value("HIGH"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
                 .andDo(print());
 
@@ -464,7 +465,7 @@ class PostControllerTest {
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
@@ -499,21 +500,21 @@ class PostControllerTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(6)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(3)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(2)
+                .totalAbility(Ability.LOW)
                 .post(post)
                 .build();
 

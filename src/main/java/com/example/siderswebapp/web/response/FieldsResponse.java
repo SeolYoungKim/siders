@@ -12,7 +12,7 @@ public class FieldsResponse {
     private final Long id;
     private final String fieldsName;
     private final Integer recruitCount;
-    private final Integer totalAbility;
+    private final String totalAbility;
     private final List<TechStackResponse> stacks;
 
     @Builder
@@ -20,7 +20,7 @@ public class FieldsResponse {
         this.id = fields.getId();
         this.fieldsName = fields.getFieldsName();
         this.recruitCount = fields.getRecruitCount();
-        this.totalAbility = fields.getTotalAbility();
+        this.totalAbility = fields.getTotalAbility().name();
         this.stacks = fields.getStacks().stream()
                 .map(TechStackResponse::new)
                 .collect(Collectors.toList());

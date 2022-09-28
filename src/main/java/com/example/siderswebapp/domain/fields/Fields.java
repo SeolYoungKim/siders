@@ -1,5 +1,6 @@
 package com.example.siderswebapp.domain.fields;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
@@ -32,7 +33,7 @@ public class Fields extends BaseTimeEntity {
     private Integer recruitCount;
 
     @Column
-    private Integer totalAbility;
+    private Ability totalAbility;
 
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = LAZY)
@@ -42,7 +43,7 @@ public class Fields extends BaseTimeEntity {
     private final List<TechStack> stacks = new ArrayList<>();
 
     @Builder
-    public Fields(String fieldsName, Integer recruitCount, Integer totalAbility, Post post) {
+    public Fields(String fieldsName, Integer recruitCount, Ability totalAbility, Post post) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;
@@ -64,7 +65,7 @@ public class Fields extends BaseTimeEntity {
                 = fieldsDto.getRecruitCount() != null ? fieldsDto.getRecruitCount() : recruitCount;
 
         this.totalAbility
-                = fieldsDto.getTotalAbility() != null ? fieldsDto.getTotalAbility() : totalAbility;
+                = fieldsDto.getTotalAbility() != null ? fieldsDto.totalAbilityToEnum() : totalAbility;
 
     }
 
