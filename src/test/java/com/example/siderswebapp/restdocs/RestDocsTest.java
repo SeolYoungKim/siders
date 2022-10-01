@@ -87,7 +87,7 @@ public class RestDocsTest {
 
         backend.getStacks().addAll(backendStack);
 
-        mockMvc.perform(post("/recruitment")
+        mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
@@ -135,7 +135,7 @@ public class RestDocsTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/post/{id}", savedPost.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("commonResponse",
@@ -188,7 +188,7 @@ public class RestDocsTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(get("/?page=1&size=10")
+        mockMvc.perform(get("/api/posts?page=1&size=10")
                         .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("pagingPosts",
@@ -237,7 +237,7 @@ public class RestDocsTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/post/{id}", savedPost.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("readPost",
@@ -276,7 +276,7 @@ public class RestDocsTest {
 
         backend.getStacks().addAll(backendStack);
 
-        mockMvc.perform(post("/recruitment")
+        mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
@@ -386,7 +386,7 @@ public class RestDocsTest {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/post/{id}", post.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/post/{id}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
@@ -434,7 +434,7 @@ public class RestDocsTest {
 
         IsCompletedDto isCompletedDto = new IsCompletedDto(true);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/post/{id}", savedPost.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(isCompletedDto)))
@@ -476,7 +476,7 @@ public class RestDocsTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/post/{id}", savedPost.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("deletePost",
@@ -507,7 +507,7 @@ public class RestDocsTest {
 
         post.getFieldsList().add(forValidation);
 
-        mockMvc.perform(post("/recruitment")
+        mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isBadRequest())
@@ -540,7 +540,7 @@ public class RestDocsTest {
     @DisplayName("예외 문서화")
     @Test
     void exceptionTest() throws Exception {
-        mockMvc.perform(get("/post/{id}", Integer.MAX_VALUE)
+        mockMvc.perform(get("/api/post/{id}", Integer.MAX_VALUE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(document("exception",

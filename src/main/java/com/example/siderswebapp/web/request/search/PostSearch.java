@@ -11,6 +11,7 @@ import static com.example.siderswebapp.domain.RecruitType.*;
 /**
  * 검색용 DTO로 사용하자.
  */
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostSearch {

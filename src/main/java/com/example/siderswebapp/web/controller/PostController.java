@@ -15,6 +15,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
@@ -38,7 +39,7 @@ public class PostController {
 
     // 여러 건 조회 + 페이징 (쿼리 파라미터 사용)
     // PostSearch는 나중에 검색용으로 사용하자. (DTO) @ModelAttribute PostSearch postSearch
-    @GetMapping("/")
+    @GetMapping("/posts")
     public Page<PostResponse> paging(Pageable pageable) {
         return postService.getPostList(pageable);
     }

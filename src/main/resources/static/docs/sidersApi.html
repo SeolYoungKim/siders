@@ -623,8 +623,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
   "isCompleted" : false,
-  "createdDate" : "2022-09-28 16:48",
-  "modifiedDate" : "2022-09-28 16:48",
+  "createdDate" : "2022-10-01 15:33",
+  "modifiedDate" : "2022-10-01 15:33",
   "fieldsList" : [ {
     "id" : 9,
     "fieldsName" : "백엔드",
@@ -739,7 +739,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청"><a class="link" href="#_요청">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /?page=1&amp;size=10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/posts?page=1&amp;size=10 HTTP/1.1
 Accept: application/json
 Host: api.siders.com</code></pre>
 </div>
@@ -787,8 +787,8 @@ Content-Length: 1007
     "recruitIntroduction" : "공부할 사람을 모집합니다.",
     "expectedPeriod" : "1개월",
     "isCompleted" : false,
-    "createdDate" : "2022-09-28 16:48",
-    "modifiedDate" : "2022-09-28 16:48",
+    "createdDate" : "2022-10-01 15:33",
+    "modifiedDate" : "2022-10-01 15:33",
     "fieldsList" : [ {
       "id" : 5,
       "fieldsName" : "백엔드",
@@ -802,8 +802,8 @@ Content-Length: 1007
   } ],
   "pageable" : {
     "sort" : {
-      "unsorted" : true,
       "sorted" : false,
+      "unsorted" : true,
       "empty" : true
     },
     "pageNumber" : 0,
@@ -816,14 +816,14 @@ Content-Length: 1007
   "totalElements" : 1,
   "last" : true,
   "numberOfElements" : 1,
+  "number" : 0,
   "first" : true,
-  "size" : 10,
   "sort" : {
-    "unsorted" : true,
     "sorted" : false,
+    "unsorted" : true,
     "empty" : true
   },
-  "number" : 0,
+  "size" : 10,
   "empty" : false
 }</code></pre>
 </div>
@@ -894,13 +894,13 @@ Content-Length: 1007
 <h3 id="_요청_2"><a class="link" href="#_요청_2">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /post/3 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/post/3 HTTP/1.1
 Accept: application/json
 Host: api.siders.com</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /post/{id}</caption>
+<caption class="title">Table 1. /api/post/{id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -938,8 +938,8 @@ Content-Length: 492
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
   "isCompleted" : false,
-  "createdDate" : "2022-09-28 16:48",
-  "modifiedDate" : "2022-09-28 16:48",
+  "createdDate" : "2022-10-01 15:33",
+  "modifiedDate" : "2022-10-01 15:33",
   "fieldsList" : [ {
     "id" : 3,
     "fieldsName" : "백엔드",
@@ -963,7 +963,7 @@ Content-Length: 492
 <h3 id="_요청_3"><a class="link" href="#_요청_3">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /recruitment HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/recruitment HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 458
@@ -1010,8 +1010,8 @@ Content-Length: 630
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
   "isCompleted" : false,
-  "createdDate" : "2022-09-28 16:48",
-  "modifiedDate" : "2022-09-28 16:48",
+  "createdDate" : "2022-10-01 15:33",
+  "modifiedDate" : "2022-10-01 15:33",
   "fieldsList" : [ {
     "id" : 2,
     "fieldsName" : "백엔드",
@@ -1041,7 +1041,7 @@ Content-Length: 630
 <h3 id="_요청_4"><a class="link" href="#_요청_4">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /post/6 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/post/6 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 835
@@ -1139,8 +1139,8 @@ Content-Length: 663
   "recruitIntroduction" : "Study nono Project gogo",
   "expectedPeriod" : "3개월",
   "isCompleted" : null,
-  "createdDate" : "2022-09-28 16:48",
-  "modifiedDate" : "2022-09-28 16:48",
+  "createdDate" : "2022-10-01 15:33",
+  "modifiedDate" : "2022-10-01 15:33",
   "fieldsList" : [ {
     "id" : 7,
     "fieldsName" : "디자인",
@@ -1173,7 +1173,7 @@ Content-Length: 663
 <h3 id="_요청_5"><a class="link" href="#_요청_5">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /post/1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /api/post/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 26
@@ -1225,8 +1225,8 @@ Content-Length: 491
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
   "isCompleted" : true,
-  "createdDate" : "2022-09-28 16:48",
-  "modifiedDate" : "2022-09-28 16:48",
+  "createdDate" : "2022-10-01 15:33",
+  "modifiedDate" : "2022-10-01 15:33",
   "fieldsList" : [ {
     "id" : 1,
     "fieldsName" : "백엔드",
@@ -1250,7 +1250,7 @@ Content-Length: 491
 <h3 id="_요청_6"><a class="link" href="#_요청_6">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /recruitment HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/recruitment HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 239
 Host: api.siders.com
@@ -1286,32 +1286,32 @@ Content-Length: 994
   "status" : 400,
   "code" : "FIELDS-ERR-400",
   "errors" : [ {
-    "fieldsName" : "title",
-    "message" : "제목을 입력해주세요."
+    "fieldsName" : "contact",
+    "message" : "연락처를 입력해주세요."
+  }, {
+    "fieldsName" : "fieldsList[0].fieldsName",
+    "message" : "필드명을 입력해주세요."
+  }, {
+    "fieldsName" : "expectedPeriod",
+    "message" : "예상 소요 기간을 선택해주세요."
   }, {
     "fieldsName" : "fieldsList[0].totalAbility",
     "message" : "종합 요구 능력치를 입력해주세요."
   }, {
+    "fieldsName" : "title",
+    "message" : "제목을 입력해주세요."
+  }, {
     "fieldsName" : "recruitIntroduction",
     "message" : "내용을 입력해주세요."
+  }, {
+    "fieldsName" : "fieldsList[0].stacks",
+    "message" : "기술 스택은 1개 이상 선택해야 합니다."
   }, {
     "fieldsName" : "recruitType",
     "message" : "모집 분야를 선택해주세요."
   }, {
     "fieldsName" : "fieldsList[0].recruitCount",
     "message" : "모집 인원을 입력해주세요."
-  }, {
-    "fieldsName" : "fieldsList[0].fieldsName",
-    "message" : "필드명을 입력해주세요."
-  }, {
-    "fieldsName" : "contact",
-    "message" : "연락처를 입력해주세요."
-  }, {
-    "fieldsName" : "expectedPeriod",
-    "message" : "예상 소요 기간을 선택해주세요."
-  }, {
-    "fieldsName" : "fieldsList[0].stacks",
-    "message" : "기술 스택은 1개 이상 선택해야 합니다."
   } ]
 }</code></pre>
 </div>

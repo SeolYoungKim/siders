@@ -105,7 +105,7 @@ class PostControllerTest {
         backend.getStacks().addAll(backendStack);
 
 
-        mockMvc.perform(post("/recruitment")
+        mockMvc.perform(post("/api/recruitment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isOk())
@@ -173,7 +173,7 @@ class PostControllerTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(get("/post/{id}", savedPost.getId())
+        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("제목"))
@@ -211,7 +211,7 @@ class PostControllerTest {
 
         postRepository.save(post);
 
-        mockMvc.perform(get("/")
+        mockMvc.perform(get("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0].title").value("title 30"))
@@ -235,7 +235,7 @@ class PostControllerTest {
 
         postRepository.saveAll(postList);
 
-        mockMvc.perform(get("/")
+        mockMvc.perform(get("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0]").doesNotExist())
@@ -314,7 +314,7 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(newField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(put("/post/{id}", post.getId())
+        mockMvc.perform(put("/api/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
@@ -431,7 +431,7 @@ class PostControllerTest {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(put("/post/{id}", post.getId())
+        mockMvc.perform(put("/api/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost)))
                 .andExpect(status().isOk())
@@ -478,7 +478,7 @@ class PostControllerTest {
 
         IsCompletedDto isCompletedDto = new IsCompletedDto(true);
 
-        mockMvc.perform(patch("/post/{id}", savedPost.getId())
+        mockMvc.perform(patch("/api/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(isCompletedDto)))
                 .andExpect(status().isOk())
@@ -535,7 +535,7 @@ class PostControllerTest {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(delete("/post/{id}", savedPost.getId())
+        mockMvc.perform(delete("/api/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -565,7 +565,7 @@ class PostControllerTest {
 
         post.getFieldsList().add(forValidation);
 
-        mockMvc.perform(post("/recruitment")
+        mockMvc.perform(post("/api/recruitment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isBadRequest())
@@ -579,7 +579,7 @@ class PostControllerTest {
     @DisplayName("없는 글 조회 시 PostNotExistException이 발생한다.")
     @Test
     void exceptionTest() throws Exception {
-        mockMvc.perform(get("/post/{id}", Integer.MAX_VALUE)
+        mockMvc.perform(get("/api/post/{id}", Integer.MAX_VALUE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
