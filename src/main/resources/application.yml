@@ -29,3 +29,4 @@ spring:
   profiles:
     include:
       - oauth
+      - jwt

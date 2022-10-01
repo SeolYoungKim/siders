@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request.completion;
+package com.example.siderswebapp.web.request.post.completion;
 
 import lombok.AccessLevel;
 import lombok.Getter;

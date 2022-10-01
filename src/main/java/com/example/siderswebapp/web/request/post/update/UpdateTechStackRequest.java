@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request.update;
+package com.example.siderswebapp.web.request.post.update;
 
 import lombok.AccessLevel;
 import lombok.Builder;

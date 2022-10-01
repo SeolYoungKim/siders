@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.response;
+package com.example.siderswebapp.web.response.post;
 
 import com.example.siderswebapp.domain.post.Post;
 import lombok.Builder;

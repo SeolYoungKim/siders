@@ -34,19 +34,17 @@ public class Member extends BaseTimeEntity {
     private RoleType roleType;
 
     @Column
-    private String accessToken;
-
-    @Column
     private String refreshToken;
 
+    //TODO: 글이랑 다대일 매핑 해야됨!
+
     @Builder
-    public Member(String authId, String email, String name, String picture, RoleType roleType, String accessToken, String refreshToken) {
+    public Member(String authId, String email, String name, String picture, RoleType roleType, String refreshToken) {
         this.authId = authId;
         this.email = email;
         this.name = name;
         this.picture = picture;
         this.roleType = roleType;
-        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 
@@ -54,8 +52,7 @@ public class Member extends BaseTimeEntity {
         return roleType.getKey();
     }
 
-    public void saveToken(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
+    public void saveRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 

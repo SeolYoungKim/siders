@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.request.search;
+package com.example.siderswebapp.web.request.post.search;
 
 import com.example.siderswebapp.domain.RecruitType;
 import lombok.AccessLevel;

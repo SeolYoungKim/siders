@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    include: jwt
+  jpa:
+    properties:
+      hibernate:
+        dialect:
+          nodeValue:
+            org.hibernate.dialect.MySQL5InnoDBDialect
+          storage_engine: innodb
+        show_sql: true
+        format_sql: true
+
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
+      username: saspring.h2.console.enabled=true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test
+            client-secret: test
+            scope:
+              - profile
+              - email

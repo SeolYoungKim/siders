@@ -1,10 +1,10 @@
 package com.example.siderswebapp.web.controller;
 
 import com.example.siderswebapp.service.post.PostService;
-import com.example.siderswebapp.web.request.completion.IsCompletedDto;
-import com.example.siderswebapp.web.request.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.update.UpdatePostRequest;
-import com.example.siderswebapp.web.response.PostResponse;
+import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
+import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
+import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
+import com.example.siderswebapp.web.response.post.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

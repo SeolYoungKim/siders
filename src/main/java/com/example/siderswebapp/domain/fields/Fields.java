@@ -4,7 +4,7 @@ import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
-import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
+import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

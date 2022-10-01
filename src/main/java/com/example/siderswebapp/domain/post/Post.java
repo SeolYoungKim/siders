@@ -3,7 +3,7 @@ package com.example.siderswebapp.domain.post;
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
-import com.example.siderswebapp.web.request.update.UpdatePostRequest;
+import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
