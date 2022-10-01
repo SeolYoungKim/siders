@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include: ec2, ec2-db
+  jpa:
+    properties:
+      hibernate:
+        dialect:
+          nodeValue:
+            org.hibernate.dialect.MySQL5InnoDBDialect
+          storage_engine: innodb
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        one-indexed-parameters: true
