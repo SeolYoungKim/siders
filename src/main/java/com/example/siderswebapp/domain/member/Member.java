@@ -8,44 +8,55 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-//@Entity
 @Getter
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
-    @Id @Column(name = "member_id")
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
+    private String authId;
+
+    @Column
     private String email;
 
-    @Column(unique = true)
-    private String nickName;
+    @Column
+    private String name;
 
-    private String profileImg;
+    @Column
+    private String picture;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 
+    @Column
+    private String accessToken;
+
+    @Column
     private String refreshToken;
 
     @Builder
-    public Member(String email, String nickName, String profileImg, Role role, String refreshToken) {
+    public Member(String authId, String email, String name, String picture, RoleType roleType, String accessToken, String refreshToken) {
+        this.authId = authId;
         this.email = email;
-        this.nickName = nickName;
-        this.profileImg = profileImg;
-        this.role = role;
+        this.name = name;
+        this.picture = picture;
+        this.roleType = roleType;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 
-    public Member update(String profileImg) {
-        this.profileImg = profileImg;
-        return this;
+    public String getRoleTypeKey() {
+        return roleType.getKey();
     }
 
-    public String getRoleKey() {
-        return role.getKey();
+    public void saveToken(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
+
 }

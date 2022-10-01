@@ -802,8 +802,8 @@ Content-Length: 1007
   } ],
   "pageable" : {
     "sort" : {
-      "sorted" : false,
       "unsorted" : true,
+      "sorted" : false,
       "empty" : true
     },
     "pageNumber" : 0,
@@ -816,14 +816,14 @@ Content-Length: 1007
   "totalElements" : 1,
   "last" : true,
   "numberOfElements" : 1,
-  "number" : 0,
-  "first" : true,
   "sort" : {
-    "sorted" : false,
     "unsorted" : true,
+    "sorted" : false,
     "empty" : true
   },
+  "first" : true,
   "size" : 10,
+  "number" : 0,
   "empty" : false
 }</code></pre>
 </div>
@@ -1286,32 +1286,32 @@ Content-Length: 994
   "status" : 400,
   "code" : "FIELDS-ERR-400",
   "errors" : [ {
-    "fieldsName" : "contact",
-    "message" : "연락처를 입력해주세요."
-  }, {
-    "fieldsName" : "fieldsList[0].fieldsName",
-    "message" : "필드명을 입력해주세요."
-  }, {
-    "fieldsName" : "expectedPeriod",
-    "message" : "예상 소요 기간을 선택해주세요."
-  }, {
-    "fieldsName" : "fieldsList[0].totalAbility",
-    "message" : "종합 요구 능력치를 입력해주세요."
-  }, {
-    "fieldsName" : "title",
-    "message" : "제목을 입력해주세요."
+    "fieldsName" : "fieldsList[0].stacks",
+    "message" : "기술 스택은 1개 이상 선택해야 합니다."
   }, {
     "fieldsName" : "recruitIntroduction",
     "message" : "내용을 입력해주세요."
   }, {
-    "fieldsName" : "fieldsList[0].stacks",
-    "message" : "기술 스택은 1개 이상 선택해야 합니다."
+    "fieldsName" : "expectedPeriod",
+    "message" : "예상 소요 기간을 선택해주세요."
+  }, {
+    "fieldsName" : "fieldsList[0].recruitCount",
+    "message" : "모집 인원을 입력해주세요."
+  }, {
+    "fieldsName" : "contact",
+    "message" : "연락처를 입력해주세요."
+  }, {
+    "fieldsName" : "fieldsList[0].totalAbility",
+    "message" : "종합 요구 능력치를 입력해주세요."
   }, {
     "fieldsName" : "recruitType",
     "message" : "모집 분야를 선택해주세요."
   }, {
-    "fieldsName" : "fieldsList[0].recruitCount",
-    "message" : "모집 인원을 입력해주세요."
+    "fieldsName" : "fieldsList[0].fieldsName",
+    "message" : "필드명을 입력해주세요."
+  }, {
+    "fieldsName" : "title",
+    "message" : "제목을 입력해주세요."
   } ]
 }</code></pre>
 </div>
