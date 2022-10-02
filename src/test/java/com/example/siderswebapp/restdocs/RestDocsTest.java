@@ -94,10 +94,22 @@ public class RestDocsTest {
 
         backend.getStacks().addAll(backendStack);
 
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
         mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(post))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("commonRequest",
                         preprocessRequest(prettyPrint()),
@@ -244,7 +256,7 @@ public class RestDocsTest {
                                 fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
                                 fieldWithPath("authId").type(STRING).description("글을 저장한 유저의 아이디"),
                                 fieldWithPath("isCompleted").type(BOOLEAN).description("모집 완료 여부 - true:완료, false:미완료"),
-                                fieldWithPath("isSameMember").type(BOOLEAN).description("글 작성자 여부 - true:작성자, false:타인"),
+                                fieldWithPath("isWriter").type(BOOLEAN).description("글 작성자 여부 - true:작성자, false:타인"),
                                 fieldWithPath("createdDate").type(STRING).description("모집글 최초 작성 시간"),
                                 fieldWithPath("modifiedDate").type(STRING).description("모집글 마지막 수정 시간"),
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
@@ -578,9 +590,21 @@ public class RestDocsTest {
 
         post.getFieldsList().add(forValidation);
 
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
         mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(post))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isBadRequest())
                 .andDo(document("validation",
                         preprocessRequest(prettyPrint()),

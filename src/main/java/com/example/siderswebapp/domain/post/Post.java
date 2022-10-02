@@ -67,7 +67,6 @@ public class Post extends BaseTimeEntity {
         this.isCompleted = isCompleted;
         this.member = member;
 
-        // 글 작성 회원의 작성 리스트에 해당 게시글을 저장.
         this.member.addPost(this);
     }
 

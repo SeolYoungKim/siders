@@ -42,7 +42,6 @@ public class Member extends BaseTimeEntity {
     @Column
     private String refreshToken;
 
-    //TODO: 글이랑 다대일 매핑 해야됨!
     @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
     private final List<Post> postList = new ArrayList<>();
 

@@ -8,6 +8,7 @@ import com.example.siderswebapp.exception.PostNotExistException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
+import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
@@ -34,6 +35,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final FieldsRepository fieldsRepository;
     private final MemberRepository memberRepository;
+    private final TechStackRepository techStackRepository;
 
     // 모집 글 작성
     // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!

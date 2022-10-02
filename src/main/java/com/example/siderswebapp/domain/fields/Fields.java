@@ -49,7 +49,6 @@ public class Fields extends BaseTimeEntity {
         this.totalAbility = totalAbility;
         this.post = post;
 
-        //이거 되나
         this.post.addFields(this);
     }
 
