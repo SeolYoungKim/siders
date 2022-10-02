@@ -1,6 +1,7 @@
 package com.example.siderswebapp.domain.member;
 
 import com.example.siderswebapp.domain.BaseTimeEntity;
+import com.example.siderswebapp.domain.post.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,12 +9,17 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.*;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
-    @Id
+    @Id @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -37,6 +43,8 @@ public class Member extends BaseTimeEntity {
     private String refreshToken;
 
     //TODO: 글이랑 다대일 매핑 해야됨!
+    @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
+    private final List<Post> postList = new ArrayList<>();
 
     @Builder
     public Member(String authId, String email, String name, String picture, RoleType roleType, String refreshToken) {
@@ -46,6 +54,10 @@ public class Member extends BaseTimeEntity {
         this.picture = picture;
         this.roleType = roleType;
         this.refreshToken = refreshToken;
+    }
+
+    public void addPost(Post post) {
+        postList.add(post);
     }
 
     public String getRoleTypeKey() {

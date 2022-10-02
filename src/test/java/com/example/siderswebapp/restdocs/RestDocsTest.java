@@ -3,8 +3,11 @@ package com.example.siderswebapp.restdocs;
 import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
+import com.example.siderswebapp.domain.member.RoleType;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
+import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
@@ -39,6 +42,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,6 +60,9 @@ public class RestDocsTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -109,62 +116,20 @@ public class RestDocsTest {
                 ));
     }
 
-    @DisplayName("공통 응답 데이터 정보")
-    @Test
-    void commonResponseTest() throws Exception {
-        Post post = Post.builder()
-                .title("제목")
-                .recruitType(RecruitType.STUDY)
-                .contact("010.0000.0000")
-                .recruitIntroduction("공부할 사람을 모집합니다.")
-                .expectedPeriod("1개월")
-                .isCompleted(false)
-                .build();
-
-        Fields back = Fields.builder()
-                .fieldsName("백엔드")
-                .recruitCount(1)
-                .totalAbility(Ability.LOW)
-                .post(post)
-                .build();
-
-        TechStack spring = TechStack.builder()
-                .stackName("spring")
-                .fields(back)
-                .build();
-
-        Post savedPost = postRepository.save(post);
-
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{id}", savedPost.getId())
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(document("commonResponse",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("id").type(NUMBER).description("모집글 ID"),
-                                fieldWithPath("title").type(STRING).description("모집글 제목"),
-                                fieldWithPath("recruitType").type(STRING).description("모집 구분"),
-                                fieldWithPath("contact").type(STRING).description("연락처"),
-                                fieldWithPath("recruitIntroduction").type(STRING).description("모집글 내용"),
-                                fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
-                                fieldWithPath("isCompleted").type(BOOLEAN).description("모집 완료 여부"),
-                                fieldWithPath("createdDate").type(STRING).description("모집글 최초 작성 시간"),
-                                fieldWithPath("modifiedDate").type(STRING).description("모집글 마지막 수정 시간"),
-                                fieldWithPath("fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
-                                fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
-                                fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
-                                fieldWithPath("fieldsList[].totalAbility").type(STRING).description("모집 분야 별 요구 능력치"),
-                                fieldWithPath("fieldsList[].stacks[].id").type(NUMBER).description("기술 스택 ID"),
-                                fieldWithPath("fieldsList[].stacks[].stackName").type(STRING).description("기술 스택 이름")
-                        )
-
-                ));
-    }
-
     @DisplayName("여러건 조회 + 페이징 문서화")
     @Test
     void indexTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
@@ -172,6 +137,7 @@ public class RestDocsTest {
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
                 .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields back = Fields.builder()
@@ -186,7 +152,7 @@ public class RestDocsTest {
                 .fields(back)
                 .build();
 
-        Post savedPost = postRepository.save(post);
+        postRepository.save(post);
 
         mockMvc.perform(get("/api/posts?page=1&size=10")
                         .accept(APPLICATION_JSON))
@@ -199,6 +165,16 @@ public class RestDocsTest {
                                 parameterWithName("size").description("페이지 사이즈 파라미터")
                         ),
                         relaxedResponseFields(
+                                fieldWithPath("content[].id").type(NUMBER).description("모집글 ID"),
+                                fieldWithPath("content[].title").type(STRING).description("모집글 제목"),
+                                fieldWithPath("content[].recruitType").type(STRING).description("모집 구분"),
+                                fieldWithPath("content[].createdDate").type(STRING).description("모집글 최초 작성 시간"),
+                                fieldWithPath("content[].modifiedDate").type(STRING).description("모집글 마지막 수정 시간"),
+                                fieldWithPath("content[].fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
+                                fieldWithPath("content[].fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
+                                fieldWithPath("content[].fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
+                                fieldWithPath("content[].fieldsList[].stacks[].id").type(NUMBER).description("기술 스택 ID"),
+                                fieldWithPath("content[].fieldsList[].stacks[].stackName").type(STRING).description("기술 스택 이름"),
                                 fieldWithPath("pageable").type(OBJECT).description("페이징 정보"),
                                 fieldWithPath("pageable.pageNumber").type(NUMBER).description("현재 페이지 번호(page=0과 page=1은 서로 동일)"),
                                 fieldWithPath("pageable.offset").type(NUMBER).description("페이지의 시작 글 번호"),
@@ -214,12 +190,24 @@ public class RestDocsTest {
     @DisplayName("단건 조회 문서화")
     @Test
     void readTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
+                .member(savedMember)
                 .isCompleted(false)
                 .build();
 
@@ -238,13 +226,33 @@ public class RestDocsTest {
         Post savedPost = postRepository.save(post);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{id}", savedPost.getId())
-                        .accept(APPLICATION_JSON))
+                        .accept(APPLICATION_JSON)
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("readPost",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("모집글 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(NUMBER).description("모집글 ID"),
+                                fieldWithPath("title").type(STRING).description("모집글 제목"),
+                                fieldWithPath("recruitType").type(STRING).description("모집 구분"),
+                                fieldWithPath("contact").type(STRING).description("연락처"),
+                                fieldWithPath("recruitIntroduction").type(STRING).description("모집글 내용"),
+                                fieldWithPath("expectedPeriod").type(STRING).description("예상 소요 기간"),
+                                fieldWithPath("authId").type(STRING).description("글을 저장한 유저의 아이디"),
+                                fieldWithPath("isCompleted").type(BOOLEAN).description("모집 완료 여부 - true:완료, false:미완료"),
+                                fieldWithPath("isSameMember").type(BOOLEAN).description("글 작성자 여부 - true:작성자, false:타인"),
+                                fieldWithPath("createdDate").type(STRING).description("모집글 최초 작성 시간"),
+                                fieldWithPath("modifiedDate").type(STRING).description("모집글 마지막 수정 시간"),
+                                fieldWithPath("fieldsList[].id").type(NUMBER).description("모집 분야 ID"),
+                                fieldWithPath("fieldsList[].fieldsName").type(STRING).description("모집 분야 구분"),
+                                fieldWithPath("fieldsList[].recruitCount").type(NUMBER).description("모집 분야 별 모집 인원"),
+                                fieldWithPath("fieldsList[].totalAbility").type(STRING).description("모집 분야 별 요구 능력치"),
+                                fieldWithPath("fieldsList[].stacks[].id").type(NUMBER).description("기술 스택 ID"),
+                                fieldWithPath("fieldsList[].stacks[].stackName").type(STRING).description("기술 스택 이름")
                         )
                 ));
     }
@@ -276,25 +284,54 @@ public class RestDocsTest {
 
         backend.getStacks().addAll(backendStack);
 
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
         mockMvc.perform(post("/api/recruitment")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(post))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("recruitment",
                         preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("postId").type(NUMBER).description("저장된 글의 ID")
+                        )
                         ));
     }
 
     @DisplayName("글 수정 문서화")
     @Test
     void updateTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
+                .isCompleted(false)
+                .member(savedMember)
                 .expectedPeriod("1개월")
                 .build();
 
@@ -389,7 +426,8 @@ public class RestDocsTest {
         mockMvc.perform(RestDocumentationRequestBuilders.put("/api/post/{id}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateForPost)))
+                        .content(objectMapper.writeValueAsString(updateForPost))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("updatePost",
@@ -401,14 +439,28 @@ public class RestDocsTest {
                         relaxedRequestFields(
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("수정할 필드의 ID (필드 새로 추가 시 null)").optional(),
                                 fieldWithPath("fieldsList[].isDelete").type(BOOLEAN).description("true면 삭제O | false면 삭제X")
+                        ),
+                        responseFields(
+                                fieldWithPath("postId").type(NUMBER).description("저장된 글의 ID")
                         )
                 ));
     }
 
-
     @DisplayName("모집 완료 여부 변경 문서화")
     @Test
     void changeCompletionTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
@@ -416,6 +468,7 @@ public class RestDocsTest {
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
                 .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields back = Fields.builder()
@@ -437,7 +490,8 @@ public class RestDocsTest {
         mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON)
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(isCompletedDto)))
+                        .content(objectMapper.writeValueAsString(isCompletedDto))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("changeCompletion",
                         preprocessRequest(prettyPrint()),
@@ -447,6 +501,9 @@ public class RestDocsTest {
                         ),
                         requestFields(
                                 fieldWithPath("isCompleted").type(BOOLEAN).description("true면 모집 마감 | false면 모집 중")
+                        ),
+                        responseFields(
+                                fieldWithPath("postId").type(NUMBER).description("수정한 글의 ID")
                         )
                 ));
     }
@@ -454,12 +511,25 @@ public class RestDocsTest {
     @DisplayName("글 삭제 문서화")
     @Test
     void deleteTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields back = Fields.builder()
@@ -477,7 +547,8 @@ public class RestDocsTest {
         Post savedPost = postRepository.save(post);
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/post/{id}", savedPost.getId())
-                        .accept(APPLICATION_JSON))
+                        .accept(APPLICATION_JSON)
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("deletePost",
                         preprocessRequest(prettyPrint()),

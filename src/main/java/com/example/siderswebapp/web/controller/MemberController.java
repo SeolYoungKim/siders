@@ -26,6 +26,14 @@ public class MemberController {
         return memberService.signUp(signUpDto, oAuth2User);
     }
 
+    // test용
+    @GetMapping("/signup/test")  // 회원 가입
+    public SignUpMemberResponse test(@AuthenticationPrincipal OAuth2User oAuth2User) {
+
+        SignUpDto signUpDto = new SignUpDto("히히");
+        return memberService.signUp(signUpDto, oAuth2User);
+    }
+
     @GetMapping("/member")  // 유저 정보를 내려줌
     public AuthMemberResponse member(Authentication authentication) {
         return memberService.getMemberInfo(authentication);

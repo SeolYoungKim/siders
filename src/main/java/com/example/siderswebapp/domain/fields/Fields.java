@@ -50,7 +50,7 @@ public class Fields extends BaseTimeEntity {
         this.post = post;
 
         //이거 되나
-        this.post.addFields(this);  // 이 때 post에 한번 넘어감 (모두 null인게)
+        this.post.addFields(this);
     }
 
     public void addStack(TechStack stack) {

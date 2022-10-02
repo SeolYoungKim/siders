@@ -3,8 +3,11 @@ package com.example.siderswebapp.repository.post;
 import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
+import com.example.siderswebapp.domain.member.RoleType;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
+import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import org.junit.jupiter.api.Test;
@@ -12,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,11 +28,23 @@ class PostRepositoryImplTest {
     @Autowired
     private FieldsRepository fieldsRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    private MemberRepository memberRepository;
+
 
     @Test
     void jpaTest() {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
 
         //given
         Post posts = Post.builder()
@@ -39,6 +52,8 @@ class PostRepositoryImplTest {
                 .title("q1e")
                 .recruitType(RecruitType.STUDY)
                 .recruitIntroduction("sdfsdf")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
 

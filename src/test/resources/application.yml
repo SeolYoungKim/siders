@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    include: jwt
   jpa:
     properties:
       hibernate:
@@ -26,3 +24,14 @@ spring:
             scope:
               - profile
               - email
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        one-indexed-parameters: true
+
+jwt:
+  header: Authorization
+  secret: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  access-token-expire-time: 1800000
+  refresh-token-expire-time: 604800000

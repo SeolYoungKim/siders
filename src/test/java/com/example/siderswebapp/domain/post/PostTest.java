@@ -3,8 +3,11 @@ package com.example.siderswebapp.domain.post;
 import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
+import com.example.siderswebapp.domain.member.RoleType;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
+import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -29,15 +32,32 @@ class PostTest {
     @Autowired
     private TechStackRepository techStackRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @DisplayName("글 저장 시 모든 정보가 제대로 저장된다.")
     @Test
     void mappingTestSave() {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         //given
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields design = Fields.builder()
@@ -102,12 +122,26 @@ class PostTest {
     @DisplayName("글 삭제 시 모든 정보가 전부 함께 삭제된다.")
     @Test
     void mappingTestDelete() {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         //given
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields design = Fields.builder()
@@ -149,6 +183,7 @@ class PostTest {
         postRepository.save(post);
 
         //when
+        savedMember.getPostList().remove(post);
         postRepository.delete(post);
 
         //then
@@ -161,12 +196,26 @@ class PostTest {
     @DisplayName("필드 삭제는 글에 영향을 주지 않는다.")
     @Test
     void mappingTestField() {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         //given
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields design = Fields.builder()
@@ -220,12 +269,26 @@ class PostTest {
     @DisplayName("기술 스택 삭제는 글과 필드에 영향을 주지 않는다.")
     @Test
     void mappingTestStack() {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        // 이미 저장이 된 상태라, savedMember를 사용할 필요는 없을 것 같다.
+        Member savedMember = memberRepository.save(member);
+
         //given
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(RecruitType.STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields design = Fields.builder()

@@ -34,7 +34,4 @@ public class TechStack extends BaseTimeEntity {
         this.fields.addStack(this);
     }
 
-//    public void updateTechStack(UpdateTechStackRequest techStackDto) {
-//        this.stackName = techStackDto.getStackName() != null ? techStackDto.getStackName() : stackName;
-//    }
 }

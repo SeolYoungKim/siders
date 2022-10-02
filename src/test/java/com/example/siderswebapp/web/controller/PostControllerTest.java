@@ -1,11 +1,12 @@
 package com.example.siderswebapp.web.controller;
 
-import com.example.siderswebapp.domain.Ability;
-import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
+import com.example.siderswebapp.domain.member.RoleType;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
+import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
@@ -30,7 +31,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.example.siderswebapp.domain.Ability.*;
+import static com.example.siderswebapp.domain.RecruitType.PROJECT;
+import static com.example.siderswebapp.domain.RecruitType.STUDY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,6 +55,7 @@ class PostControllerTest {
     @Autowired private PostRepository postRepository;
     @Autowired private FieldsRepository fieldsRepository;
     @Autowired private TechStackRepository techStackRepository;
+    @Autowired private MemberRepository memberRepository;
 
     @DisplayName("글 작성 후, 정보들이 잘 저장된다.")
     @Test
@@ -104,18 +110,23 @@ class PostControllerTest {
         frontend.getStacks().addAll(frontendStack);
         backend.getStacks().addAll(backendStack);
 
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
 
         mockMvc.perform(post("/api/recruitment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(post))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("제목"))
-                .andExpect(jsonPath("$.recruitType").value("STUDY"))
-                .andExpect(jsonPath("$.contact").value("010-0000-1111"))
-                .andExpect(jsonPath("$.recruitIntroduction").value("스터디 구하니까 오셈ㅋ"))
-                .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
-                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
-                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("디자인스택1"))
+                .andExpect(jsonPath("$.postId").exists())
                 .andDo(print());
 
         assertThat(postRepository.findAll().size()).isEqualTo(1);
@@ -123,36 +134,49 @@ class PostControllerTest {
         assertThat(techStackRepository.findAll().size()).isEqualTo(9);
     }
 
-    @DisplayName("글이 조회된다.")
+    @DisplayName("글 작성자가 글을 조회하면 isWriter가 true다.")
     @Test
-    void readPostTest() throws Exception {
+    void sameUserReadPostTest() throws Exception {
+
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
-                .recruitType(RecruitType.STUDY)
+                .recruitType(STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("1개월")
+                .member(savedMember)
                 .isCompleted(false)
                 .build();
 
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(Ability.MID)
+                .totalAbility(MID)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(Ability.HIGH)
+                .totalAbility(HIGH)
                 .post(post)
                 .build();
 
@@ -174,12 +198,168 @@ class PostControllerTest {
         Post savedPost = postRepository.save(post);
 
         mockMvc.perform(get("/api/post/{id}", savedPost.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.recruitType").value("STUDY"))
                 .andExpect(jsonPath("$.recruitIntroduction").value("공부할사람"))
                 .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
+                .andExpect(jsonPath("$.isWriter").value(true))
+                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
+                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
+                .andDo(print());
+    }
+
+    @DisplayName("글 작성자가 아닌 사람이 글을 조회하면 isWriter가 false다.")
+    @Test
+    void notSameUserReadPostTest() throws Exception {
+
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(LOW)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(MID)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user("notSameUser").password("").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("제목"))
+                .andExpect(jsonPath("$.recruitType").value("STUDY"))
+                .andExpect(jsonPath("$.recruitIntroduction").value("공부할사람"))
+                .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
+                .andExpect(jsonPath("$.isWriter").value(false))
+                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
+                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
+                .andDo(print());
+    }
+
+    @DisplayName("회원이 아니어도 글은 조회할 수 있다.")
+    @Test
+    void notMemberReadPostTest() throws Exception {
+
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(LOW)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(MID)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user("notSameUser").password("").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("제목"))
+                .andExpect(jsonPath("$.recruitType").value("STUDY"))
+                .andExpect(jsonPath("$.recruitIntroduction").value("공부할사람"))
+                .andExpect(jsonPath("$.expectedPeriod").value("1개월"))
+                .andExpect(jsonPath("$.isWriter").value(false))
                 .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
                 .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
                 .andDo(print());
@@ -188,13 +368,25 @@ class PostControllerTest {
     @DisplayName("페이징 테스트 - 모집이 완료되지 않은 글만 노출된다.")
     @Test
     void testPaging() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         List<Post> postList = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder()
                         .title("title " + i)
-                        .recruitType(RecruitType.STUDY)
+                        .recruitType(STUDY)
                         .contact("email")
                         .recruitIntroduction("content " + i)
                         .expectedPeriod(i + "개월")
+                        .member(savedMember)
                         .isCompleted(false)
                         .build())
                 .collect(Collectors.toList());
@@ -203,9 +395,10 @@ class PostControllerTest {
 
         Post post = Post.builder()
                 .isCompleted(true)
-                .recruitType(RecruitType.PROJECT)
+                .recruitType(PROJECT)
                 .contact("333")
                 .recruitIntroduction("intro")
+                .member(savedMember)
                 .title("title")
                 .build();
 
@@ -222,13 +415,26 @@ class PostControllerTest {
     @DisplayName("페이징 테스트 - 모집 완료 글만 있을 경우 전혀 노출되지 않는다.")
     @Test
     void testPaging2() throws Exception {
+
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         List<Post> postList = IntStream.range(1, 31)
                 .mapToObj(i -> Post.builder()
                         .title("title " + i)
-                        .recruitType(RecruitType.STUDY)
+                        .recruitType(STUDY)
                         .contact("email")
                         .recruitIntroduction("content " + i)
                         .expectedPeriod(i + "개월")
+                        .member(savedMember)
                         .isCompleted(true)
                         .build())
                 .collect(Collectors.toList());
@@ -243,21 +449,83 @@ class PostControllerTest {
 
     }
 
+    @DisplayName("페이징 테스트 - 필요한 정보가 잘 내려온다.")
+    @Test
+    void testPaging3() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        mockMvc.perform(get("/api/posts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.[0].title").value("제목"))
+                .andExpect(jsonPath("$.content.[0].recruitType").value("STUDY"))
+                .andExpect(jsonPath("$.content.[0].fieldsList.[0].fieldsName").value("백엔드"))
+                .andExpect(jsonPath("$.content.[0].fieldsList.[0].recruitCount").value(1))
+                .andExpect(jsonPath("$.content.[0].fieldsList.[0].stacks.[0].stackName").value("spring"))
+                .andDo(print());
+    }
+
     @DisplayName("글이 잘 수정 된다.")
     @Test
     void updateTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
-                .recruitType(RecruitType.STUDY)
+                .recruitType(STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람을 모집합니다.")
+                .isCompleted(false)
+                .member(savedMember)
                 .expectedPeriod("1개월")
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
@@ -316,37 +584,52 @@ class PostControllerTest {
 
         mockMvc.perform(put("/api/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateForPost)))
+                        .content(objectMapper.writeValueAsString(updateForPost))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("titleeeee"))
-                .andExpect(jsonPath("$.recruitType").value("PROJECT"))
-                .andExpect(jsonPath("$.contact").value("email"))
-                .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
-                .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
-                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("백엔드를 이 분야로 수정"))
-                .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(3))
-                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value("MID"))
-                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("node.js"))
-                .andExpect(jsonPath("$.fieldsList.[0].stacks.[1].stackName").value("mysql"))
+                .andExpect(jsonPath("$.postId").value(post.getId()))
                 .andDo(print());
 
+        assertThat(post.getTitle()).isEqualTo("titleeeee");
+        assertThat(post.getRecruitType()).isEqualTo(PROJECT);
+        assertThat(post.getContact()).isEqualTo("email");
+        assertThat(post.getRecruitIntroduction()).isEqualTo("Study nono Project gogo");
+        assertThat(post.getExpectedPeriod()).isEqualTo("300개월");
+        assertThat(back.getFieldsName()).isEqualTo("백엔드를 이 분야로 수정");
+        assertThat(back.getRecruitCount()).isEqualTo(3);
+        assertThat(back.getTotalAbility()).isEqualTo(MID);
+        assertThat(back.getStacks().get(0).getStackName()).isEqualTo("node.js");
+        assertThat(back.getStacks().get(1).getStackName()).isEqualTo("mysql");
     }
 
     @DisplayName("글이 삭제 될 필드는 삭제가 잘 되고, 나머지는 잘 수정(혹은 추가) 된다.")
     @Test
     void updateTest2() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
-                .recruitType(RecruitType.STUDY)
+                .recruitType(STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
@@ -358,7 +641,7 @@ class PostControllerTest {
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
@@ -433,17 +716,10 @@ class PostControllerTest {
 
         mockMvc.perform(put("/api/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateForPost)))
+                        .content(objectMapper.writeValueAsString(updateForPost))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("titleeeee"))
-                .andExpect(jsonPath("$.recruitType").value("PROJECT"))
-                .andExpect(jsonPath("$.contact").value("email"))
-                .andExpect(jsonPath("$.recruitIntroduction").value("Study nono Project gogo"))
-                .andExpect(jsonPath("$.expectedPeriod").value("300개월"))
-                .andExpect(jsonPath("$.fieldsList.[0].fieldsName").value("디자인"))
-                .andExpect(jsonPath("$.fieldsList.[0].recruitCount").value(50))
-                .andExpect(jsonPath("$.fieldsList.[0].totalAbility").value("HIGH"))
-                .andExpect(jsonPath("$.fieldsList.[0].stacks.[0].stackName").value("zeplin"))
+                .andExpect(jsonPath("$.postId").value(post.getId()))
                 .andDo(print());
 
         assertThat(fieldsRepository.findAll().size()).isEqualTo(2);
@@ -453,19 +729,31 @@ class PostControllerTest {
     @DisplayName("모집 완료 여부가 변경된다.")
     @Test
     void changeCompletedTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
-                .recruitType(RecruitType.STUDY)
+                .recruitType(STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("1개월")
                 .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
@@ -480,41 +768,57 @@ class PostControllerTest {
 
         mockMvc.perform(patch("/api/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(isCompletedDto)))
+                        .content(objectMapper.writeValueAsString(isCompletedDto))
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isCompleted").value(true))
+                .andExpect(jsonPath("$.postId").value(post.getId()))
                 .andDo(print());
+
+        assertThat(post.getIsCompleted()).isTrue();
     }
 
     @DisplayName("글이 삭제된다.")
     @Test
     void deletePostTest() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
-                .recruitType(RecruitType.STUDY)
+                .recruitType(STUDY)
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("3000개")
+                .isCompleted(false)
+                .member(savedMember)
                 .build();
 
         Fields design = Fields.builder()
                 .fieldsName("디자인")
                 .recruitCount(3)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
         Fields front = Fields.builder()
                 .fieldsName("프론트")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
         Fields back = Fields.builder()
                 .fieldsName("백엔드")
                 .recruitCount(1)
-                .totalAbility(Ability.LOW)
+                .totalAbility(LOW)
                 .post(post)
                 .build();
 
@@ -536,10 +840,12 @@ class PostControllerTest {
         Post savedPost = postRepository.save(post);
 
         mockMvc.perform(delete("/api/post/{id}", savedPost.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(print());
 
+        assertThat(member.getPostList().size()).isEqualTo(0);
         assertThat(postRepository.findAll().size()).isEqualTo(0);
         assertThat(fieldsRepository.findAll().size()).isEqualTo(0);
         assertThat(techStackRepository.findAll().size()).isEqualTo(0);

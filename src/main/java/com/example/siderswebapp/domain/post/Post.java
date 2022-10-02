@@ -3,6 +3,7 @@ package com.example.siderswebapp.domain.post;
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Entity(name = "post")
@@ -46,18 +48,31 @@ public class Post extends BaseTimeEntity {
     @Column
     private Boolean isCompleted;
 
+    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = LAZY)
+    private Member member;
+
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private final List<Fields> fieldsList = new ArrayList<>();
 
     @Builder
     public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction,
-                String expectedPeriod, Boolean isCompleted) {
+                String expectedPeriod, Boolean isCompleted, Member member) {
+
         this.title = title;
         this.recruitType = recruitType;
         this.contact = contact;
         this.recruitIntroduction = recruitIntroduction;
         this.expectedPeriod = expectedPeriod;
         this.isCompleted = isCompleted;
+        this.member = member;
+
+        // 글 작성 회원의 작성 리스트에 해당 게시글을 저장.
+        this.member.addPost(this);
+    }
+
+    public Boolean isWriter(String authId) {
+        return member.getAuthId().equals(authId);
     }
 
     public void addFields(Fields fields) {

@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.response.post;
+package com.example.siderswebapp.web.response.post.read.paging;
 
 import com.example.siderswebapp.domain.post.Post;
 import lombok.Getter;
@@ -8,32 +8,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class PostResponse {
+public class PagingPostsResponse {
+
     private final Long id;
     private final String title;
     private final String recruitType;
-    private final String contact;
-    private final String recruitIntroduction;
-    private final String expectedPeriod;
-    private final String authId;
-    private final Boolean isCompleted;
     private final String createdDate;
     private final String modifiedDate;
-    private final List<FieldsResponse> fieldsList;
+    private final List<PagingFieldsResponse> fieldsList;
 
-    public PostResponse(Post post) {
+    public PagingPostsResponse(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.recruitType = post.getRecruitType().name();
-        this.contact = post.getContact();
-        this.recruitIntroduction = post.getRecruitIntroduction();
-        this.expectedPeriod = post.getExpectedPeriod();
-        this.authId = post.getMember().getAuthId();
-        this.isCompleted = post.getIsCompleted();
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.modifiedDate = post.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.fieldsList = post.getFieldsList().stream()
-                .map(FieldsResponse::new)
+                .map(PagingFieldsResponse::new)
                 .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
-package com.example.siderswebapp.web.response.post;
+package com.example.siderswebapp.web.response.post.read;
 
 import com.example.siderswebapp.domain.post.Post;
+import com.example.siderswebapp.web.response.post.FieldsResponse;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class PostResponse {
+public class ReadPostResponse {
     private final Long id;
     private final String title;
     private final String recruitType;
@@ -17,11 +18,12 @@ public class PostResponse {
     private final String expectedPeriod;
     private final String authId;
     private final Boolean isCompleted;
+    private final Boolean isWriter;
     private final String createdDate;
     private final String modifiedDate;
     private final List<FieldsResponse> fieldsList;
 
-    public PostResponse(Post post) {
+    public ReadPostResponse(Post post, Boolean isWriter) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.recruitType = post.getRecruitType().name();
@@ -30,6 +32,7 @@ public class PostResponse {
         this.expectedPeriod = post.getExpectedPeriod();
         this.authId = post.getMember().getAuthId();
         this.isCompleted = post.getIsCompleted();
+        this.isWriter = isWriter;
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.modifiedDate = post.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.fieldsList = post.getFieldsList().stream()
