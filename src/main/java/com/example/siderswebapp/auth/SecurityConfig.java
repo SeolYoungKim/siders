@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
                         .mvcMatchers("/api/posts").permitAll()
+                        .mvcMatchers("/api/search").permitAll()
                         .mvcMatchers(HttpMethod.GET, "/api/post/**").permitAll()
                         .anyRequest().authenticated())
 

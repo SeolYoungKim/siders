@@ -8,8 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface PostRepositoryCustom {
     Page<Post> pagingPost(Pageable pageable);
 
-    // TODO: 기본 기능 추가 후, 서치 로직 고민.
-    Page<Post> searchByRecruitType(PostSearch postSearch, Pageable pageable);
-    Page<Post> searchByFieldsName(PostSearch postSearch, Pageable pageable);
-    Page<Post> searchByStackName(PostSearch postSearch, Pageable pageable);
+    Page<Post> searchPost(PostSearch postSearch, Pageable pageable);
 }

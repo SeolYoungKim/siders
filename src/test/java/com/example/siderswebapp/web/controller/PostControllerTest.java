@@ -498,6 +498,141 @@ class PostControllerTest {
                 .andDo(print());
     }
 
+    @DisplayName("Search test - 글이 잘 찾아진다.")
+    @Test
+    void testSearching() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(LOW)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(MID)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        Post post2 = Post.builder()
+                .title("title")
+                .recruitType(PROJECT)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields back2 = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post2)
+                .build();
+
+        TechStack spring2 = TechStack.builder()
+                .stackName("spring")
+                .fields(back2)
+                .build();
+
+        postRepository.save(post2);
+
+        // 전체 검색
+        mockMvc.perform(get("/api/search")
+                        .param("recruitType", "total")
+                        .param("keyword", "spring")
+                        .param("page", "1")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(2))
+                .andExpect(jsonPath("$.content.[0].id").value(post2.getId()))
+                .andDo(print());
+
+        // 스터디만 검색
+        mockMvc.perform(get("/api/search")
+                        .param("recruitType", "study")
+                        .param("keyword", "spring")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(1))
+                .andDo(print());
+
+        // 프로젝트만 검색
+        mockMvc.perform(get("/api/search")
+                        .param("recruitType", "project")
+                        .param("keyword", "spring")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(1))
+                .andDo(print());
+
+        // 필드명 검색
+        mockMvc.perform(get("/api/search")
+                        .param("recruitType", "total")
+                        .param("keyword", "프론트")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(1))
+                .andDo(print());
+
+        // 기술 스택 검색
+        mockMvc.perform(get("/api/search")
+                        .param("recruitType", "total")
+                        .param("keyword", "zeplin")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(1))
+                .andDo(print());
+    }
+
     @DisplayName("글이 잘 수정 된다.")
     @Test
     void updateTest() throws Exception {

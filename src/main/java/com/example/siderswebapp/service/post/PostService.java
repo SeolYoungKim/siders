@@ -11,6 +11,7 @@ import com.example.siderswebapp.repository.post.PostRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
+import com.example.siderswebapp.web.request.post.search.PostSearch;
 import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import com.example.siderswebapp.web.response.post.create.PostIdDto;
@@ -91,6 +92,11 @@ public class PostService {
     @Transactional(readOnly = true)
     public Page<PagingPostsResponse> getPostList(Pageable pageable) {
         return postRepository.pagingPost(pageable).map(PagingPostsResponse::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PagingPostsResponse> searchPost(PostSearch postSearch, Pageable pageable) {
+        return postRepository.searchPost(postSearch, pageable).map(PagingPostsResponse::new);
     }
 
     public PostIdDto updatePost(Long id, UpdatePostRequest postDto,

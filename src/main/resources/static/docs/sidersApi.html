@@ -459,34 +459,40 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_응답">응답</a></li>
 </ul>
 </li>
-<li><a href="#_글_단건_조회">글 단건 조회</a>
+<li><a href="#_글_정보_검색">글 정보 검색</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_2">요청</a></li>
 <li><a href="#_응답_2">응답</a></li>
 </ul>
 </li>
-<li><a href="#_글_작성">글 작성</a>
+<li><a href="#_글_단건_조회">글 단건 조회</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_3">요청</a></li>
 <li><a href="#_응답_3">응답</a></li>
 </ul>
 </li>
-<li><a href="#_글_수정">글 수정</a>
+<li><a href="#_글_작성">글 작성</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_4">요청</a></li>
 <li><a href="#_응답_4">응답</a></li>
 </ul>
 </li>
-<li><a href="#_모집_완료_여부_변경">모집 완료 여부 변경</a>
+<li><a href="#_글_수정">글 수정</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_5">요청</a></li>
 <li><a href="#_응답_5">응답</a></li>
 </ul>
 </li>
-<li><a href="#_필드_검증_글_작성_글_수정">필드 검증 | 글 작성 &amp; 글 수정</a>
+<li><a href="#_모집_완료_여부_변경">모집 완료 여부 변경</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_6">요청</a></li>
 <li><a href="#_응답_6">응답</a></li>
+</ul>
+</li>
+<li><a href="#_필드_검증_글_작성_글_수정">필드 검증 | 글 작성 &amp; 글 수정</a>
+<ul class="sectlevel2">
+<li><a href="#_요청_7">요청</a></li>
+<li><a href="#_응답_7">응답</a></li>
 </ul>
 </li>
 <li><a href="#_예외">예외</a>
@@ -500,26 +506,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_회원_가입">회원 가입</a>
 <ul class="sectlevel2">
-<li><a href="#_요청_7">요청</a></li>
-<li><a href="#_응답_7">응답</a></li>
-</ul>
-</li>
-<li><a href="#_닉네임_중복_체크">닉네임 중복 체크</a>
-<ul class="sectlevel2">
 <li><a href="#_요청_8">요청</a></li>
 <li><a href="#_응답_8">응답</a></li>
 </ul>
 </li>
-<li><a href="#_회원_조회">회원 조회</a>
+<li><a href="#_닉네임_중복_체크">닉네임 중복 체크</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_9">요청</a></li>
 <li><a href="#_응답_9">응답</a></li>
 </ul>
 </li>
-<li><a href="#_회원_탈퇴">회원 탈퇴</a>
+<li><a href="#_회원_조회">회원 조회</a>
 <ul class="sectlevel2">
 <li><a href="#_요청_10">요청</a></li>
 <li><a href="#_응답_10">응답</a></li>
+</ul>
+</li>
+<li><a href="#_회원_탈퇴">회원 탈퇴</a>
+<ul class="sectlevel2">
+<li><a href="#_요청_11">요청</a></li>
+<li><a href="#_응답_11">응답</a></li>
 </ul>
 </li>
 </ul>
@@ -696,8 +702,8 @@ Content-Length: 816
     "id" : 6,
     "title" : "제목",
     "recruitType" : "STUDY",
-    "createdDate" : "2022-10-03 13:55",
-    "modifiedDate" : "2022-10-03 13:55",
+    "createdDate" : "2022-10-03 16:17",
+    "modifiedDate" : "2022-10-03 16:17",
     "fieldsList" : [ {
       "id" : 6,
       "fieldsName" : "백엔드",
@@ -710,8 +716,8 @@ Content-Length: 816
   } ],
   "pageable" : {
     "sort" : {
-      "unsorted" : true,
       "sorted" : false,
+      "unsorted" : true,
       "empty" : true
     },
     "pageNumber" : 0,
@@ -724,14 +730,14 @@ Content-Length: 816
   "totalElements" : 1,
   "last" : true,
   "numberOfElements" : 1,
-  "first" : true,
-  "size" : 10,
-  "number" : 0,
   "sort" : {
-    "unsorted" : true,
     "sorted" : false,
+    "unsorted" : true,
     "empty" : true
   },
+  "size" : 10,
+  "first" : true,
+  "number" : 0,
   "empty" : false
 }</code></pre>
 </div>
@@ -846,10 +852,60 @@ Content-Length: 816
 </div>
 </div>
 <div class="sect1">
-<h2 id="_글_단건_조회"><a class="link" href="#_글_단건_조회">글 단건 조회</a></h2>
+<h2 id="_글_정보_검색"><a class="link" href="#_글_정보_검색">글 정보 검색</a></h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청_2"><a class="link" href="#_요청_2">요청</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/search?recruitType=study&amp;keyword=spring HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Host: api.siders.com</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모집 분야 : total - 전체 | study - 스터디 | project - 프로젝트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keyword</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색 키워드 : 현재 단어만 검색 가능합니다. | target : 글 제목, 글 내용, 필드 이름, 기술 스택 이름</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>페이징 관련 요청 파라미터는 page, size 등 페이징 관련 파라미터와 같은 값을 사용합니다. (홈 화면과 같습니다.)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답_2"><a class="link" href="#_응답_2">응답</a></h3>
+<div class="paragraph">
+<p>응답은 검색된 글의 리스트가 페이징되어 내려갑니다. (홈 화면 조회와 응답 결과가 같습니다.)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_글_단건_조회"><a class="link" href="#_글_단건_조회">글 단건 조회</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_요청_3"><a class="link" href="#_요청_3">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/post/4 HTTP/1.1
@@ -900,7 +956,7 @@ Host: api.siders.com</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_2"><a class="link" href="#_응답_2">응답</a></h3>
+<h3 id="_응답_3"><a class="link" href="#_응답_3">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -927,8 +983,8 @@ Content-Length: 541
   "authId" : "savedAuthId",
   "isCompleted" : false,
   "isWriter" : true,
-  "createdDate" : "2022-10-03 13:55",
-  "modifiedDate" : "2022-10-03 13:55",
+  "createdDate" : "2022-10-03 16:17",
+  "modifiedDate" : "2022-10-03 16:17",
   "fieldsList" : [ {
     "id" : 4,
     "fieldsName" : "백엔드",
@@ -949,7 +1005,7 @@ Content-Length: 541
 <h2 id="_글_작성"><a class="link" href="#_글_작성">글 작성</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_3"><a class="link" href="#_요청_3">요청</a></h3>
+<h3 id="_요청_4"><a class="link" href="#_요청_4">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/recruitment HTTP/1.1
@@ -1003,7 +1059,7 @@ Host: api.siders.com
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_3"><a class="link" href="#_응답_3">응답</a></h3>
+<h3 id="_응답_4"><a class="link" href="#_응답_4">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1032,14 +1088,14 @@ Content-Length: 18
 <h2 id="_글_수정"><a class="link" href="#_글_수정">글 수정</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_4"><a class="link" href="#_요청_4">요청</a></h3>
+<h3 id="_요청_5"><a class="link" href="#_요청_5">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/post/7 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /api/post/9 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Authorization: Bearer ThisIsAccessToken
-Content-Length: 835
+Content-Length: 837
 Host: api.siders.com
 
 {
@@ -1058,7 +1114,7 @@ Host: api.siders.com
       "stackName" : "react"
     } ]
   }, {
-    "id" : 8,
+    "id" : 12,
     "fieldsName" : "디자인",
     "recruitCount" : 50,
     "totalAbility" : "High",
@@ -1067,7 +1123,7 @@ Host: api.siders.com
       "stackName" : "zeplin"
     } ]
   }, {
-    "id" : 7,
+    "id" : 11,
     "fieldsName" : "삭제가 되어 나타나지 않아야 합니다.",
     "recruitCount" : 3,
     "totalAbility" : "Low",
@@ -1137,7 +1193,7 @@ Host: api.siders.com
 </div>
 </div>
 <div class="sect2">
-<h3 id="_응답_4"><a class="link" href="#_응답_4">응답</a></h3>
+<h3 id="_응답_5"><a class="link" href="#_응답_5">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1155,7 +1211,7 @@ X-Frame-Options: DENY
 Content-Length: 18
 
 {
-  "postId" : 7
+  "postId" : 9
 }</code></pre>
 </div>
 </div>
@@ -1166,7 +1222,7 @@ Content-Length: 18
 <h2 id="_모집_완료_여부_변경"><a class="link" href="#_모집_완료_여부_변경">모집 완료 여부 변경</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_5"><a class="link" href="#_요청_5">요청</a></h3>
+<h3 id="_요청_6"><a class="link" href="#_요청_6">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /api/post/1 HTTP/1.1
@@ -1225,7 +1281,7 @@ Host: api.siders.com
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_5"><a class="link" href="#_응답_5">응답</a></h3>
+<h3 id="_응답_6"><a class="link" href="#_응답_6">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1254,7 +1310,7 @@ Content-Length: 18
 <h2 id="_필드_검증_글_작성_글_수정"><a class="link" href="#_필드_검증_글_작성_글_수정">필드 검증 | 글 작성 &amp; 글 수정</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_6"><a class="link" href="#_요청_6">요청</a></h3>
+<h3 id="_요청_7"><a class="link" href="#_요청_7">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/recruitment HTTP/1.1
@@ -1279,7 +1335,7 @@ Host: api.siders.com
 </div>
 </div>
 <div class="sect2">
-<h3 id="_응답_6"><a class="link" href="#_응답_6">응답</a></h3>
+<h3 id="_응답_7"><a class="link" href="#_응답_7">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
@@ -1300,29 +1356,29 @@ Content-Length: 994
   "status" : 400,
   "code" : "FIELDS-ERR-400",
   "errors" : [ {
-    "fieldsName" : "contact",
-    "message" : "연락처를 입력해주세요."
+    "fieldsName" : "recruitType",
+    "message" : "모집 분야를 선택해주세요."
   }, {
     "fieldsName" : "fieldsList[0].totalAbility",
     "message" : "종합 요구 능력치를 입력해주세요."
   }, {
-    "fieldsName" : "recruitType",
-    "message" : "모집 분야를 선택해주세요."
+    "fieldsName" : "contact",
+    "message" : "연락처를 입력해주세요."
   }, {
-    "fieldsName" : "recruitIntroduction",
-    "message" : "내용을 입력해주세요."
+    "fieldsName" : "title",
+    "message" : "제목을 입력해주세요."
   }, {
     "fieldsName" : "fieldsList[0].stacks",
     "message" : "기술 스택은 1개 이상 선택해야 합니다."
+  }, {
+    "fieldsName" : "recruitIntroduction",
+    "message" : "내용을 입력해주세요."
   }, {
     "fieldsName" : "fieldsList[0].recruitCount",
     "message" : "모집 인원을 입력해주세요."
   }, {
     "fieldsName" : "expectedPeriod",
     "message" : "예상 소요 기간을 선택해주세요."
-  }, {
-    "fieldsName" : "title",
-    "message" : "제목을 입력해주세요."
   }, {
     "fieldsName" : "fieldsList[0].fieldsName",
     "message" : "필드명을 입력해주세요."
@@ -1455,7 +1511,7 @@ Content-Length: 98
 <h2 id="_회원_가입"><a class="link" href="#_회원_가입">회원 가입</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_7"><a class="link" href="#_요청_7">요청</a></h3>
+<h3 id="_요청_8"><a class="link" href="#_요청_8">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/signup HTTP/1.1
@@ -1492,7 +1548,7 @@ Host: api.siders.com
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_7"><a class="link" href="#_응답_7">응답</a></h3>
+<h3 id="_응답_8"><a class="link" href="#_응답_8">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1513,7 +1569,7 @@ Content-Length: 301
   "authId" : "authId",
   "name" : "유저닉네임",
   "picture" : "picture",
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhdXRoSWQiLCJhdXRob3JpdHkiOiJST0xFX1VTRVIsU0NPUEVfcmVhZCIsImV4cCI6MTY2NDc3NDc1M30.HnIESEWboFB7DD5t-5-aLp_kJnPz-3WyKPsS6R8luL24iPUjCqbRjaL2JQ_ZvaLv1JHMmNDNWbD-nD7V5gKo2Q"
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhdXRoSWQiLCJhdXRob3JpdHkiOiJST0xFX1VTRVIsU0NPUEVfcmVhZCIsImV4cCI6MTY2NDc4MzIzOX0.hWYkbj2UeMemzAM5VgXtRdTd2u06XdX21DMPD9fQdrI-JecAdHsuQHjIY4VcNnZLjR-YxMooMJ_JMa4H0faW1A"
 }</code></pre>
 </div>
 </div>
@@ -1560,7 +1616,7 @@ Content-Length: 301
 <h2 id="_닉네임_중복_체크"><a class="link" href="#_닉네임_중복_체크">닉네임 중복 체크</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_8"><a class="link" href="#_요청_8">요청</a></h3>
+<h3 id="_요청_9"><a class="link" href="#_요청_9">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/signup?name=savedName HTTP/1.1
@@ -1588,7 +1644,7 @@ Host: api.siders.com</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_8"><a class="link" href="#_응답_8">응답</a></h3>
+<h3 id="_응답_9"><a class="link" href="#_응답_9">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1638,7 +1694,7 @@ Content-Length: 23
 <h2 id="_회원_조회"><a class="link" href="#_회원_조회">회원 조회</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_9"><a class="link" href="#_요청_9">요청</a></h3>
+<h3 id="_요청_10"><a class="link" href="#_요청_10">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/member HTTP/1.1
@@ -1670,7 +1726,7 @@ Host: api.siders.com</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_9"><a class="link" href="#_응답_9">응답</a></h3>
+<h3 id="_응답_10"><a class="link" href="#_응답_10">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1738,7 +1794,7 @@ Content-Length: 109
 <h2 id="_회원_탈퇴"><a class="link" href="#_회원_탈퇴">회원 탈퇴</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_10"><a class="link" href="#_요청_10">요청</a></h3>
+<h3 id="_요청_11"><a class="link" href="#_요청_11">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /api/member HTTP/1.1
@@ -1769,7 +1825,7 @@ Host: api.siders.com</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_응답_10"><a class="link" href="#_응답_10">응답</a></h3>
+<h3 id="_응답_11"><a class="link" href="#_응답_11">응답</a></h3>
 <div class="paragraph">
 <p>회원 탈퇴에 대한 응답은 따로 제공하지 않습니다.</p>
 </div>
@@ -1780,7 +1836,7 @@ Host: api.siders.com</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-10-03 13:55:38 +0900
+Last updated 2022-10-03 16:16:06 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

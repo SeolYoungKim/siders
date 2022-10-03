@@ -32,6 +32,17 @@ include::{snippets}/pagingPosts/request-parameters.adoc[]
 include::{snippets}/pagingPosts/http-response.adoc[]
 include::{snippets}/pagingPosts/response-fields.adoc[]
 
+== 글 정보 검색
+
+=== 요청
+
+include::{snippets}/postSearch/http-request.adoc[]
+include::{snippets}/postSearch/request-parameters.adoc[]
+- 페이징 관련 요청 파라미터는 page, size 등 페이징 관련 파라미터와 같은 값을 사용합니다. (홈 화면과 같습니다.)
+
+=== 응답
+응답은 검색된 글의 리스트가 페이징되어 내려갑니다. (홈 화면 조회와 응답 결과가 같습니다.)
+
 
 == 글 단건 조회
 

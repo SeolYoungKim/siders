@@ -40,7 +40,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.example.siderswebapp.domain.Ability.LOW;
+import static com.example.siderswebapp.domain.Ability.*;
+import static com.example.siderswebapp.domain.Ability.HIGH;
+import static com.example.siderswebapp.domain.RecruitType.PROJECT;
 import static com.example.siderswebapp.domain.RecruitType.STUDY;
 import static com.example.siderswebapp.web.controller.attributes.TestAttributes.TEST_ATTRIBUTES;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -204,6 +206,107 @@ public class RestDocsTest {
                                 fieldWithPath("size").type(NUMBER).description("페이지 사이즈(기본값=10)"),
                                 fieldWithPath("numberOfElements").type(NUMBER).description("요청 페이지에서 조회된 데이터의 개수"),
                                 fieldWithPath("first").type(BOOLEAN).description("첫 페이지 여부")
+                        )
+                ));
+    }
+
+    @DisplayName("글 검색 문서화")
+    @Test
+    void searchPost() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields design = Fields.builder()
+                .fieldsName("디자인")
+                .recruitCount(3)
+                .totalAbility(LOW)
+                .post(post)
+                .build();
+
+        Fields front = Fields.builder()
+                .fieldsName("프론트")
+                .recruitCount(1)
+                .totalAbility(MID)
+                .post(post)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post)
+                .build();
+
+        TechStack zeplin = TechStack.builder()
+                .stackName("zeplin")
+                .fields(design)
+                .build();
+
+        TechStack react = TechStack.builder()
+                .stackName("react")
+                .fields(front)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        Post post2 = Post.builder()
+                .title("title")
+                .recruitType(PROJECT)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .member(savedMember)
+                .isCompleted(false)
+                .build();
+
+        Fields back2 = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(HIGH)
+                .post(post2)
+                .build();
+
+        TechStack spring2 = TechStack.builder()
+                .stackName("spring")
+                .fields(back2)
+                .build();
+
+        postRepository.save(post2);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/search")
+                        .param("recruitType", "study")
+                        .param("keyword", "spring")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("postSearch",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("recruitType").description("모집 분야 : total - 전체 | study - 스터디 | project - 프로젝트"),
+                                parameterWithName("keyword").description("검색 키워드 : 현재 단어만 검색 가능합니다. | target : 글 제목, 글 내용, 필드 이름, 기술 스택 이름")
                         )
                 ));
     }

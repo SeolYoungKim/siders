@@ -3,6 +3,7 @@ package com.example.siderswebapp.web.controller;
 import com.example.siderswebapp.service.post.PostService;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
+import com.example.siderswebapp.web.request.post.search.PostSearch;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import com.example.siderswebapp.web.response.post.create.PostIdDto;
 import com.example.siderswebapp.web.response.post.read.ReadPostResponse;
@@ -47,6 +48,13 @@ public class PostController {
     @GetMapping("/posts")
     public Page<PagingPostsResponse> paging(Pageable pageable) {
         return postService.getPostList(pageable);
+    }
+
+    // 서치
+    @GetMapping("/search")
+    public Page<PagingPostsResponse> search(@ModelAttribute PostSearch postSearch, Pageable pageable) {
+
+        return postService.searchPost(postSearch, pageable);
     }
 
     // 글 수정
