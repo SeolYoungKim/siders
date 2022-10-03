@@ -72,6 +72,54 @@ class MemberControllerTest {
         assertThat(memberRepository.findAll().size()).isEqualTo(1);
     }
 
+    @DisplayName("중복 닉네임일 경우 isExists=true 를 반환한다.")
+    @Test
+    void duplicateNameCheck() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
+        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
+
+        mockMvc.perform(get("/api/signup?name=savedName")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isExists").value(true))
+                .andDo(print());
+    }
+
+    @DisplayName("중복 닉네임이 아닐 경우 isExists=false 를 반환한다.")
+    @Test
+    void duplicateNameCheck2() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
+        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
+
+        mockMvc.perform(get("/api/signup?name=haha")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isExists").value(false))
+                .andDo(print());
+    }
+
     @DisplayName("유저의 정보를 조회할 수 있다.")
     @Test
     void memberInfo() throws Exception {

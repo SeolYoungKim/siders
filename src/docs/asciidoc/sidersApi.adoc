@@ -126,6 +126,16 @@ include::{snippets}/signup/request-fields.adoc[]
 include::{snippets}/signup/http-response.adoc[]
 include::{snippets}/signup/response-fields.adoc[]
 
+== 닉네임 중복 체크
+
+=== 요청
+include::{snippets}/duplicateNameCheck/http-request.adoc[]
+include::{snippets}/duplicateNameCheck/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/duplicateNameCheck/http-response.adoc[]
+include::{snippets}/duplicateNameCheck/response-fields.adoc[]
+
 == 회원 조회
 
 === 요청
@@ -136,3 +146,14 @@ include::{snippets}/memberInfo/request-headers.adoc[]
 === 응답
 include::{snippets}/memberInfo/http-response.adoc[]
 include::{snippets}/memberInfo/response-fields.adoc[]
+
+
+== 회원 탈퇴
+
+=== 요청
+include::{snippets}/deleteMember/http-request.adoc[]
+Header
+include::{snippets}/deleteMember/request-headers.adoc[]
+
+=== 응답
+회원 탈퇴에 대한 응답은 따로 제공하지 않습니다.

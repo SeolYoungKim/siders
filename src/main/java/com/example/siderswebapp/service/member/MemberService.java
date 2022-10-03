@@ -6,6 +6,7 @@ import com.example.siderswebapp.domain.member.RoleType;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.response.member.AuthMemberResponse;
+import com.example.siderswebapp.web.response.member.DuplicateNameCheckDto;
 import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,10 @@ public class MemberService {
                 .orElseThrow(IllegalAccessException::new);
 
         memberRepository.delete(member);
+    }
+
+    public DuplicateNameCheckDto duplicateNameCheck(String name) {
+        return new DuplicateNameCheckDto(memberRepository.existsByName(name));
     }
 
     private String getAuthId(Authentication authentication) {

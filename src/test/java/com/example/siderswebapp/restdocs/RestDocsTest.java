@@ -740,7 +740,39 @@ public class RestDocsTest {
                 ));
     }
 
-    @DisplayName("회원 탈퇴")
+    @DisplayName("닉네임 중복 검사 문서화")
+    @Test
+    void duplicateNameCheck() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
+        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/signup?name=savedName")
+                        .contentType(APPLICATION_JSON)
+                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                .andExpect(status().isOk())
+                .andDo(document("duplicateNameCheck",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name").description("유저가 가입 시 작성한 닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("isExists").type(BOOLEAN).description("닉네임 중복 여부 : 중복됨 - true | 중복 안됨 - false")
+                        )
+                ));
+    }
+
+    @DisplayName("회원 탈퇴 문서화")
     @Test
     void deleteMember() throws Exception {
         Member member = Member.builder()

@@ -3,6 +3,7 @@ package com.example.siderswebapp.web.controller;
 import com.example.siderswebapp.service.member.MemberService;
 import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.response.member.AuthMemberResponse;
+import com.example.siderswebapp.web.response.member.DuplicateNameCheckDto;
 import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,11 @@ public class MemberController {
         return memberService.signUp(signUpDto, oAuth2User);
     }
 
+    @GetMapping("/signup")
+    public DuplicateNameCheckDto duplicateCheck(@RequestParam String name) {
+        return memberService.duplicateNameCheck(name);
+    }
+
     @GetMapping("/member")  // 유저 정보를 내려줌
     public AuthMemberResponse member(Authentication authentication) {
         return memberService.getMemberInfo(authentication);
@@ -43,4 +49,7 @@ public class MemberController {
     public void deleteMember(Authentication authentication) throws IllegalAccessException {
         memberService.deleteMember(authentication);
     }
+
+
+
 }
