@@ -1,5 +1,6 @@
 package com.example.siderswebapp.auth.oauth.handler;
 
+import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.repository.member.MemberRepository;

@@ -44,12 +44,13 @@ public class MemberService {
         return new SignUpMemberResponse(member, accessToken);
     }
 
-    // TODO: 토큰을 프론트에서 계속 가지고 있을 수 있다는 가정 하에 auth결과로는 accessToken을 내려주지 않음.
     public AuthMemberResponse getMemberInfo(Authentication authentication) {
-        String authId = authentication.getName();
+        //TODO: 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
+
+        String authId = authentication != null ? authentication.getName() : "";
 
         Member member = memberRepository.findByAuthId(authId)
-                .orElseThrow(IllegalAccessError::new);
+                .orElse(null);
 
         return new AuthMemberResponse(member);
     }

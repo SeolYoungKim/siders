@@ -1,5 +1,9 @@
 package com.example.siderswebapp.auth.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -13,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.example.siderswebapp.auth.UriList.FRONT_END;
+
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -25,14 +31,28 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwt = jwtProvider.resolveToken(request);
 
-        // 토큰이 유효하지 않으면, 재 로그인 요청을 보낼까?
-        if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
-            Authentication authentication = jwtProvider.authenticate(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else { // 토큰이 없거나 유효하지 않은 경우 -> 만료 페이지로 리디렉션
-            log.info("토큰이 없거나 만료되었습니다. 다시 로그인 해주세요.");
+        if (StringUtils.hasText(jwt)) {  // 토큰이 있으면
+            try {
+                if (jwtProvider.validateToken(jwt)) {  // 토큰을 검증하고 (올바르지 않은 경우 여기서 예외 발생)
+                    // 토큰이 유효하면
+                    Authentication authentication = jwtProvider.authenticate(jwt);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (ExpiredJwtException e) {  // 토큰이 만료되었다면
+                log.info("만료된 토큰입니다.");
+                response.sendRedirect(FRONT_END.getUri() + "/token-expired");
+            } catch (SecurityException | MalformedJwtException e) {
+                log.info("올바르지 못한 토큰입니다.");
+            } catch (UnsupportedJwtException e) {
+                log.info("지원되지 않는 토큰입니다.");
+            } catch (IllegalArgumentException e) {
+                log.info("잘못된 토큰입니다.");
+            }
+        } else {
+            log.info("미인증 사용자 입니다.");
         }
 
+        // 토큰이 없으면 SecurityContext에 인증 객체 넣지 않고 그냥 필터 진행
         filterChain.doFilter(request, response);
     }
 

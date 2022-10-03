@@ -95,22 +95,8 @@ public class JwtProvider {
 
     // 토큰 검증하기
     public Boolean validateToken(String token) {
-
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException e) {
-            log.info("올바르지 못한 토큰입니다.");
-        } catch (ExpiredJwtException e) {
-            // TODO: 만료된 토큰이면 재발급을 해줘야...
-            log.info("만료된 토큰입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 토큰입니다.");
-        } catch (IllegalArgumentException e) {
-            log.info("잘못된 토큰입니다.");
-        }
-
-        return false;
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        return true;
     }
 
     // 액세스 토큰으로 Authentication 만들기

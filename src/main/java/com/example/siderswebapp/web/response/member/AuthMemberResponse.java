@@ -9,10 +9,14 @@ public class AuthMemberResponse {
     private final String authId;
     private final String name;
     private final String picture;
+    private final Boolean isAuthMember;
 
     public AuthMemberResponse(Member member) {
-        this.authId = member.getAuthId();
-        this.name = member.getName();
-        this.picture = member.getPicture();
+        boolean isAuthMember = member != null;
+
+        this.authId = isAuthMember ? member.getAuthId() : null;
+        this.name = isAuthMember ? member.getName() : null;
+        this.picture = isAuthMember ? member.getPicture() : null;
+        this.isAuthMember = isAuthMember;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.siderswebapp.auth.oauth.handler;
+package com.example.siderswebapp.auth;
 
 import lombok.Getter;
 

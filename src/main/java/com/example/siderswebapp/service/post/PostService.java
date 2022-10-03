@@ -8,7 +8,6 @@ import com.example.siderswebapp.exception.PostNotExistException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
-import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
@@ -35,14 +34,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final FieldsRepository fieldsRepository;
     private final MemberRepository memberRepository;
-    private final TechStackRepository techStackRepository;
 
     // 모집 글 작성
     // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!
     public PostIdDto createPost(CreatePostRequest postDto, Authentication authentication) {
 
         // 멤버를 찾는다.
-        String authId = authentication.getName();
+        String authId = getAuthId(authentication);
         Member member = memberRepository.findByAuthId(authId)
                 .orElseThrow(IllegalAccessError::new);  // 나중에 커스텀 예외처리.
 
@@ -84,7 +82,8 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
 
-        String authId = authentication.getName();
+        // 조회 화면에서는 인증된 유저가 넘어오지 않을 수도 있다. NPE 방지를 위해 아래와 같이 구성.
+        String authId = getAuthId(authentication);
 
         return new ReadPostResponse(post, post.isWriter(authId));
     }
@@ -95,8 +94,9 @@ public class PostService {
     }
 
     public PostIdDto updatePost(Long id, UpdatePostRequest postDto,
-                                   Authentication authentication) throws IllegalAccessException {
-        String authId = authentication.getName();
+                                Authentication authentication) throws IllegalAccessException {
+
+        String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
@@ -143,10 +143,11 @@ public class PostService {
         return new PostIdDto(id);
     }
 
+
     public PostIdDto changeCompletion(Long id, IsCompletedDto isCompletedDto,
                                          Authentication authentication) throws IllegalAccessException {
 
-        String authId = authentication.getName();
+        String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
@@ -161,7 +162,7 @@ public class PostService {
 
     public void deletePost(Long id, Authentication authentication) throws IllegalAccessException {
 
-        String authId = authentication.getName();
+        String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
@@ -175,6 +176,11 @@ public class PostService {
 
         member.getPostList().remove(post);
         postRepository.delete(post);
+    }
+
+    // Authentication이 null일 경우 "" 반환
+    private String getAuthId(Authentication authentication) {
+        return authentication != null ? authentication.getName() : "";
     }
 }
 
