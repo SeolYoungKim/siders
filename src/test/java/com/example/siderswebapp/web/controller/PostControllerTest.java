@@ -845,10 +845,10 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        assertThat(member.getPostList().size()).isEqualTo(0);
-        assertThat(postRepository.findAll().size()).isEqualTo(0);
-        assertThat(fieldsRepository.findAll().size()).isEqualTo(0);
-        assertThat(techStackRepository.findAll().size()).isEqualTo(0);
+        assertThat(member.getPostList()).isEmpty();
+        assertThat(postRepository.findAll()).isEmpty();
+        assertThat(fieldsRepository.findAll()).isEmpty();
+        assertThat(techStackRepository.findAll()).isEmpty();
     }
 
     @DisplayName("검증이 올바르게 작동한다.")

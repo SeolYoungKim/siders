@@ -8,6 +8,7 @@ import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.response.member.AuthMemberResponse;
 import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,11 +49,24 @@ public class MemberService {
     public AuthMemberResponse getMemberInfo(Authentication authentication) {
         //TODO: 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
 
-        String authId = authentication != null ? authentication.getName() : "";
+        String authId = getAuthId(authentication);
 
         Member member = memberRepository.findByAuthId(authId)
                 .orElse(null);
 
         return new AuthMemberResponse(member);
+    }
+
+    public void deleteMember(Authentication authentication) throws IllegalAccessException {
+        String authId = getAuthId(authentication);
+
+        Member member = memberRepository.findByAuthId(authId)
+                .orElseThrow(IllegalAccessException::new);
+
+        memberRepository.delete(member);
+    }
+
+    private String getAuthId(Authentication authentication) {
+        return authentication != null ? authentication.getName() : "";
     }
 }

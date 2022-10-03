@@ -9,6 +9,7 @@ import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
+import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
@@ -17,6 +18,7 @@ import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import com.example.siderswebapp.web.request.post.update.UpdateTechStackRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -33,18 +36,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.example.siderswebapp.domain.Ability.LOW;
+import static com.example.siderswebapp.domain.RecruitType.STUDY;
+import static com.example.siderswebapp.web.controller.attributes.TestAttributes.TEST_ATTRIBUTES;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -239,6 +248,7 @@ public class RestDocsTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("readPost",
@@ -246,6 +256,9 @@ public class RestDocsTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("모집글 ID")
+                        ),
+                        requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").type(NUMBER).description("모집글 ID"),
@@ -311,11 +324,15 @@ public class RestDocsTest {
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post))
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("recruitment",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
+                        ),
                         responseFields(
                                 fieldWithPath("postId").type(NUMBER).description("저장된 글의 ID")
                         )
@@ -439,6 +456,7 @@ public class RestDocsTest {
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost))
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -447,6 +465,9 @@ public class RestDocsTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("모집글 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
                         ),
                         relaxedRequestFields(
                                 fieldWithPath("fieldsList[].id").type(NUMBER).description("수정할 필드의 ID (필드 새로 추가 시 null)").optional(),
@@ -503,6 +524,7 @@ public class RestDocsTest {
                         .accept(APPLICATION_JSON)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(isCompletedDto))
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("changeCompletion",
@@ -510,6 +532,9 @@ public class RestDocsTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("모집글 ID")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
                         ),
                         requestFields(
                                 fieldWithPath("isCompleted").type(BOOLEAN).description("true면 모집 마감 | false면 모집 중")
@@ -560,11 +585,15 @@ public class RestDocsTest {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/post/{id}", savedPost.getId())
                         .accept(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("deletePost",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
+                        ),
                         pathParameters(
                                 parameterWithName("id").description("모집글 ID")
                         )
@@ -645,6 +674,117 @@ public class RestDocsTest {
                                 fieldWithPath("status").type(NUMBER).description("Response status"),
                                 fieldWithPath("message").type(STRING).description("에러 메세지"),
                                 fieldWithPath("code").type(STRING).description("에러 코드")
+                        )
+                ));
+    }
+
+    @DisplayName("회원 가입 문서화")
+    @Test
+    void signUp() throws Exception {
+        SignUpDto signUpDto = new SignUpDto("유저닉네임");
+
+        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
+
+        mockMvc.perform(post("/api/signup")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signUpDto))
+                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                .andExpect(status().isOk())
+                .andDo(document("signup",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(STRING).description("유저 닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("authId").type(STRING).description("authId - 유저 고유 번호"),
+                                fieldWithPath("name").type(STRING).description("유저 닉네임"),
+                                fieldWithPath("picture").type(STRING).description("유저 프로필 사진"),
+                                fieldWithPath("accessToken").type(STRING).description("accessToken")
+                                )
+                ));
+    }
+
+    @DisplayName("회원 정보 조회")
+    @Test
+    void memberInfo() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        memberRepository.save(member);
+
+        mockMvc.perform(get("/api/member")
+                        .contentType(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
+                        .with(user("savedAuthId").password("").roles("USER")))
+                .andExpect(status().isOk())
+                .andDo(document("memberInfo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
+                        ),
+                        responseFields(
+                                fieldWithPath("authId").type(STRING).description("authId - 유저 고유 번호"),
+                                fieldWithPath("name").type(STRING).description("유저 닉네임"),
+                                fieldWithPath("picture").type(STRING).description("유저 프로필 사진"),
+                                fieldWithPath("isAuthMember").type(BOOLEAN).description("인증 유저 여부 : 인증 유저 - true | 미인증 유저 - false")
+                        )
+                ));
+    }
+
+    @DisplayName("회원 탈퇴")
+    @Test
+    void deleteMember() throws Exception {
+        Member member = Member.builder()
+                .authId("savedAuthId")
+                .picture("savedPicture")
+                .name("savedName")
+                .email("savedEmail")
+                .refreshToken("savedRefreshToken")
+                .roleType(RoleType.USER)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .recruitType(STUDY)
+                .contact("010.0000.0000")
+                .recruitIntroduction("공부할사람")
+                .expectedPeriod("1개월")
+                .isCompleted(false)
+                .member(savedMember)
+                .build();
+
+        Fields back = Fields.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility(LOW)
+                .post(post)
+                .build();
+
+        TechStack spring = TechStack.builder()
+                .stackName("spring")
+                .fields(back)
+                .build();
+
+        postRepository.save(post);
+
+        mockMvc.perform(delete("/api/member")
+                        .header(HttpHeaders.AUTHORIZATION, AccessTokenType.BEARER.getValue() + " ThisIsAccessToken")
+                        .with(user("savedAuthId").password("").roles("USER")))
+                .andExpect(status().isOk())
+                .andDo(document("deleteMember",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 Jwt AccessToken(필수)")
                         )
                 ));
     }

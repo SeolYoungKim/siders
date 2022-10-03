@@ -38,4 +38,9 @@ public class MemberController {
     public AuthMemberResponse member(Authentication authentication) {
         return memberService.getMemberInfo(authentication);
     }
+
+    @DeleteMapping("/member")
+    public void deleteMember(Authentication authentication) throws IllegalAccessException {
+        memberService.deleteMember(authentication);
+    }
 }

@@ -175,6 +175,8 @@ public class PostService {
                 .orElseThrow(IllegalAccessException::new);
 
         member.getPostList().remove(post);
+        log.info("Member's PostList size = {}", member.getPostList().size());
+
         postRepository.delete(post);
     }
 
