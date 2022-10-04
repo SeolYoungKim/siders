@@ -1,6 +1,0 @@
-jwt:
-  header: Authorization
-  #HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
-  secret: a2ltc3ktam9qcy15ZW9zbS1zaWRlcnMtc3ByaW5nLWJvb3Qtand0LXRva2VuLXNlY3JldC10b2tlbi1mb3Itand0LWF1dGgtb2F1dGgtaWxvdmVkZXZlbG9wLWtpbQo=
-  access-token-expire-time: 1800000
-  refresh-token-expire-time: 604800000
