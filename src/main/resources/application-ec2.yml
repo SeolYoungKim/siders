@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: ec2, oauth, ec2-db
+    include: ec2, oauth, ec2-db, jwt
   jpa:
     properties:
       hibernate:
