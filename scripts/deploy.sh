@@ -20,7 +20,16 @@ if [ -z "$CURRENT_PID" ]; then
 else
   echo "> kill -15 $CURRENT_PID"
   kill -15 $CURRENT_PID
-  sleep 5
+  sleep 10
+fi
+
+# 자꾸 8080포트가 중복되었다고 뜬다. 일단 아래의 구문을 추가해서 한번 더 검사하자. 그래도 문제 발생 시 다른 해결방안 ㄱㄱ
+if [ -z "$CURRENT_PID" ]; then
+  echo "> 프로세스가 정상적으로 종료되었습니다."
+else
+  echo "> kill -9 $CURRENT_PID"
+  kill -9 $CURRENT_PID
+  sleep 10
 fi
 
 JAR_NAME=$(ls -tr $REPOSITORY/*.jar | grep -v "plain" | tail -n 1)
