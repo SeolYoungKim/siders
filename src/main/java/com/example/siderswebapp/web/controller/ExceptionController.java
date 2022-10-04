@@ -28,6 +28,16 @@ public class ExceptionController {
     }
 
     @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult illegalArgumentExceptionHandler(IllegalArgumentException e) {
+        return ErrorResult.builder()
+                .status(400)
+                .code("MEMBER-ERR-400")
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public FieldErrorResult fieldErrorHandler(MethodArgumentNotValidException e) {
 

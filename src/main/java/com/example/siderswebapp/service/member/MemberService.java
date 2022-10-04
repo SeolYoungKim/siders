@@ -3,13 +3,16 @@ package com.example.siderswebapp.service.member;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.domain.member.RoleType;
+import com.example.siderswebapp.exception.MemberNotFoundException;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.response.member.AuthMemberResponse;
 import com.example.siderswebapp.web.response.member.DuplicateNameCheckDto;
+import com.example.siderswebapp.web.response.member.MemberPostResponse;
 import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ public class MemberService {
 
         String authId = (String) attributes.get("id");
 
+        // TODO: 어떻게 변경할지 나중에 다시 생각. authId 중복 가입은 이미 OAuth2 filter에서 막아주고 있음.
         if (memberRepository.existsByAuthId(authId)) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
@@ -54,7 +58,7 @@ public class MemberService {
     }
 
     public AuthMemberResponse getMemberInfo(Authentication authentication) {
-        //TODO: 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
+        // 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
 
         String authId = getAuthId(authentication);
 
@@ -64,17 +68,27 @@ public class MemberService {
         return new AuthMemberResponse(member);
     }
 
-    public void deleteMember(Authentication authentication) throws IllegalAccessException {
+    public void deleteMember(Authentication authentication) {
         String authId = getAuthId(authentication);
 
         Member member = memberRepository.findByAuthId(authId)
-                .orElseThrow(IllegalAccessException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         memberRepository.delete(member);
     }
 
     public DuplicateNameCheckDto duplicateNameCheck(String name) {
         return new DuplicateNameCheckDto(memberRepository.existsByName(name));
+    }
+
+    public MemberPostResponse memberPosts(UsernamePasswordAuthenticationToken authentication) {
+
+        String authId = getAuthId(authentication);
+
+        Member member = memberRepository.findByAuthId(authId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberPostResponse(member);
     }
 
     private String getAuthId(Authentication authentication) {

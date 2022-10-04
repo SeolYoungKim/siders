@@ -4,7 +4,9 @@ import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
-import com.example.siderswebapp.exception.PostNotExistException;
+import com.example.siderswebapp.exception.IsNotOwnerException;
+import com.example.siderswebapp.exception.MemberNotFoundException;
+import com.example.siderswebapp.exception.PostNotFoundException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
 import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,12 +41,13 @@ public class PostService {
 
     // 모집 글 작성
     // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!
-    public PostIdDto createPost(CreatePostRequest postDto, Authentication authentication) {
+    public PostIdDto createPost(CreatePostRequest postDto,
+                                UsernamePasswordAuthenticationToken authentication) {
 
         // 멤버를 찾는다.
         String authId = getAuthId(authentication);
         Member member = memberRepository.findByAuthId(authId)
-                .orElseThrow(IllegalAccessError::new);  // 나중에 커스텀 예외처리.
+                .orElseThrow(MemberNotFoundException::new);  // 나중에 커스텀 예외처리.
 
         Post post = Post.builder()
                 .title(postDto.getTitle())
@@ -71,9 +75,9 @@ public class PostService {
                             .build());
         }
 
-        Post savedPost = postRepository.save(post);
+        postRepository.save(post);
 
-        return new PostIdDto(savedPost.getId());
+        return new PostIdDto(post.getId());
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +85,7 @@ public class PostService {
 
         // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotExistException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         // 조회 화면에서는 인증된 유저가 넘어오지 않을 수도 있다. NPE 방지를 위해 아래와 같이 구성.
         String authId = getAuthId(authentication);
@@ -100,15 +104,15 @@ public class PostService {
     }
 
     public PostIdDto updatePost(Long id, UpdatePostRequest postDto,
-                                Authentication authentication) throws IllegalAccessException {
+                                Authentication authentication) {
 
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotExistException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         if (!post.isWriter(authId))
-            throw new IllegalAccessException();
+            throw new IsNotOwnerException();
 
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
         post.updatePost(postDto);
@@ -151,34 +155,35 @@ public class PostService {
 
 
     public PostIdDto changeCompletion(Long id, IsCompletedDto isCompletedDto,
-                                         Authentication authentication) throws IllegalAccessException {
+                                      UsernamePasswordAuthenticationToken authentication) {
 
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotExistException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         if (!post.isWriter(authId))
-            throw new IllegalAccessException();
+            throw new IsNotOwnerException();
 
         post.changeCompletion(isCompletedDto.getIsCompleted());
 
         return new PostIdDto(post.getId());
     }
     
-    public void deletePost(Long id, Authentication authentication) throws IllegalAccessException {
+    public void deletePost(Long id,
+                           UsernamePasswordAuthenticationToken authentication) {
 
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotExistException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         if (!post.isWriter(authId))
-            throw new IllegalAccessException();
+            throw new IsNotOwnerException();
 
         // member의 orphanremoval 옵션 때문에, member의 List에서 제거해줘야 post가 삭제 됨
         Member member = memberRepository.findByAuthId(authId)
-                .orElseThrow(IllegalAccessException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         member.getPostList().remove(post);
     }

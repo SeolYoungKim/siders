@@ -4,10 +4,11 @@ import com.example.siderswebapp.service.member.MemberService;
 import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.response.member.AuthMemberResponse;
 import com.example.siderswebapp.web.response.member.DuplicateNameCheckDto;
+import com.example.siderswebapp.web.response.member.MemberPostResponse;
 import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -43,16 +44,20 @@ public class MemberController {
         return memberService.duplicateNameCheck(name);
     }
 
-    @GetMapping("/member")  // 유저 정보를 내려줌
-    public AuthMemberResponse member(Authentication authentication) {
+    @GetMapping("/member")  // 회원 정보 조회 (인증 여부도 조회 가능)
+    public AuthMemberResponse member(UsernamePasswordAuthenticationToken authentication) {
         return memberService.getMemberInfo(authentication);
     }
 
-    @DeleteMapping("/member")
-    public void deleteMember(Authentication authentication) throws IllegalAccessException {
+    @DeleteMapping("/member")  // 회원 탈퇴
+    public void deleteMember(UsernamePasswordAuthenticationToken authentication) throws IllegalAccessException {
         memberService.deleteMember(authentication);
     }
 
-
+    // 멤버의 게시글 조회
+    @GetMapping("/member/posts")
+    public MemberPostResponse memberPosts(UsernamePasswordAuthenticationToken authentication) {
+        return memberService.memberPosts(authentication);
+    }
 
 }

@@ -49,8 +49,13 @@ include::{snippets}/postSearch/request-parameters.adoc[]
 === 요청
 
 include::{snippets}/readPost/http-request.adoc[]
-Header - 단건 조회 시 헤더는 필수가 아닙니다.
-include::{snippets}/readPost/request-headers.adoc[]
+
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
+단건 조회 시 헤더는 필수가 아닙니다.
+
 include::{snippets}/readPost/path-parameters.adoc[]
 
 === 응답
@@ -63,8 +68,10 @@ include::{snippets}/readPost/http-response.adoc[]
 === 요청
 
 include::{snippets}/recruitment/http-request.adoc[]
-Header
-include::{snippets}/recruitment/request-headers.adoc[]
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
 
 === 응답
 
@@ -76,8 +83,10 @@ include::{snippets}/recruitment/http-response.adoc[]
 === 요청
 
 include::{snippets}/updatePost/http-request.adoc[]
-Header
-include::{snippets}/updatePost/request-headers.adoc[]
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
 include::{snippets}/updatePost/request-fields.adoc[]
 
 - 글 수정 시, 공통 필드의 "요청" 필드에 더해, 위 필드가 추가적으로 요구됩니다.
@@ -92,8 +101,10 @@ include::{snippets}/updatePost/http-response.adoc[]
 === 요청
 
 include::{snippets}/changeCompletion/http-request.adoc[]
-Header
-include::{snippets}/changeCompletion/request-headers.adoc[]
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
 include::{snippets}/changeCompletion/request-fields.adoc[]
 
 
@@ -151,8 +162,10 @@ include::{snippets}/duplicateNameCheck/response-fields.adoc[]
 
 === 요청
 include::{snippets}/memberInfo/http-request.adoc[]
-Header
-include::{snippets}/memberInfo/request-headers.adoc[]
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
 
 === 응답
 include::{snippets}/memberInfo/http-response.adoc[]
@@ -163,8 +176,10 @@ include::{snippets}/memberInfo/response-fields.adoc[]
 
 === 요청
 include::{snippets}/deleteMember/http-request.adoc[]
-Header
-include::{snippets}/deleteMember/request-headers.adoc[]
+[source,httprequest]
+----
+Authorization: Bearer ThisIsAccessToken
+----
 
 === 응답
 회원 탈퇴에 대한 응답은 따로 제공하지 않습니다.

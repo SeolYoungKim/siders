@@ -1,4 +1,4 @@
-package com.example.siderswebapp.web.controller.attributes;
+package com.example.siderswebapp.web;
 
 import java.util.HashMap;
 import java.util.Map;

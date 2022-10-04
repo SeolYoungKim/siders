@@ -135,6 +135,71 @@ class PostControllerTest {
         assertThat(techStackRepository.findAll().size()).isEqualTo(9);
     }
 
+    @DisplayName("회원이 아닌 사람이 글을 작성할 경우 예외를 던진다.")
+    @Test
+    void recruitmentTest2() throws Exception {
+
+        List<CreatedTechStackRequest> designStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreatedTechStackRequest("디자인스택" + i))
+                .collect(Collectors.toList());
+
+        List<CreatedTechStackRequest> frontendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreatedTechStackRequest("프론트엔드스택" + i))
+                .collect(Collectors.toList());
+
+        List<CreatedTechStackRequest> backendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreatedTechStackRequest("백엔드스택" + i))
+                .collect(Collectors.toList());
+
+        CreateFieldsRequest design = CreateFieldsRequest.builder()
+                .fieldsName("디자인")
+                .recruitCount(2)
+                .totalAbility("Low")
+                .stacks(new ArrayList<>())
+                .build();
+
+        CreateFieldsRequest frontend = CreateFieldsRequest.builder()
+                .fieldsName("프론트엔드")
+                .recruitCount(3)
+                .totalAbility("Mid")
+                .stacks(new ArrayList<>())
+                .build();
+
+        CreateFieldsRequest backend = CreateFieldsRequest.builder()
+                .fieldsName("백엔드")
+                .recruitCount(1)
+                .totalAbility("High")
+                .stacks(new ArrayList<>())
+                .build();
+
+        CreatePostRequest post = CreatePostRequest.builder()
+                .title("제목")
+                .recruitType("study")
+                .contact("010-0000-1111")
+                .recruitIntroduction("스터디 구하니까 오셈ㅋ")
+                .expectedPeriod("1개월")
+                .fieldsList(new ArrayList<>())
+                .build();
+
+        post.getFieldsList().add(design);
+        post.getFieldsList().add(frontend);
+        post.getFieldsList().add(backend);
+
+        design.getStacks().addAll(designStack);
+        frontend.getStacks().addAll(frontendStack);
+        backend.getStacks().addAll(backendStack);
+
+        mockMvc.perform(post("/api/recruitment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(post))
+                        .with(user("악질유저").password("").roles("USER")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 회원입니다."))
+                .andExpect(jsonPath("$.code").value("MEMBER-ERR-404"))
+                .andDo(print());
+    }
+
     @DisplayName("글 작성자가 글을 조회하면 isWriter가 true다.")
     @Test
     void sameUserReadPostTest() throws Exception {

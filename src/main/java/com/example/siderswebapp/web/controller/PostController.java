@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,10 +30,10 @@ public class PostController {
         return "";
     }
 
-    // 글 등록
+    // 글 등록 : Jwt 토큰 소유자만 요청이 되도록 한다. (OAuth2 인증자는 안됨)
     @PostMapping("/recruitment")
     public PostIdDto recruitmentWrite(@Valid @RequestBody CreatePostRequest postDto,
-                                      Authentication authentication) {
+                                      UsernamePasswordAuthenticationToken authentication) {  // 여기에 OAuth2 인증자가 요청보내면 에러냄
 
         return postService.createPost(postDto, authentication);
     }
@@ -60,8 +61,8 @@ public class PostController {
     // 글 수정
     @PutMapping("/post/{id}")
     public PostIdDto updatePost(@PathVariable Long id,
-                                   @Valid @RequestBody UpdatePostRequest postDto,
-                                   Authentication authentication) throws IllegalAccessException {
+                                @Valid @RequestBody UpdatePostRequest postDto,
+                                UsernamePasswordAuthenticationToken authentication) {
         return postService.updatePost(id, postDto, authentication);
     }
 
@@ -69,14 +70,14 @@ public class PostController {
     @PatchMapping("/post/{id}")
     public PostIdDto completedPost(@PathVariable Long id,
                                    @RequestBody IsCompletedDto isCompletedDto,
-                                   Authentication authentication) throws IllegalAccessException {
+                                   UsernamePasswordAuthenticationToken authentication) {
         return postService.changeCompletion(id, isCompletedDto, authentication);
     }
 
     // 글 삭제
     @DeleteMapping("/post/{id}")
     public void deletePost(@PathVariable Long id,
-                           Authentication authentication) throws IllegalAccessException {
+                           UsernamePasswordAuthenticationToken authentication) {
         postService.deletePost(id, authentication);
     }
 
