@@ -35,11 +35,11 @@ public class Member extends BaseTimeEntity {
     @Column
     private String picture;
 
-    @Column(name = "role_type")
+    @Column
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @Column(name = "refresh_token")
+    @Column
     private String refreshToken;
 
     @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
