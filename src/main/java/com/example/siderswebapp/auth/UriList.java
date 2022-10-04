@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum UriList {
 
-    FRONT_END("http://localhost:8082");
+    FRONT_END("http://localhost:3000");
 
     private final String uri;
 

@@ -33,9 +33,15 @@ public class MemberService {
         String accessToken = jwtProvider.generateAccessToken(oAuth2User);
         String refreshToken = jwtProvider.generateRefreshToken();
 
+        String authId = (String) attributes.get("id");
+
+        if (memberRepository.existsByAuthId(authId)) {
+            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+        }
+
         Member member = Member.builder()
                 .name(signUpDto.getName())
-                .authId((String) attributes.get("id"))
+                .authId(authId)
                 .email((String) attributes.get("sub"))
                 .picture((String) attributes.get("picture"))
                 .roleType(RoleType.USER)

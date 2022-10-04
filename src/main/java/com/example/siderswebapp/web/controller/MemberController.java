@@ -12,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -30,8 +32,9 @@ public class MemberController {
     // test용
     @GetMapping("/signup/test")  // 회원 가입
     public SignUpMemberResponse test(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        SignUpDto signUpDto = new SignUpDto((String) attributes.get("id"));
 
-        SignUpDto signUpDto = new SignUpDto("히히");
         return memberService.signUp(signUpDto, oAuth2User);
     }
 
