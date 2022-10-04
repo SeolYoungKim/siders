@@ -29,17 +29,17 @@ public class Member extends BaseTimeEntity {
     @Column
     private String email;
 
-    @Column
+    @Column(name = "member_name")
     private String name;
 
     @Column
     private String picture;
 
-    @Column
+    @Column(name = "role_type")
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @Column
+    @Column(name = "refresh_token")
     private String refreshToken;
 
     @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
