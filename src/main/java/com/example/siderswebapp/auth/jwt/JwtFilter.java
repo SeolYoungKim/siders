@@ -1,9 +1,5 @@
 package com.example.siderswebapp.auth.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,13 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.example.siderswebapp.auth.UriList.FRONT_END;
-
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+
+    //TODO: 여기서 왜 리디렉션이 안가지...
+    // https://stackoverflow.com/questions/34595605/how-to-manage-exceptions-thrown-in-filters-in-spring
+    // https://codingdog.tistory.com/entry/spring-security-filter-exception-%EC%9D%84-custom-%ED%95%98%EA%B2%8C-%EC%B2%98%EB%A6%AC%ED%95%B4-%EB%B4%85%EC%8B%9C%EB%8B%A4
+    // 직접 여기서 예외를 처리해서 보내주거나, 이거 전에 필터를 하나 두고, 거기서 try-catch로 예외를 처리해준다.
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -32,21 +31,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwt = jwtProvider.resolveToken(request);
 
         if (StringUtils.hasText(jwt)) {  // 토큰이 있으면
-            try {
-                if (jwtProvider.validateToken(jwt)) {  // 토큰을 검증하고 (올바르지 않은 경우 여기서 예외 발생)
-                    // 토큰이 유효하면
-                    Authentication authentication = jwtProvider.authenticate(jwt);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            } catch (ExpiredJwtException e) {  // 토큰이 만료되었다면
-                log.info("만료된 토큰입니다.");
-                response.sendRedirect(FRONT_END.getUri() + "/token-expired");
-            } catch (SecurityException | MalformedJwtException e) {
-                log.info("올바르지 못한 토큰입니다.");
-            } catch (UnsupportedJwtException e) {
-                log.info("지원되지 않는 토큰입니다.");
-            } catch (IllegalArgumentException e) {
-                log.info("잘못된 토큰입니다.");
+            if (jwtProvider.validateToken(jwt)) {  // 토큰을 검증하고 (올바르지 않은 경우 여기서 예외 발생)
+                // 토큰이 유효하면
+                Authentication authentication = jwtProvider.authenticate(jwt);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } else {
             log.info("미인증 사용자 입니다.");

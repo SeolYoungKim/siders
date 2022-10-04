@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum RecruitType {
+
     STUDY("스터디"),
     PROJECT("프로젝트");
 

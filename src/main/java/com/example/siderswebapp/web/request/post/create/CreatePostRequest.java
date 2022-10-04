@@ -11,9 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
-import static com.example.siderswebapp.domain.RecruitType.PROJECT;
-import static com.example.siderswebapp.domain.RecruitType.STUDY;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreatePostRequest {
@@ -50,6 +47,6 @@ public class CreatePostRequest {
     }
 
     public RecruitType recruitTypeToEnum() {
-        return recruitType.equals("스터디") ? STUDY : PROJECT;
+        return RecruitType.valueOf(recruitType.toUpperCase());
     }
 }

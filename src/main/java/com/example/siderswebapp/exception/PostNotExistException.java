@@ -1,6 +1,6 @@
 package com.example.siderswebapp.exception;
 
-public class PostNotExistException extends CommonException {
+public class PostNotExistException extends SidersException {
 
     private final static String ERROR_MESSAGE = "존재하지 않는 글입니다.";
 

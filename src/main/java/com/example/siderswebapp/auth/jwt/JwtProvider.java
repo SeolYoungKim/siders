@@ -1,9 +1,11 @@
 package com.example.siderswebapp.auth.jwt;
 
+import com.example.siderswebapp.exception.JwtNotAvailable;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -95,8 +97,14 @@ public class JwtProvider {
 
     // 토큰 검증하기
     public Boolean validateToken(String token) {
-        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-        return true;
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {  // 토큰이 만료되었다면
+            throw new JwtNotAvailable("토큰이 만료되었습니다. 다시 로그인 해주세요.");
+        } catch (SecurityException | MalformedJwtException | IllegalArgumentException | UnsupportedJwtException e) {
+            throw new JwtNotAvailable("올바르지 않은 토큰입니다.");
+        }
     }
 
     // 액세스 토큰으로 Authentication 만들기

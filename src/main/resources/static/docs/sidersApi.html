@@ -561,7 +561,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
   "title" : "제목",
-  "recruitType" : "스터디",
+  "recruitType" : "study",
   "contact" : "010.0000.0000",
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
@@ -702,8 +702,8 @@ Content-Length: 816
     "id" : 6,
     "title" : "제목",
     "recruitType" : "STUDY",
-    "createdDate" : "2022-10-03 16:17",
-    "modifiedDate" : "2022-10-03 16:17",
+    "createdDate" : "2022-10-03 20:38",
+    "modifiedDate" : "2022-10-03 20:38",
     "fieldsList" : [ {
       "id" : 6,
       "fieldsName" : "백엔드",
@@ -716,8 +716,8 @@ Content-Length: 816
   } ],
   "pageable" : {
     "sort" : {
-      "sorted" : false,
       "unsorted" : true,
+      "sorted" : false,
       "empty" : true
     },
     "pageNumber" : 0,
@@ -730,14 +730,14 @@ Content-Length: 816
   "totalElements" : 1,
   "last" : true,
   "numberOfElements" : 1,
+  "size" : 10,
+  "number" : 0,
+  "first" : true,
   "sort" : {
-    "sorted" : false,
     "unsorted" : true,
+    "sorted" : false,
     "empty" : true
   },
-  "size" : 10,
-  "first" : true,
-  "number" : 0,
   "empty" : false
 }</code></pre>
 </div>
@@ -983,8 +983,8 @@ Content-Length: 541
   "authId" : "savedAuthId",
   "isCompleted" : false,
   "isWriter" : true,
-  "createdDate" : "2022-10-03 16:17",
-  "modifiedDate" : "2022-10-03 16:17",
+  "createdDate" : "2022-10-03 20:38",
+  "modifiedDate" : "2022-10-03 20:38",
   "fieldsList" : [ {
     "id" : 4,
     "fieldsName" : "백엔드",
@@ -1012,12 +1012,12 @@ Content-Length: 541
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Authorization: Bearer ThisIsAccessToken
-Content-Length: 458
+Content-Length: 454
 Host: api.siders.com
 
 {
   "title" : "제목",
-  "recruitType" : "스터디",
+  "recruitType" : "study",
   "contact" : "010.0000.0000",
   "recruitIntroduction" : "공부할 사람을 모집합니다.",
   "expectedPeriod" : "1개월",
@@ -1095,12 +1095,12 @@ Content-Length: 18
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Authorization: Bearer ThisIsAccessToken
-Content-Length: 837
+Content-Length: 832
 Host: api.siders.com
 
 {
   "title" : "titleeeee",
-  "recruitType" : "프로젝트",
+  "recruitType" : "project",
   "contact" : "email",
   "recruitIntroduction" : "Study nono Project gogo",
   "expectedPeriod" : "3개월",
@@ -1356,32 +1356,32 @@ Content-Length: 994
   "status" : 400,
   "code" : "FIELDS-ERR-400",
   "errors" : [ {
-    "fieldsName" : "recruitType",
-    "message" : "모집 분야를 선택해주세요."
+    "fieldsName" : "contact",
+    "message" : "연락처를 입력해주세요."
   }, {
     "fieldsName" : "fieldsList[0].totalAbility",
     "message" : "종합 요구 능력치를 입력해주세요."
   }, {
-    "fieldsName" : "contact",
-    "message" : "연락처를 입력해주세요."
+    "fieldsName" : "fieldsList[0].fieldsName",
+    "message" : "필드명을 입력해주세요."
   }, {
-    "fieldsName" : "title",
-    "message" : "제목을 입력해주세요."
+    "fieldsName" : "expectedPeriod",
+    "message" : "예상 소요 기간을 선택해주세요."
   }, {
     "fieldsName" : "fieldsList[0].stacks",
     "message" : "기술 스택은 1개 이상 선택해야 합니다."
+  }, {
+    "fieldsName" : "recruitType",
+    "message" : "모집 분야를 선택해주세요."
+  }, {
+    "fieldsName" : "title",
+    "message" : "제목을 입력해주세요."
   }, {
     "fieldsName" : "recruitIntroduction",
     "message" : "내용을 입력해주세요."
   }, {
     "fieldsName" : "fieldsList[0].recruitCount",
     "message" : "모집 인원을 입력해주세요."
-  }, {
-    "fieldsName" : "expectedPeriod",
-    "message" : "예상 소요 기간을 선택해주세요."
-  }, {
-    "fieldsName" : "fieldsList[0].fieldsName",
-    "message" : "필드명을 입력해주세요."
   } ]
 }</code></pre>
 </div>
@@ -1569,7 +1569,7 @@ Content-Length: 301
   "authId" : "authId",
   "name" : "유저닉네임",
   "picture" : "picture",
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhdXRoSWQiLCJhdXRob3JpdHkiOiJST0xFX1VTRVIsU0NPUEVfcmVhZCIsImV4cCI6MTY2NDc4MzIzOX0.hWYkbj2UeMemzAM5VgXtRdTd2u06XdX21DMPD9fQdrI-JecAdHsuQHjIY4VcNnZLjR-YxMooMJ_JMa4H0faW1A"
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhdXRoSWQiLCJhdXRob3JpdHkiOiJST0xFX1VTRVIsU0NPUEVfcmVhZCIsImV4cCI6MTY2NDc5ODg5N30.bqIsCU5Q15GtrC-K01ITovGQoqJVRr5b9B0PjOzJWfbIFBRizxc3VYKWrvO3PpMFQ3NXrbFhsE2I9jCW7mBRLg"
 }</code></pre>
 </div>
 </div>

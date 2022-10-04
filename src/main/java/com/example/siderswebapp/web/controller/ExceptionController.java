@@ -1,6 +1,6 @@
 package com.example.siderswebapp.web.controller;
 
-import com.example.siderswebapp.exception.CommonException;
+import com.example.siderswebapp.exception.SidersException;
 import com.example.siderswebapp.web.response.exception.ErrorResult;
 import com.example.siderswebapp.web.response.exception.FieldErrorResult;
 import com.example.siderswebapp.web.response.exception.FieldsErrorInfo;
@@ -18,8 +18,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ExceptionController {
 
     @ResponseStatus(code = NOT_FOUND)
-    @ExceptionHandler(CommonException.class)
-    public ErrorResult commonExceptionHandler(CommonException e) {
+    @ExceptionHandler(SidersException.class)
+    public ErrorResult commonExceptionHandler(SidersException e) {
         return ErrorResult.builder()
                 .status(e.getStatus())
                 .code(e.getErrorCode())

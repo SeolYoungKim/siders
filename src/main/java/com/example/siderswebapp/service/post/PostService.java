@@ -165,7 +165,7 @@ public class PostService {
 
         return new PostIdDto(post.getId());
     }
-
+    
     public void deletePost(Long id, Authentication authentication) throws IllegalAccessException {
 
         String authId = getAuthId(authentication);
@@ -181,9 +181,6 @@ public class PostService {
                 .orElseThrow(IllegalAccessException::new);
 
         member.getPostList().remove(post);
-        log.info("Member's PostList size = {}", member.getPostList().size());
-
-        postRepository.delete(post);
     }
 
     // Authentication이 null일 경우 "" 반환

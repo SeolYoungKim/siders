@@ -59,6 +59,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// TODO: 테스트 코드 1000줄 돌파할거같은거 에바인듯... 공통 요소좀 줄여보자..
+
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -94,7 +96,7 @@ public class RestDocsTest {
 
         CreatePostRequest post = CreatePostRequest.builder()
                 .title("제목")
-                .recruitType("스터디")
+                .recruitType("study")
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
@@ -401,7 +403,7 @@ public class RestDocsTest {
 
         CreatePostRequest post = CreatePostRequest.builder()
                 .title("제목")
-                .recruitType("스터디")
+                .recruitType("study")
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할 사람을 모집합니다.")
                 .expectedPeriod("1개월")
@@ -544,7 +546,7 @@ public class RestDocsTest {
 
         UpdatePostRequest updateForPost = UpdatePostRequest.builder()
                 .title("titleeeee")
-                .recruitType("프로젝트")
+                .recruitType("project")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
                 .expectedPeriod("3개월")

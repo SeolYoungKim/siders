@@ -60,6 +60,7 @@ class PostControllerTest {
     @DisplayName("글 작성 후, 정보들이 잘 저장된다.")
     @Test
     void recruitmentTest() throws Exception {
+
         List<CreatedTechStackRequest> designStack = IntStream.range(1, 4)
                 .mapToObj(i -> new CreatedTechStackRequest("디자인스택" + i))
                 .collect(Collectors.toList());
@@ -95,7 +96,7 @@ class PostControllerTest {
 
         CreatePostRequest post = CreatePostRequest.builder()
                 .title("제목")
-                .recruitType("스터디")
+                .recruitType("study")
                 .contact("010-0000-1111")
                 .recruitIntroduction("스터디 구하니까 오셈ㅋ")
                 .expectedPeriod("1개월")
@@ -147,7 +148,7 @@ class PostControllerTest {
                 .roleType(RoleType.USER)
                 .build();
 
-        Member savedMember = memberRepository.save(member);
+        memberRepository.save(member);
 
         Post post = Post.builder()
                 .title("제목")
@@ -155,7 +156,7 @@ class PostControllerTest {
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("1개월")
-                .member(savedMember)
+                .member(member)
                 .isCompleted(false)
                 .build();
 
@@ -224,7 +225,7 @@ class PostControllerTest {
                 .roleType(RoleType.USER)
                 .build();
 
-        Member savedMember = memberRepository.save(member);
+        memberRepository.save(member);
 
         Post post = Post.builder()
                 .title("제목")
@@ -232,7 +233,7 @@ class PostControllerTest {
                 .contact("010.0000.0000")
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("1개월")
-                .member(savedMember)
+                .member(member)
                 .isCompleted(false)
                 .build();
 
@@ -707,7 +708,7 @@ class PostControllerTest {
 
         UpdatePostRequest updateForPost = UpdatePostRequest.builder()
                 .title("titleeeee")
-                .recruitType("프로젝트")
+                .recruitType("project")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
                 .expectedPeriod("300개월")
@@ -838,7 +839,7 @@ class PostControllerTest {
 
         UpdatePostRequest updateForPost = UpdatePostRequest.builder()
                 .title("titleeeee")
-                .recruitType("프로젝트")
+                .recruitType("project")
                 .contact("email")
                 .recruitIntroduction("Study nono Project gogo")
                 .expectedPeriod("300개월")
@@ -924,8 +925,6 @@ class PostControllerTest {
                 .roleType(RoleType.USER)
                 .build();
 
-        Member savedMember = memberRepository.save(member);
-
         Post post = Post.builder()
                 .title("제목")
                 .recruitType(STUDY)
@@ -933,7 +932,7 @@ class PostControllerTest {
                 .recruitIntroduction("공부할사람")
                 .expectedPeriod("3000개")
                 .isCompleted(false)
-                .member(savedMember)
+                .member(member)
                 .build();
 
         Fields design = Fields.builder()
@@ -972,6 +971,7 @@ class PostControllerTest {
                 .fields(back)
                 .build();
 
+        memberRepository.save(member);
         Post savedPost = postRepository.save(post);
 
         mockMvc.perform(delete("/api/post/{id}", savedPost.getId())

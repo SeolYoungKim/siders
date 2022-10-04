@@ -77,7 +77,7 @@ class PostRepositoryImplTest {
 
         UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
                 .fieldsList(new ArrayList<>())
-                .recruitType("스터디")
+                .recruitType("study")
                 .contact("email")
                 .recruitIntroduction("ssss")
                 .title("tttt")

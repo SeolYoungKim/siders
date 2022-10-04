@@ -3,13 +3,13 @@ package com.example.siderswebapp.exception;
 import lombok.Getter;
 
 @Getter
-public abstract class CommonException extends RuntimeException {
+public abstract class SidersException extends RuntimeException {
 
-    public CommonException(String message) {
+    public SidersException(String message) {
         super(message);
     }
 
-    public CommonException(String message, Throwable cause) {
+    public SidersException(String message, Throwable cause) {
         super(message, cause);
     }
 

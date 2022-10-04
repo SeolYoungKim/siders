@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -45,9 +44,6 @@ public class UpdateFieldsRequest {
     }
 
     public Ability totalAbilityToEnum() {
-        return Arrays.stream(Ability.values())
-                .filter(ability -> ability.name().equals(totalAbility.toUpperCase()))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("종합 요구 능력치가 누락되었습니다."));
+        return Ability.valueOf(totalAbility.toUpperCase());
     }
 }

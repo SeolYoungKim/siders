@@ -1,10 +1,10 @@
 package com.example.siderswebapp.web.request.post.search;
 
 import com.example.siderswebapp.domain.RecruitType;
-import lombok.*;
-
-import static com.example.siderswebapp.domain.RecruitType.PROJECT;
-import static com.example.siderswebapp.domain.RecruitType.STUDY;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 검색용 DTO로 사용하자.
@@ -23,6 +23,6 @@ public class PostSearch {
     }
 
     public RecruitType recruitTypeToEnum() {
-        return recruitType.equals("STUDY") ? STUDY : PROJECT;
+        return RecruitType.valueOf(recruitType.toUpperCase());
     }
 }

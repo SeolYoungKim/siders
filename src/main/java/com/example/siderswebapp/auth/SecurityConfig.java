@@ -1,9 +1,11 @@
 package com.example.siderswebapp.auth;
 
+import com.example.siderswebapp.auth.jwt.JwtExceptionFilter;
 import com.example.siderswebapp.auth.jwt.JwtFilter;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.auth.oauth.handler.OAuth2LoginSuccessHandler;
 import com.example.siderswebapp.auth.oauth.service.CustomUserDetailService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -23,6 +25,7 @@ public class SecurityConfig {
     private final CustomUserDetailService customUserDetailService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -47,12 +50,14 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
 
                 .oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
+                        .loginPage(UriList.FRONT_END.getUri())
                         .userInfoEndpoint()
                         .userService(customUserDetailService)
                         .and()
                         .successHandler(oAuth2LoginSuccessHandler))
 
-                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtFilter.class);
 
         return http.build();
     }
