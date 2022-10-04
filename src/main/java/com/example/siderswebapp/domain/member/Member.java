@@ -1,6 +1,7 @@
 package com.example.siderswebapp.domain.member;
 
 import com.example.siderswebapp.domain.BaseTimeEntity;
+import com.example.siderswebapp.domain.post.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +9,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-//@Entity
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.*;
+
 @Getter
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
@@ -17,35 +23,48 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
+    private String authId;
+
+    @Column
     private String email;
 
-    @Column(unique = true)
-    private String nickName;
+    @Column
+    private String name;
 
-    private String profileImg;
+    @Column
+    private String picture;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 
+    @Column
     private String refreshToken;
 
+    @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
+    private final List<Post> postList = new ArrayList<>();
+
     @Builder
-    public Member(String email, String nickName, String profileImg, Role role, String refreshToken) {
+    public Member(String authId, String email, String name, String picture, RoleType roleType, String refreshToken) {
+        this.authId = authId;
         this.email = email;
-        this.nickName = nickName;
-        this.profileImg = profileImg;
-        this.role = role;
+        this.name = name;
+        this.picture = picture;
+        this.roleType = roleType;
         this.refreshToken = refreshToken;
     }
 
-    public Member update(String profileImg) {
-        this.profileImg = profileImg;
-        return this;
+    public void addPost(Post post) {
+        postList.add(post);
     }
 
-    public String getRoleKey() {
-        return role.getKey();
+    public String getRoleTypeKey() {
+        return roleType.getKey();
     }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 }

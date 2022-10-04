@@ -7,6 +7,7 @@
 :sectlinks:
 :prettify-theme:
 
+= 글 관련 API
 == 공통 필드
 
 - 요청 및 응답에 대한 공통 필드 정보입니다.
@@ -18,13 +19,6 @@
 
 include::{snippets}/commonRequest/request-body.adoc[]
 include::{snippets}/commonRequest/request-fields.adoc[]
-
-=== 응답 | 글 작성 & 글 수정 & 글 조회
-
-- 응답 정보는 "글 작성", "글 수정" 및 "글 조회"에서 전부 동일하게 아래 공통 필드가 존재합니다.
-
-include::{snippets}/commonResponse/response-body.adoc[]
-include::{snippets}/commonResponse/response-fields.adoc[]
 
 == 홈 화면 & 글 여러 건 조회
 
@@ -38,12 +32,25 @@ include::{snippets}/pagingPosts/request-parameters.adoc[]
 include::{snippets}/pagingPosts/http-response.adoc[]
 include::{snippets}/pagingPosts/response-fields.adoc[]
 
+== 글 정보 검색
+
+=== 요청
+
+include::{snippets}/postSearch/http-request.adoc[]
+include::{snippets}/postSearch/request-parameters.adoc[]
+- 페이징 관련 요청 파라미터는 page, size 등 페이징 관련 파라미터와 같은 값을 사용합니다. (홈 화면과 같습니다.)
+
+=== 응답
+응답은 검색된 글의 리스트가 페이징되어 내려갑니다. (홈 화면 조회와 응답 결과가 같습니다.)
+
 
 == 글 단건 조회
 
 === 요청
 
 include::{snippets}/readPost/http-request.adoc[]
+Header - 단건 조회 시 헤더는 필수가 아닙니다.
+include::{snippets}/readPost/request-headers.adoc[]
 include::{snippets}/readPost/path-parameters.adoc[]
 
 === 응답
@@ -56,6 +63,8 @@ include::{snippets}/readPost/http-response.adoc[]
 === 요청
 
 include::{snippets}/recruitment/http-request.adoc[]
+Header
+include::{snippets}/recruitment/request-headers.adoc[]
 
 === 응답
 
@@ -67,6 +76,8 @@ include::{snippets}/recruitment/http-response.adoc[]
 === 요청
 
 include::{snippets}/updatePost/http-request.adoc[]
+Header
+include::{snippets}/updatePost/request-headers.adoc[]
 include::{snippets}/updatePost/request-fields.adoc[]
 
 - 글 수정 시, 공통 필드의 "요청" 필드에 더해, 위 필드가 추가적으로 요구됩니다.
@@ -81,6 +92,8 @@ include::{snippets}/updatePost/http-response.adoc[]
 === 요청
 
 include::{snippets}/changeCompletion/http-request.adoc[]
+Header
+include::{snippets}/changeCompletion/request-headers.adoc[]
 include::{snippets}/changeCompletion/request-fields.adoc[]
 
 
@@ -110,3 +123,48 @@ include::{snippets}/exception/http-response.adoc[]
 include::{snippets}/exception/response-fields.adoc[]
 
 - 에러 코드는 `{Object Name}-ERR-{Response Code}` 와 같이 구성하였습니다.
+
+
+= 유저 관련 API
+
+== 회원 가입
+
+=== 요청
+include::{snippets}/signup/http-request.adoc[]
+include::{snippets}/signup/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/signup/http-response.adoc[]
+include::{snippets}/signup/response-fields.adoc[]
+
+== 닉네임 중복 체크
+
+=== 요청
+include::{snippets}/duplicateNameCheck/http-request.adoc[]
+include::{snippets}/duplicateNameCheck/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/duplicateNameCheck/http-response.adoc[]
+include::{snippets}/duplicateNameCheck/response-fields.adoc[]
+
+== 회원 조회
+
+=== 요청
+include::{snippets}/memberInfo/http-request.adoc[]
+Header
+include::{snippets}/memberInfo/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/memberInfo/http-response.adoc[]
+include::{snippets}/memberInfo/response-fields.adoc[]
+
+
+== 회원 탈퇴
+
+=== 요청
+include::{snippets}/deleteMember/http-request.adoc[]
+Header
+include::{snippets}/deleteMember/request-headers.adoc[]
+
+=== 응답
+회원 탈퇴에 대한 응답은 따로 제공하지 않습니다.

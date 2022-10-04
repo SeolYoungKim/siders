@@ -1,22 +1,27 @@
 package com.example.siderswebapp.service.post;
 
 import com.example.siderswebapp.domain.fields.Fields;
+import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.domain.tech_stack.TechStack;
 import com.example.siderswebapp.exception.PostNotExistException;
 import com.example.siderswebapp.repository.fields.FieldsRepository;
+import com.example.siderswebapp.repository.member.MemberRepository;
 import com.example.siderswebapp.repository.post.PostRepository;
-import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
-import com.example.siderswebapp.web.request.completion.IsCompletedDto;
-import com.example.siderswebapp.web.request.create.CreateFieldsRequest;
-import com.example.siderswebapp.web.request.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.update.UpdateFieldsRequest;
-import com.example.siderswebapp.web.request.update.UpdatePostRequest;
-import com.example.siderswebapp.web.response.PostResponse;
+import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
+import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
+import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
+import com.example.siderswebapp.web.request.post.search.PostSearch;
+import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
+import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
+import com.example.siderswebapp.web.response.post.create.PostIdDto;
+import com.example.siderswebapp.web.response.post.read.ReadPostResponse;
+import com.example.siderswebapp.web.response.post.read.paging.PagingPostsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +34,16 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final FieldsRepository fieldsRepository;
-    private final TechStackRepository techStackRepository;
+    private final MemberRepository memberRepository;
 
     // 모집 글 작성
     // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!
-    public PostResponse createPost(CreatePostRequest postDto) {
+    public PostIdDto createPost(CreatePostRequest postDto, Authentication authentication) {
+
+        // 멤버를 찾는다.
+        String authId = getAuthId(authentication);
+        Member member = memberRepository.findByAuthId(authId)
+                .orElseThrow(IllegalAccessError::new);  // 나중에 커스텀 예외처리.
 
         Post post = Post.builder()
                 .title(postDto.getTitle())
@@ -41,6 +51,7 @@ public class PostService {
                 .contact(postDto.getContact())
                 .recruitIntroduction(postDto.getRecruitIntroduction())
                 .expectedPeriod(postDto.getExpectedPeriod())
+                .member(member)  // 멤버를 넣어준다.
                 .isCompleted(false)
                 .build();
 
@@ -60,27 +71,44 @@ public class PostService {
                             .build());
         }
 
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
 
-        return new PostResponse(post);
+        return new PostIdDto(savedPost.getId());
     }
 
     @Transactional(readOnly = true)
-    public PostResponse readPost(Long id) {
+    public ReadPostResponse readPost(Long id, Authentication authentication) {
+
+        // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
 
-        return new PostResponse(post);  // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
+        // 조회 화면에서는 인증된 유저가 넘어오지 않을 수도 있다. NPE 방지를 위해 아래와 같이 구성.
+        String authId = getAuthId(authentication);
+
+        return new ReadPostResponse(post, post.isWriter(authId));
     }
 
     @Transactional(readOnly = true)
-    public Page<PostResponse> getPostList(Pageable pageable) {
-        return postRepository.pagingPost(pageable).map(PostResponse::new);
+    public Page<PagingPostsResponse> getPostList(Pageable pageable) {
+        return postRepository.pagingPost(pageable).map(PagingPostsResponse::new);
     }
 
-    public PostResponse updatePost(Long id, UpdatePostRequest postDto) {
+    @Transactional(readOnly = true)
+    public Page<PagingPostsResponse> searchPost(PostSearch postSearch, Pageable pageable) {
+        return postRepository.searchPost(postSearch, pageable).map(PagingPostsResponse::new);
+    }
+
+    public PostIdDto updatePost(Long id, UpdatePostRequest postDto,
+                                Authentication authentication) throws IllegalAccessException {
+
+        String authId = getAuthId(authentication);
+
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
+
+        if (!post.isWriter(authId))
+            throw new IllegalAccessException();
 
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
         post.updatePost(postDto);
@@ -114,28 +142,50 @@ public class PostService {
                                     .stackName(stackDto.getStackName())
                                     .fields(fields)
                                     .build());
-
         }
 
         postRepository.save(post);  // 새로운 필드나 스택이 추가될 수 있기 때문에 저장
 
-        return new PostResponse(post);
+        return new PostIdDto(id);
     }
 
-    public PostResponse changeCompletion(Long id, IsCompletedDto isCompletedDto) {
+
+    public PostIdDto changeCompletion(Long id, IsCompletedDto isCompletedDto,
+                                         Authentication authentication) throws IllegalAccessException {
+
+        String authId = getAuthId(authentication);
+
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
+
+        if (!post.isWriter(authId))
+            throw new IllegalAccessException();
 
         post.changeCompletion(isCompletedDto.getIsCompleted());
 
-        return new PostResponse(post);
+        return new PostIdDto(post.getId());
     }
+    
+    public void deletePost(Long id, Authentication authentication) throws IllegalAccessException {
 
-    public void deletePost(Long id) {
+        String authId = getAuthId(authentication);
+
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotExistException::new);
 
-        postRepository.delete(post);
+        if (!post.isWriter(authId))
+            throw new IllegalAccessException();
+
+        // member의 orphanremoval 옵션 때문에, member의 List에서 제거해줘야 post가 삭제 됨
+        Member member = memberRepository.findByAuthId(authId)
+                .orElseThrow(IllegalAccessException::new);
+
+        member.getPostList().remove(post);
+    }
+
+    // Authentication이 null일 경우 "" 반환
+    private String getAuthId(Authentication authentication) {
+        return authentication != null ? authentication.getName() : "";
     }
 }
 
