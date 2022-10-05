@@ -19,11 +19,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
 
-    //TODO: 여기서 왜 리디렉션이 안가지...
-    // https://stackoverflow.com/questions/34595605/how-to-manage-exceptions-thrown-in-filters-in-spring
-    // https://codingdog.tistory.com/entry/spring-security-filter-exception-%EC%9D%84-custom-%ED%95%98%EA%B2%8C-%EC%B2%98%EB%A6%AC%ED%95%B4-%EB%B4%85%EC%8B%9C%EB%8B%A4
-    // 직접 여기서 예외를 처리해서 보내주거나, 이거 전에 필터를 하나 두고, 거기서 try-catch로 예외를 처리해준다.
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
