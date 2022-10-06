@@ -61,7 +61,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                     .where(keywordCheck(postSearch.getKeyword()));
         } else {
             find = join
-                    .where(recruitTypeCheck(recruitType), keywordCheck(postSearch.getKeyword()));
+                    .where(recruitTypeCheck(recruitType).and(keywordCheck(postSearch.getKeyword())));
         }
 
         List<Post> totalList = find.fetch();
@@ -79,6 +79,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return post.recruitType.eq(recruitType);
     }
 
+    // 같은 글이 두개가 조회가 되는 현상이 있다. 아무래도 여기가 문제인가?
     private BooleanExpression keywordCheck(String keyword) {
         BooleanExpression fieldsAndTechStackCheck =
                 fields.fieldsName.contains(keyword).or(techStack.stackName.contains(keyword));
