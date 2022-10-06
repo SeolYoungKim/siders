@@ -48,10 +48,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Page<Post> searchPost(PostSearch postSearch, Pageable pageable) {
         RecruitType recruitType =
-                postSearch.getRecruitType().toUpperCase().equals("TOTAL") ?
+                postSearch.getRecruitType().equalsIgnoreCase("TOTAL") ?
                         null : postSearch.recruitTypeToEnum();
 
-        JPAQuery<Post> join = jpaQueryFactory.selectFrom(post)
+        JPAQuery<Post> join = jpaQueryFactory
+                .selectFrom(post).distinct()
                 .join(post.fieldsList, fields)
                 .join(fields.stacks, techStack);
 
