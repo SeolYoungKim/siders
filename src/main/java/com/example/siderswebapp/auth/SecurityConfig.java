@@ -32,7 +32,8 @@ public class SecurityConfig {
         return web -> web.ignoring().antMatchers(
                 "/h2-console/**",
                 "/favicon.ico",
-                "/error"
+                "/error",
+                "/docs/sidersApi.html"
         );
     }
 
