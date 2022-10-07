@@ -18,7 +18,7 @@ public class PostSearch {
 
     @Builder
     public PostSearch(String recruitType, String keyword) {
-        this.recruitType = recruitType.toUpperCase();
+        this.recruitType = recruitType;
         this.keyword = keyword;
     }
 

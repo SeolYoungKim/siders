@@ -3,7 +3,7 @@ package com.example.siderswebapp.repository.post;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.web.request.post.search.PostSearch;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return new PageImpl<>(postList, pageable, totalList.size());
     }
 
-    //TODO: 이렇게 구현하는게 맞는지 모르겠다.. 좀 더 고민을 해보자..
+    //TODO: N+1 문제가 해결이 안된다. -> 방법을 지속적으로 강구해보자..
     @Override
     public Page<Post> searchPost(PostSearch postSearch, Pageable pageable) {
         RecruitType recruitType =
@@ -53,22 +53,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         JPAQuery<Post> join = jpaQueryFactory
                 .selectFrom(post).distinct()
-                .join(post.fieldsList, fields)
-                .join(fields.stacks, techStack);
+                .innerJoin(post.fieldsList, fields).fetchJoin()
+                .innerJoin(fields.stacks, techStack)
+                .where(searchPost(recruitType, postSearch.getKeyword()));
 
-        JPAQuery<Post> find;
+        List<Post> totalList = join.fetch();
 
-        if (recruitType == null) {
-            find = join
-                    .where(keywordCheck(postSearch.getKeyword()));
-        } else {
-            find = join
-                    .where(recruitTypeCheck(recruitType).and(keywordCheck(postSearch.getKeyword())));
-        }
-
-        List<Post> totalList = find.fetch();
-
-        List<Post> postList = find
+        List<Post> postList = join
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(post.createdDate.desc())
@@ -77,18 +68,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return new PageImpl<>(postList, pageable, totalList.size());
     }
 
-    private BooleanExpression recruitTypeCheck(RecruitType recruitType) {
-        return post.recruitType.eq(recruitType);
-    }
+    private BooleanBuilder searchPost(RecruitType recruitType, String keyword) {
 
-    // 같은 글이 두개가 조회가 되는 현상이 있다. 아무래도 여기가 문제인가?
-    private BooleanExpression keywordCheck(String keyword) {
-        BooleanExpression fieldsAndTechStackCheck =
-                fields.fieldsName.contains(keyword).or(techStack.stackName.contains(keyword));
+        BooleanBuilder builder = new BooleanBuilder();
 
-        BooleanExpression postTitleAndContentsCheck =
-                post.recruitIntroduction.contains(keyword).or(post.title.contains(keyword));
+        builder.or(fields.fieldsName.contains(keyword));
+        builder.or(techStack.stackName.contains(keyword));
+        builder.or(post.recruitIntroduction.contains(keyword));
+        builder.or(post.title.contains(keyword));
 
-        return postTitleAndContentsCheck.or(fieldsAndTechStackCheck);
+        if (recruitType != null) {
+            builder.and(post.recruitType.eq(recruitType));
+        }
+
+
+        return builder;
     }
 }

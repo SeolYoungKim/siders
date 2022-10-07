@@ -13,11 +13,11 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        show_sql: true
-#    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        default_batch_fetch_size: 1000
 
   data:
     web:
