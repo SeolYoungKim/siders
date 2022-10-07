@@ -13,3 +13,6 @@ spring:
       pageable:
         default-page-size: 10
         one-indexed-parameters: true
+
+  session:
+    store-type: none
