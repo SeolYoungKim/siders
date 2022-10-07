@@ -35,6 +35,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                     .message(e.getMessage())
                     .build();
 
+            //자바 객체를 JSON으로 직렬화
+            // -> response.getWirter()를 통해 writer를 얻은 후, errorResult를 직렬화 해서 response 바디에 작성함
             objectMapper.writeValue(response.getWriter(), errorResult);
         }
     }
