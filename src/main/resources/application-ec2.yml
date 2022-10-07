@@ -15,4 +15,6 @@ spring:
         one-indexed-parameters: true
 
   session:
-    store-type: none
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
