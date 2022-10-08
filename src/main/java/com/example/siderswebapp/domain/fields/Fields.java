@@ -26,6 +26,7 @@ public class Fields extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // TODO: 공통적인 부분은 테이블을 따로 빼도 될까?
     @Column
     private String fieldsName;
 
