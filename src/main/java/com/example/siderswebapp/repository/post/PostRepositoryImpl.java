@@ -51,15 +51,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 postSearch.getRecruitType().equalsIgnoreCase("TOTAL") ?
                         null : postSearch.recruitTypeToEnum();
 
-        JPAQuery<Post> join = jpaQueryFactory
-                .selectFrom(post).distinct()
-                .innerJoin(post.fieldsList, fields).fetchJoin()
+        // 조건을 만족하는 post Id만 우선 찾는다. 왜 Id를 찾느냐? 중복을 제거할 수 있는 수단이 Id뿐이다.
+        List<Long> postIds = jpaQueryFactory
+                .select(post.id).from(post).distinct()
+                .innerJoin(post.fieldsList, fields)
                 .innerJoin(fields.stacks, techStack)
-                .where(searchPost(recruitType, postSearch.getKeyword()));
+                .where(searchPost(recruitType, postSearch.getKeyword()))
+                .fetch();
 
-        List<Post> totalList = join.fetch();
+        // 여기서는 post를 찾아야 한다. 페이징 해서 보내줘야 하기 때문.
+        JPAQuery<Post> find = jpaQueryFactory.selectFrom(post)
+                .where(post.isCompleted.eq(false), post.id.in(postIds));
 
-        List<Post> postList = join
+        List<Post> totalList = find.fetch();
+
+        List<Post> postList = find
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(post.createdDate.desc())
