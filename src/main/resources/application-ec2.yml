@@ -8,6 +8,7 @@ spring:
           nodeValue:
             org.hibernate.dialect.MySQL5InnoDBDialect
           storage_engine: innodb
+        default_batch_fetch_size: 1000
   data:
     web:
       pageable:

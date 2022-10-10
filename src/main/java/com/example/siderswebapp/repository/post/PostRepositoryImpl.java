@@ -44,7 +44,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return new PageImpl<>(postList, pageable, totalList.size());
     }
 
-    //TODO: N+1 문제가 해결이 안된다. -> 방법을 지속적으로 강구해보자..
     @Override
     public Page<Post> searchPost(PostSearch postSearch, Pageable pageable) {
         RecruitType recruitType =
