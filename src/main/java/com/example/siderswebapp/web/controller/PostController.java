@@ -49,8 +49,10 @@ public class PostController {
     @GetMapping("/posts")
     public Page<PagingPostsResponse> paging(Pageable pageable, Authentication authentication) {
 
-        log.info("접속 유저 : {}", authentication.getName());
-        log.info("인증 타입 : {}", authentication.getClass());
+        if (authentication != null) {
+            log.info("접속 유저 : {}", authentication.getName());
+            log.info("인증 타입 : {}", authentication.getClass());
+        }
 
         return postService.getPostList(pageable);
     }
