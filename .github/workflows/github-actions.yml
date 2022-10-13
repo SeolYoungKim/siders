@@ -61,7 +61,7 @@ jobs:
           mv before-deploy/before-deploy.zip deploy/$PROJECT_NAME.zip
         shell: bash
 
-      # 아래 부분이 개인 설정
+      # TODO: 이부분 좀 확인해보자. 왜 zip 파일을 두번만들지..?
       - name: Make zip file
         run: zip -r ./$PROJECT_NAME.zip .
         shell: bash

@@ -105,7 +105,7 @@ class MemberControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 회원입니다."))
-                .andExpect(jsonPath("$.code").value("MEMBER-ERR-400"))
+                .andExpect(jsonPath("$.code").value("ILLEGAL_ARGS-ERR-400"))
                 .andDo(print());
 
         assertThat(memberRepository.findAll().size()).isEqualTo(1);

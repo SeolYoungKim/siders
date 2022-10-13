@@ -50,7 +50,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/member")  // 회원 탈퇴
-    public void deleteMember(UsernamePasswordAuthenticationToken authentication) throws IllegalAccessException {
+    public void deleteMember(UsernamePasswordAuthenticationToken authentication) {
         memberService.deleteMember(authentication);
     }
 
