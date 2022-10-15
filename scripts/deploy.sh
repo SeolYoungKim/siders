@@ -27,8 +27,8 @@ fi
 if [ -z "$CURRENT_PID" ]; then
   echo "> 프로세스가 정상적으로 종료되었습니다."
 else
-  echo "> kill -15 $CURRENT_PID"
-  kill -15 $CURRENT_PID
+  echo "> kill -9 $CURRENT_PID"
+  kill -9 $CURRENT_PID
   sleep 10
 fi
 
