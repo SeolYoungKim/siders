@@ -49,24 +49,12 @@ public class PostService {
         Member member = memberRepository.findByAuthId(authId)
                 .orElseThrow(MemberNotFoundException::new);  // 나중에 커스텀 예외처리.
 
-        Post post = Post.builder()
-                .title(postDto.getTitle())
-                .recruitType(postDto.recruitTypeToEnum())
-                .contact(postDto.getContact())
-                .recruitIntroduction(postDto.getRecruitIntroduction())
-                .expectedPeriod(postDto.getExpectedPeriod())
-                .member(member)  // 멤버를 넣어준다.
-                .isCompleted(false)
-                .build();
+        Post post = getNewPost(postDto, member);
 
         List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsList();
+
         for (CreateFieldsRequest fieldsRequest : fieldsRequests) {
-            Fields fields = Fields.builder()
-                    .post(post)
-                    .fieldsName(fieldsRequest.getFieldsName())
-                    .recruitCount(fieldsRequest.getRecruitCount())
-                    .totalAbility(fieldsRequest.totalAbilityToEnum())
-                    .build();
+            Fields fields = getNewFields(post, fieldsRequest);
 
             fieldsRequest.getStacks()
                     .forEach(techStackDto -> TechStack.builder()
@@ -79,6 +67,8 @@ public class PostService {
 
         return new PostIdDto(post.getId());
     }
+
+
 
     @Transactional(readOnly = true)
     public ReadPostResponse readPost(Long id, Authentication authentication) {
@@ -105,7 +95,6 @@ public class PostService {
 
     public PostIdDto updatePost(Long id, UpdatePostRequest postDto,
                                 Authentication authentication) {
-
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
@@ -191,6 +180,27 @@ public class PostService {
     // Authentication이 null일 경우 "" 반환
     private String getAuthId(Authentication authentication) {
         return authentication != null ? authentication.getName() : "";
+    }
+
+    private Post getNewPost(CreatePostRequest postDto, Member member) {
+        return Post.builder()
+                .title(postDto.getTitle())
+                .recruitType(postDto.recruitTypeToEnum())
+                .contact(postDto.getContact())
+                .recruitIntroduction(postDto.getRecruitIntroduction())
+                .expectedPeriod(postDto.getExpectedPeriod())
+                .member(member)  // 멤버를 넣어준다.
+                .isCompleted(false)
+                .build();
+    }
+
+    private Fields getNewFields(Post post, CreateFieldsRequest fieldsRequest) {
+        return Fields.builder()
+                .post(post)
+                .fieldsName(fieldsRequest.getFieldsName())
+                .recruitCount(fieldsRequest.getRecruitCount())
+                .totalAbility(fieldsRequest.totalAbilityToEnum())
+                .build();
     }
 }
 

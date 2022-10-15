@@ -13,7 +13,7 @@ import com.example.siderswebapp.web.request.member.SignUpDto;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.post.create.CreatedTechStackRequest;
+import com.example.siderswebapp.web.request.post.create.CreateTechStackRequest;
 import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import com.example.siderswebapp.web.request.post.update.UpdateTechStackRequest;
@@ -78,8 +78,8 @@ public class RestDocsTest {
     @DisplayName("공통 요청 데이터 정보")
     @Test
     void commonRequestTest() throws Exception {
-        List<CreatedTechStackRequest> backendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("백엔드스택" + i))
+        List<CreateTechStackRequest> backendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("백엔드스택" + i))
                 .collect(Collectors.toList());
 
         CreateFieldsRequest backend = CreateFieldsRequest.builder()
@@ -381,8 +381,8 @@ public class RestDocsTest {
     @DisplayName("글 저장 문서화")
     @Test
     void saveTest() throws Exception {
-        List<CreatedTechStackRequest> backendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("백엔드스택" + i))
+        List<CreateTechStackRequest> backendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("백엔드스택" + i))
                 .collect(Collectors.toList());
 
         CreateFieldsRequest backend = CreateFieldsRequest.builder()

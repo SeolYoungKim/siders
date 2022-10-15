@@ -26,10 +26,10 @@ public class CreateFieldsRequest {
 
     @Valid
     @NotEmpty(message = "기술 스택은 1개 이상 선택해야 합니다.")
-    private List<CreatedTechStackRequest> stacks;
+    private List<CreateTechStackRequest> stacks;
 
     @Builder
-    public CreateFieldsRequest(String fieldsName, Integer recruitCount, String totalAbility, List<CreatedTechStackRequest> stacks) {
+    public CreateFieldsRequest(String fieldsName, Integer recruitCount, String totalAbility, List<CreateTechStackRequest> stacks) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;

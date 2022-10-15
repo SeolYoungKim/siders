@@ -58,14 +58,17 @@ public class Fields extends BaseTimeEntity {
     }
 
     public void updateFields(UpdateFieldsRequest fieldsDto) {
-        this.fieldsName
-                = fieldsDto.getFieldsName() != null ? fieldsDto.getFieldsName() : fieldsName;
+        this.fieldsName = fieldsDto.getFieldsName() != null
+                ? fieldsDto.getFieldsName()
+                : fieldsName;
 
-        this.recruitCount
-                = fieldsDto.getRecruitCount() != null ? fieldsDto.getRecruitCount() : recruitCount;
+        this.recruitCount = fieldsDto.getRecruitCount() != null
+                ? fieldsDto.getRecruitCount()
+                : recruitCount;
 
-        this.totalAbility
-                = fieldsDto.getTotalAbility() != null ? fieldsDto.totalAbilityToEnum() : totalAbility;
+        this.totalAbility = fieldsDto.getTotalAbility() != null
+                ? fieldsDto.totalAbilityToEnum()
+                : totalAbility;
 
     }
 

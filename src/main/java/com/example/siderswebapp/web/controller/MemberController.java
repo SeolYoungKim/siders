@@ -39,6 +39,7 @@ public class MemberController {
         return memberService.signUp(signUpDto, oAuth2User);
     }
 
+    // 아이디 중복 조회
     @GetMapping("/signup")
     public DuplicateNameCheckDto duplicateCheck(@RequestParam String name) {
         return memberService.duplicateNameCheck(name);

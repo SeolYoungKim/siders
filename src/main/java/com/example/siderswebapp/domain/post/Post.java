@@ -79,20 +79,25 @@ public class Post extends BaseTimeEntity {
     }
 
     public void updatePost(UpdatePostRequest postDto) {
-        this.title
-                = postDto.getTitle() != null ? postDto.getTitle() : title;
+        this.title = postDto.getTitle() != null
+                ? postDto.getTitle()
+                : title;
 
-        this.recruitType
-                = postDto.recruitTypeToEnum() != null ? postDto.recruitTypeToEnum() : recruitType;
+        this.recruitType = postDto.recruitTypeToEnum() != null
+                ? postDto.recruitTypeToEnum()
+                : recruitType;
 
-        this.contact
-                = postDto.getContact() != null ? postDto.getContact() : contact;
+        this.contact = postDto.getContact() != null
+                ? postDto.getContact()
+                : contact;
 
-        this.recruitIntroduction
-                = postDto.getRecruitIntroduction() != null ? postDto.getRecruitIntroduction() : recruitIntroduction;
+        this.recruitIntroduction = postDto.getRecruitIntroduction() != null
+                ? postDto.getRecruitIntroduction()
+                : recruitIntroduction;
 
-        this.expectedPeriod
-                = postDto.getExpectedPeriod() != null ? postDto.getExpectedPeriod() : expectedPeriod;
+        this.expectedPeriod = postDto.getExpectedPeriod() != null
+                ? postDto.getExpectedPeriod()
+                : expectedPeriod;
     }
 
     public void changeCompletion(Boolean isCompleted) {

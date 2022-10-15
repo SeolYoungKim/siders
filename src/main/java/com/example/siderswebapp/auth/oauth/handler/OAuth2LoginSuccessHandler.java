@@ -32,8 +32,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
 
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        Map<String, Object> attributes = oauth2User.getAttributes();
-        String authId = (String) attributes.get("id");
+        String authId = getAuthId(oauth2User);
 
         Optional<Member> findMember = memberRepository.findByAuthId(authId);
 
@@ -47,24 +46,27 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                             .toUriString();
 
             response.sendRedirect(redirectionUri);
-        } else {
 
-            Member member = findMember.get();
-
-            // TODO: 토큰 발급 로직 -> member의 token 필드를 변경하기 때문에 Transactional을 걸어준것
-            String accessToken = jwtProvider.generateAccessToken(oauth2User);
-            String refreshToken = jwtProvider.generateRefreshToken();
-
-            // 액세스 토큰에는 어차피 authId 정보가 있기 때문에, access 토큰을 멤버에 저장할 필요가 없다.
-            member.saveRefreshToken(refreshToken);
-
-            String redirectionUri = uriBuilder
-                    .queryParam("loginSuccess", true)
-                    .queryParam("token", accessToken)
-                    .build()
-                    .toUriString();
-
-            response.sendRedirect(redirectionUri);
+            return;
         }
+
+        Member member = findMember.get();
+        member.saveRefreshToken(jwtProvider.generateRefreshToken());
+
+        String accessToken = jwtProvider.generateAccessToken(oauth2User);
+
+        String redirectionUri = uriBuilder
+                .queryParam("loginSuccess", true)
+                .queryParam("token", accessToken)
+                .build()
+                .toUriString();
+
+        response.sendRedirect(redirectionUri);
+
+    }
+
+    private String getAuthId(OAuth2User oauth2User) {
+        Map<String, Object> attributes = oauth2User.getAttributes();
+        return (String) attributes.get("id");
     }
 }

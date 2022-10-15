@@ -43,14 +43,7 @@ public class MemberService {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
 
-        Member member = Member.builder()
-                .name(signUpDto.getName())
-                .authId(authId)
-                .email((String) attributes.get("sub"))
-                .picture((String) attributes.get("picture"))
-                .roleType(RoleType.USER)
-                .refreshToken(refreshToken)
-                .build();
+        Member member = getNewMember(signUpDto, attributes, refreshToken, authId);
 
         memberRepository.save(member);
 
@@ -91,7 +84,22 @@ public class MemberService {
         return new MemberPostResponse(member);
     }
 
+
     private String getAuthId(Authentication authentication) {
-        return authentication != null ? authentication.getName() : "";
+        return authentication != null
+                ? authentication.getName()
+                : "";
     }
+
+    private Member getNewMember(SignUpDto signUpDto, Map<String, Object> attributes, String refreshToken, String authId) {
+        return Member.builder()
+                .name(signUpDto.getName())
+                .authId(authId)
+                .email((String) attributes.get("sub"))
+                .picture((String) attributes.get("picture"))
+                .roleType(RoleType.USER)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }

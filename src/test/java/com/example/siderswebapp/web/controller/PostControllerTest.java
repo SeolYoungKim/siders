@@ -12,7 +12,7 @@ import com.example.siderswebapp.repository.tech_stack.TechStackRepository;
 import com.example.siderswebapp.web.request.post.completion.IsCompletedDto;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
 import com.example.siderswebapp.web.request.post.create.CreatePostRequest;
-import com.example.siderswebapp.web.request.post.create.CreatedTechStackRequest;
+import com.example.siderswebapp.web.request.post.create.CreateTechStackRequest;
 import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import com.example.siderswebapp.web.request.post.update.UpdateTechStackRequest;
@@ -61,16 +61,16 @@ class PostControllerTest {
     @Test
     void recruitmentTest() throws Exception {
 
-        List<CreatedTechStackRequest> designStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("디자인스택" + i))
+        List<CreateTechStackRequest> designStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("디자인스택" + i))
                 .collect(Collectors.toList());
 
-        List<CreatedTechStackRequest> frontendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("프론트엔드스택" + i))
+        List<CreateTechStackRequest> frontendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("프론트엔드스택" + i))
                 .collect(Collectors.toList());
 
-        List<CreatedTechStackRequest> backendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("백엔드스택" + i))
+        List<CreateTechStackRequest> backendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("백엔드스택" + i))
                 .collect(Collectors.toList());
 
         CreateFieldsRequest design = CreateFieldsRequest.builder()
@@ -139,16 +139,16 @@ class PostControllerTest {
     @Test
     void recruitmentTest2() throws Exception {
 
-        List<CreatedTechStackRequest> designStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("디자인스택" + i))
+        List<CreateTechStackRequest> designStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("디자인스택" + i))
                 .collect(Collectors.toList());
 
-        List<CreatedTechStackRequest> frontendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("프론트엔드스택" + i))
+        List<CreateTechStackRequest> frontendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("프론트엔드스택" + i))
                 .collect(Collectors.toList());
 
-        List<CreatedTechStackRequest> backendStack = IntStream.range(1, 4)
-                .mapToObj(i -> new CreatedTechStackRequest("백엔드스택" + i))
+        List<CreateTechStackRequest> backendStack = IntStream.range(1, 4)
+                .mapToObj(i -> new CreateTechStackRequest("백엔드스택" + i))
                 .collect(Collectors.toList());
 
         CreateFieldsRequest design = CreateFieldsRequest.builder()
