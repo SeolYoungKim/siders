@@ -43,9 +43,10 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
 
 
         return new DefaultOAuth2User(
-                Collections.singleton(
-                        new SimpleGrantedAuthority(
-                                findMember == null ? GUEST.getKey() : findMember.getRoleTypeKey())),
+                Collections.singleton(new SimpleGrantedAuthority(
+                        findMember == null
+                                ? GUEST.getKey()
+                                : findMember.getRoleTypeKey())),
                 attributes.parsedAttributes(),
                 "id");
 

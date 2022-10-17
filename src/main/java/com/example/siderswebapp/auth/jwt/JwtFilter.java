@@ -39,9 +39,4 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-//    // 회원가입 시에는 해당 필터 미적용
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        return request.getRequestURI().equals("/api/signup");
-//    }
 }

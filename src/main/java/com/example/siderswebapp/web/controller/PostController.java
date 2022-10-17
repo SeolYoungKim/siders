@@ -25,16 +25,10 @@ import javax.validation.Valid;
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/recruitment")
-    public String recruitmentView() {
-        return "";
-    }
-
     // 글 등록 : Jwt 토큰 소유자만 요청이 되도록 한다. (OAuth2 인증자는 안됨)
     @PostMapping("/recruitment")
     public PostIdDto recruitmentWrite(@Valid @RequestBody CreatePostRequest postDto,
                                       UsernamePasswordAuthenticationToken authentication) {  // 여기에 OAuth2 인증자가 요청보내면 에러냄
-
         return postService.createPost(postDto, authentication);
     }
 
@@ -47,20 +41,13 @@ public class PostController {
     // 여러 건 조회 + 페이징 (쿼리 파라미터 사용)
     // PostSearch는 나중에 검색용으로 사용하자. (DTO) @ModelAttribute PostSearch postSearch
     @GetMapping("/posts")
-    public Page<PagingPostsResponse> paging(Pageable pageable, Authentication authentication) {
-
-        if (authentication != null) {
-            log.info("접속 유저 : {}", authentication.getName());
-            log.info("인증 타입 : {}", authentication.getClass());
-        }
-
+    public Page<PagingPostsResponse> paging(Pageable pageable) {
         return postService.getPostList(pageable);
     }
 
     // 서치
     @GetMapping("/search")
     public Page<PagingPostsResponse> search(@ModelAttribute PostSearch postSearch, Pageable pageable) {
-
         return postService.searchPost(postSearch, pageable);
     }
 

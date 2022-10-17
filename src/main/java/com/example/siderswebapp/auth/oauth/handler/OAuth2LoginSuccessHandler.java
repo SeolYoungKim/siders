@@ -4,6 +4,7 @@ import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.repository.member.MemberRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -26,41 +27,37 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         String authId = getAuthId(oauth2User);
 
         Optional<Member> findMember = memberRepository.findByAuthId(authId);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(UriList.FRONT_END.getUri());
+        String accessToken = jwtProvider.generateAccessToken(oauth2User);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(UriList.FRONT_END.getUri())
+                .queryParam("token", accessToken);
 
         if (findMember.isEmpty()) {
 
-            String noMemberToken = jwtProvider.generateAccessToken(oauth2User);
-
             String redirectionUri = uriBuilder
                     .queryParam("loginSuccess", false)
-                    .queryParam("token", noMemberToken)
                     .build()
                     .toUriString();
 
             response.sendRedirect(redirectionUri);
-
             return;
         }
 
         Member member = findMember.get();
         member.saveRefreshToken(jwtProvider.generateRefreshToken());
 
-        String accessToken = jwtProvider.generateAccessToken(oauth2User);
-
         String redirectionUri = uriBuilder
                 .queryParam("loginSuccess", true)
-                .queryParam("token", accessToken)
                 .build()
                 .toUriString();
 

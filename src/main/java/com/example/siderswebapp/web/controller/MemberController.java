@@ -22,18 +22,8 @@ public class MemberController {
     @PostMapping("/signup")  // 회원 가입
     public SignUpMemberResponse signup(@RequestBody SignUpDto signUpDto,
                                        UsernamePasswordAuthenticationToken user) {
-
         return memberService.signUp(signUpDto, user);
     }
-
-    // test용
-//    @GetMapping("/signup/test")  // 회원 가입
-//    public SignUpMemberResponse test(@AuthenticationPrincipal OAuth2User oAuth2User) {
-//        Map<String, Object> attributes = oAuth2User.getAttributes();
-//        SignUpDto signUpDto = new SignUpDto((String) attributes.get("id"));
-//
-//        return memberService.signUp(signUpDto, oAuth2User);
-//    }
 
     // 아이디 중복 조회
     @GetMapping("/signup")

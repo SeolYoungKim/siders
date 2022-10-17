@@ -30,7 +30,6 @@ import static com.example.siderswebapp.domain.RecruitType.PROJECT;
 import static com.example.siderswebapp.domain.RecruitType.STUDY;
 import static com.example.siderswebapp.web.TestAttributes.TEST_ATTRIBUTES;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,16 +63,14 @@ class MemberControllerTest {
     void signupOk() throws Exception {
         SignUpDto signUpDto = new SignUpDto("유저닉네임");
 
-        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
-
         mockMvc.perform(post("/api/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signUpDto))
-                        .with(oauth2Login().attributes(attrs -> attrs.putAll(attributes))))
+                        .with(user("authId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.authId").value("authId"))
                 .andExpect(jsonPath("$.name").value("유저닉네임"))
-                .andExpect(jsonPath("$.picture").value("picture"))
+                .andExpect(jsonPath("$.picture").value(""))
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andDo(print());
 
@@ -96,12 +93,10 @@ class MemberControllerTest {
 
         SignUpDto signUpDto = new SignUpDto("유저닉네임");
 
-        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
-
         mockMvc.perform(post("/api/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signUpDto))
-                        .with(oauth2Login().attributes(attrs -> attrs.putAll(attributes))))
+                        .with(user("authId").password("").roles("USER")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 회원입니다."))
@@ -125,11 +120,9 @@ class MemberControllerTest {
 
         memberRepository.save(member);
 
-        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
-
         mockMvc.perform(get("/api/signup?name=savedName")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                        .with(user("authId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isExists").value(true))
                 .andDo(print());
@@ -153,7 +146,7 @@ class MemberControllerTest {
 
         mockMvc.perform(get("/api/signup?name=haha")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                        .with(user("authId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isExists").value(false))
                 .andDo(print());

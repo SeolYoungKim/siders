@@ -27,10 +27,6 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     public SignUpMemberResponse signUp(SignUpDto signUpDto, UsernamePasswordAuthenticationToken user) {
-
-        String accessToken = jwtProvider.generateAccessToken(user);
-        String refreshToken = jwtProvider.generateRefreshToken();
-
         String authId = user.getName();
 
         // TODO: 어떻게 변경할지 나중에 다시 생각. authId 중복 가입은 이미 OAuth2 filter에서 막아주고 있음.
@@ -38,8 +34,10 @@ public class MemberService {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
 
-        Member member = getNewMember(signUpDto, refreshToken, authId);
+        String accessToken = jwtProvider.generateAccessToken(user);
+        String refreshToken = jwtProvider.generateRefreshToken();
 
+        Member member = getNewMember(signUpDto, refreshToken, authId);
         memberRepository.save(member);
 
         return new SignUpMemberResponse(member, accessToken);
@@ -47,7 +45,6 @@ public class MemberService {
 
     public AuthMemberResponse getMemberInfo(Authentication authentication) {
         // 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
-
         String authId = getAuthId(authentication);
 
         Member member = memberRepository.findByAuthId(authId)
@@ -70,7 +67,6 @@ public class MemberService {
     }
 
     public MemberPostResponse memberPosts(UsernamePasswordAuthenticationToken authentication) {
-
         String authId = getAuthId(authentication);
 
         Member member = memberRepository.findByAuthId(authId)

@@ -763,13 +763,11 @@ public class RestDocsTest {
     void signUp() throws Exception {
         SignUpDto signUpDto = new SignUpDto("유저닉네임");
 
-        Map<String, Object> attributes = TEST_ATTRIBUTES.getAttributes();
-
         mockMvc.perform(post("/api/signup")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signUpDto))
-                        .with(oauth2Login().attributes(attr -> attr.putAll(attributes))))
+                        .with(user("authId").password("").roles("USER")))
                 .andExpect(status().isOk())
                 .andDo(document("signup",
                         preprocessRequest(prettyPrint()),
