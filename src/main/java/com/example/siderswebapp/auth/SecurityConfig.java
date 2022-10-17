@@ -15,6 +15,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
+import static com.example.siderswebapp.auth.UriList.FRONT_END;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 //TODO: 구현한 코드 내용 정리
 
@@ -44,6 +52,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
 
                 .and()
+                .cors(withDefaults())
+
                 .authorizeRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
                         .mvcMatchers("/api/posts").permitAll()
                         .mvcMatchers("/api/search").permitAll()
@@ -62,5 +72,17 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("https://admirable-starburst-00d6a9.netlify.app/", FRONT_END.getUri()));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }
