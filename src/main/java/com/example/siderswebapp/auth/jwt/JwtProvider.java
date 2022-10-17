@@ -72,6 +72,19 @@ public class JwtProvider {
                 .compact();
     }
 
+    // 회원가입용 액세스 토큰
+    public String generateAccessToken(UsernamePasswordAuthenticationToken user) {
+        long now = new Date().getTime();
+        Date accessTokenExpireTime = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        return Jwts.builder()
+                .setSubject(user.getName())
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
+                .setExpiration(accessTokenExpireTime)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
     // 리프레시 토큰 발급
     public String generateRefreshToken() {
         long now = new Date().getTime();

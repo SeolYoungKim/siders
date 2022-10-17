@@ -40,10 +40,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         if (findMember.isEmpty()) {
 
+            String noMemberToken = jwtProvider.generateAccessToken(oauth2User);
+
             String redirectionUri = uriBuilder
-                            .queryParam("loginSuccess", false)
-                            .build()
-                            .toUriString();
+                    .queryParam("loginSuccess", false)
+                    .queryParam("token", noMemberToken)
+                    .build()
+                    .toUriString();
 
             response.sendRedirect(redirectionUri);
 

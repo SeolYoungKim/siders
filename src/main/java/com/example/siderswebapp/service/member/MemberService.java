@@ -14,11 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,21 +26,19 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
 
-    public SignUpMemberResponse signUp(SignUpDto signUpDto, OAuth2User oAuth2User) {
+    public SignUpMemberResponse signUp(SignUpDto signUpDto, UsernamePasswordAuthenticationToken user) {
 
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-
-        String accessToken = jwtProvider.generateAccessToken(oAuth2User);
+        String accessToken = jwtProvider.generateAccessToken(user);
         String refreshToken = jwtProvider.generateRefreshToken();
 
-        String authId = (String) attributes.get("id");
+        String authId = user.getName();
 
         // TODO: 어떻게 변경할지 나중에 다시 생각. authId 중복 가입은 이미 OAuth2 filter에서 막아주고 있음.
         if (memberRepository.existsByAuthId(authId)) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
 
-        Member member = getNewMember(signUpDto, attributes, refreshToken, authId);
+        Member member = getNewMember(signUpDto, refreshToken, authId);
 
         memberRepository.save(member);
 
@@ -91,12 +86,12 @@ public class MemberService {
                 : "";
     }
 
-    private Member getNewMember(SignUpDto signUpDto, Map<String, Object> attributes, String refreshToken, String authId) {
+    private Member getNewMember(SignUpDto signUpDto, String refreshToken, String authId) {
         return Member.builder()
                 .name(signUpDto.getName())
                 .authId(authId)
-                .email((String) attributes.get("sub"))
-                .picture((String) attributes.get("picture"))
+                .email("")
+                .picture("")
                 .roleType(RoleType.USER)
                 .refreshToken(refreshToken)
                 .build();

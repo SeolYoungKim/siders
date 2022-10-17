@@ -9,11 +9,7 @@ import com.example.siderswebapp.web.response.member.SignUpMemberResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -25,19 +21,19 @@ public class MemberController {
 
     @PostMapping("/signup")  // 회원 가입
     public SignUpMemberResponse signup(@RequestBody SignUpDto signUpDto,
-                                       @AuthenticationPrincipal OAuth2User oAuth2User) {
+                                       UsernamePasswordAuthenticationToken user) {
 
-        return memberService.signUp(signUpDto, oAuth2User);
+        return memberService.signUp(signUpDto, user);
     }
 
     // test용
-    @GetMapping("/signup/test")  // 회원 가입
-    public SignUpMemberResponse test(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-        SignUpDto signUpDto = new SignUpDto((String) attributes.get("id"));
-
-        return memberService.signUp(signUpDto, oAuth2User);
-    }
+//    @GetMapping("/signup/test")  // 회원 가입
+//    public SignUpMemberResponse test(@AuthenticationPrincipal OAuth2User oAuth2User) {
+//        Map<String, Object> attributes = oAuth2User.getAttributes();
+//        SignUpDto signUpDto = new SignUpDto((String) attributes.get("id"));
+//
+//        return memberService.signUp(signUpDto, oAuth2User);
+//    }
 
     // 아이디 중복 조회
     @GetMapping("/signup")
