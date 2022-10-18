@@ -13,6 +13,7 @@ import java.util.Map;
 //TODO: 나중에 이걸 Enum으로 바꿔보자. 근데, 바꾸는 이유가 중요하겠지? 이유도 찾아보자.
 
 @Getter
+@SuppressWarnings({"unchecked"})
 public class OAuthAttributes {
 
     private final Map<String, Object> attributes;

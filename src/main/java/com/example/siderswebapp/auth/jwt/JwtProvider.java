@@ -96,7 +96,6 @@ public class JwtProvider {
                 .compact();
     }
 
-
     // 요청 헤더에서 토큰 꺼내오기
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -113,7 +112,7 @@ public class JwtProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException e) {  // 토큰이 만료되었다면
+        } catch (ExpiredJwtException e) {
             throw new JwtNotAvailable("토큰이 만료되었습니다. 다시 로그인 해주세요.");
         } catch (SecurityException | MalformedJwtException | IllegalArgumentException | UnsupportedJwtException e) {
             throw new JwtNotAvailable("올바르지 않은 토큰입니다.");

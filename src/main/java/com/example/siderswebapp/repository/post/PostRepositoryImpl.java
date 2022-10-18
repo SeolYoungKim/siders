@@ -22,10 +22,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    //postSearch에는 가변 값이 담겨있다. (검색 정보.. 등)
-    //pageable에는 기본적인 페이징을 위한 값이 담겨있다.
-    //혼용해서 사용해보자.
-
     @Override
     public Page<Post> pagingPost(Pageable pageable) {
 
