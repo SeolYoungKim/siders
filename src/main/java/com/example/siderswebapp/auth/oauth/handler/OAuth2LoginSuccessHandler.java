@@ -4,7 +4,6 @@ import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.repository.member.MemberRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,7 +27,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,8 +38,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String accessToken = jwtProvider.generateAccessToken(oauth2User);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(UriList.FRONT_END.getUri())
-                .queryParam("token", accessToken);
+        Cookie cookie = getCookie(accessToken);
+        response.addCookie(cookie);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(UriList.FRONT_END.getUri());
 
         if (findMember.isEmpty()) {
 
@@ -63,6 +65,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.sendRedirect(redirectionUri);
 
+    }
+
+    private Cookie getCookie(String accessToken) {
+        Cookie cookie = new Cookie("token", accessToken);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        return cookie;
     }
 
     private String getAuthId(OAuth2User oauth2User) {
