@@ -32,20 +32,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        String authId = getAuthId(oauth2User);
+        Optional<Member> findMember = memberRepository.findByAuthId(getAuthId(oauth2User));
 
-        Optional<Member> findMember = memberRepository.findByAuthId(authId);
-
-        String accessToken = jwtProvider.generateAccessToken(oauth2User);
-
-        Cookie cookie = getCookie(accessToken);
-        response.addCookie(cookie);
+        addJwtToCookie(oauth2User, response);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(UriList.FRONT_END.getUri());
 
         if (findMember.isEmpty()) {
-
             String redirectionUri = uriBuilder
                     .queryParam("loginSuccess", false)
                     .build()
@@ -67,11 +61,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private Cookie getCookie(String accessToken) {
-        Cookie cookie = new Cookie("token", accessToken);
+    private void addJwtToCookie(OAuth2User oauth2User, HttpServletResponse response) {
+        final String COOKIE_NAME = "token";
+        String accessToken = jwtProvider.generateAccessToken(oauth2User);
+
+        Cookie cookie = new Cookie(COOKIE_NAME, accessToken);
         cookie.setMaxAge(3600);
         cookie.setPath("/");
-        return cookie;
+
+        response.addCookie(cookie);
     }
 
     private String getAuthId(OAuth2User oauth2User) {
