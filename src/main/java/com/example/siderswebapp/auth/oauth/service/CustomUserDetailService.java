@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.example.siderswebapp.auth.oauth.service.AttibuteKeys.*;
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.*;
 import static com.example.siderswebapp.domain.member.RoleType.GUEST;
 
 /**
@@ -37,14 +37,13 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
                 .getClientRegistration()
                 .getRegistrationId();
 
-        Map<String, Object> attributes = OAuthAttributes
-                .of(registrationId, oAuth2User.getAttributes())
-                .parsedAttributes();
+        Map<String, Object> attributes = OAuth2AttributesFactory
+                .getOAuth2Attributes(registrationId, oAuth2User.getAttributes())
+                .getAttributes();
 
         Member findMember = memberRepository
                 .findByAuthId((String) attributes.get(ID))
                 .orElse(null);
-
 
         return new DefaultOAuth2User(
                 Collections.singleton(

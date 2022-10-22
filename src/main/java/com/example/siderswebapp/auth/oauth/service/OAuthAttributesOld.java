@@ -5,14 +5,15 @@ import lombok.Builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.siderswebapp.auth.oauth.service.AttibuteKeys.*;
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.*;
 
 /**
  * 각각 다른 곳에서 로그인을 요청한 유저의 attributes 정보를 평준화 하는 클래스
  */
 
+@Deprecated
 @SuppressWarnings({"unchecked"})
-public class OAuthAttributes {
+public class OAuthAttributesOld {
 
     private Map<String, Object> attributes;
     private String authId;
@@ -20,12 +21,12 @@ public class OAuthAttributes {
     private String userEmail;
     private String userPicture;
 
-    private OAuthAttributes() {
+    private OAuthAttributesOld() {
     }
 
     @Builder
-    private OAuthAttributes(Map<String, Object> attributes, String authId, String userName,
-                            String userEmail, String userPicture) {
+    private OAuthAttributesOld(Map<String, Object> attributes, String authId, String userName,
+                               String userEmail, String userPicture) {
         this.attributes = attributes;
         this.authId = authId;
         this.userName = userName;
@@ -33,7 +34,7 @@ public class OAuthAttributes {
         this.userPicture = userPicture;
     }
 
-    public static OAuthAttributes of(String registrationId, Map<String, Object> attributes) {
+    public static OAuthAttributesOld of(String registrationId, Map<String, Object> attributes) {
 
         switch (registrationId) {
             case "naver":
@@ -50,8 +51,8 @@ public class OAuthAttributes {
 
     }
 
-    private static OAuthAttributes ofGoogle(Map<String, Object> attributes) {
-        return OAuthAttributes.builder()
+    private static OAuthAttributesOld ofGoogle(Map<String, Object> attributes) {
+        return OAuthAttributesOld.builder()
                 .authId((String) attributes.get("sub"))
                 .userName((String) attributes.get("name"))
                 .userEmail((String) attributes.get("email"))
@@ -61,8 +62,8 @@ public class OAuthAttributes {
     }
 
 
-    private static OAuthAttributes ofGitHub(Map<String, Object> attributes) {
-        return OAuthAttributes.builder()
+    private static OAuthAttributesOld ofGitHub(Map<String, Object> attributes) {
+        return OAuthAttributesOld.builder()
                 .authId(String.valueOf(attributes.get("id")))
                 .userName((String) attributes.get("name"))
                 .userEmail((String) attributes.get("login"))  // github의 경우, email이 없을 수도 있기 때문에 "login"을 고유 식별자로 사용한다.
@@ -71,10 +72,10 @@ public class OAuthAttributes {
                 .build();
     }
 
-    private static OAuthAttributes ofNaver(Map<String, Object> attributes) {
+    private static OAuthAttributesOld ofNaver(Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
-        return OAuthAttributes.builder()
+        return OAuthAttributesOld.builder()
                 .authId((String) response.get("id"))
                 .userName((String) response.get("name"))
                 .userEmail((String) response.get("email"))
@@ -83,11 +84,11 @@ public class OAuthAttributes {
                 .build();
     }
 
-    private static OAuthAttributes ofKakao(Map<String, Object> attributes) {
+    private static OAuthAttributesOld ofKakao(Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) response.get("profile");
 
-        return OAuthAttributes.builder()
+        return OAuthAttributesOld.builder()
                 .authId(String.valueOf(attributes.get("id")))
                 .userName((String) profile.get("nickname"))
                 .userEmail((String) response.get("email"))
