@@ -1,29 +1,31 @@
 package com.example.siderswebapp.auth.oauth.service;
 
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.siderswebapp.auth.oauth.service.AttibuteKeys.*;
 
 /**
  * 각각 다른 곳에서 로그인을 요청한 유저의 attributes 정보를 평준화 하는 클래스
  */
 
-//TODO: 나중에 이걸 Enum으로 바꿔보자. 근데, 바꾸는 이유가 중요하겠지? 이유도 찾아보자.
-
-@Getter
 @SuppressWarnings({"unchecked"})
 public class OAuthAttributes {
 
-    private final Map<String, Object> attributes;
-    private final String authId;
-    private final String userName;
-    private final String userEmail;
-    private final String userPicture;
+    private Map<String, Object> attributes;
+    private String authId;
+    private String userName;
+    private String userEmail;
+    private String userPicture;
+
+    private OAuthAttributes() {
+    }
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String authId, String userName, String userEmail, String userPicture) {
+    private OAuthAttributes(Map<String, Object> attributes, String authId, String userName,
+                            String userEmail, String userPicture) {
         this.attributes = attributes;
         this.authId = authId;
         this.userName = userName;
@@ -96,12 +98,13 @@ public class OAuthAttributes {
 
     // Map으로 바꿔주는 작업을 해야함. 그래야 DefaultOAuth2User를 똑같은 attribute key를 가진 객체로 바꿀 수 있음
     // Missing attribute 'sub' in attributes -> "sub"이라는 키의 attribute가 있어야 하는듯 ?
+    // TODO: 여기에 일급 컬렉션을 적용하는 게 좋은 선택일까?
     public Map<String, Object> parsedAttributes() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", authId);
-        map.put("sub", userEmail);
-        map.put("name", userName);
-        map.put("picture", userPicture);
+        map.put(ID, authId);
+        map.put(SUB, userEmail);
+        map.put(NAME, userName);
+        map.put(PICTURE, userPicture);
 
         return map;
     }

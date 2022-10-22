@@ -12,7 +12,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Map;
 
+import static com.example.siderswebapp.auth.oauth.service.AttibuteKeys.*;
 import static com.example.siderswebapp.domain.member.RoleType.GUEST;
 
 /**
@@ -35,20 +37,22 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
                 .getClientRegistration()
                 .getRegistrationId();
 
-        OAuthAttributes attributes
-                = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
+        Map<String, Object> attributes = OAuthAttributes
+                .of(registrationId, oAuth2User.getAttributes())
+                .parsedAttributes();
 
-        Member findMember = memberRepository.findByAuthId(attributes.getAuthId())
+        Member findMember = memberRepository
+                .findByAuthId((String) attributes.get(ID))
                 .orElse(null);
 
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(
-                        findMember == null
-                                ? GUEST.getKey()
-                                : findMember.getRoleTypeKey())),
-                attributes.parsedAttributes(),
-                "id");
+                Collections.singleton(
+                        new SimpleGrantedAuthority(
+                                findMember == null
+                                        ? GUEST.getKey()
+                                        : findMember.getRoleTypeKey())),
+                attributes, ID);
 
     }
 }
