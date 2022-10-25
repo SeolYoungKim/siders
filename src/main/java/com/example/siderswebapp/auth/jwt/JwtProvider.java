@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 @Component
 public class JwtProvider {
 
-    private final static String AUTHORITIES_KEY = "authority";
-    private final static String BEARER_TYPE = "Bearer";
+    private static final String AUTHORITIES_KEY = "authority";
+    public static final String AUTH_ID_KEY = "id";
 
     @Value("${jwt.access-token-expire-time}")
     private long ACCESS_TOKEN_EXPIRE_TIME;
@@ -65,7 +65,7 @@ public class JwtProvider {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject((String) attributes.get("id"))
+                .setSubject((String) attributes.get(AUTH_ID_KEY))
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpireTime)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -77,8 +77,10 @@ public class JwtProvider {
         long now = new Date().getTime();
         Date accessTokenExpireTime = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
+        String authId = user.getName();
+
         return Jwts.builder()
-                .setSubject(user.getName())
+                .setSubject(authId)
                 .claim(AUTHORITIES_KEY, "ROLE_USER")
                 .setExpiration(accessTokenExpireTime)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -122,13 +124,14 @@ public class JwtProvider {
     // 액세스 토큰으로 Authentication 만들기
     public Authentication authenticate(String accessToken) {
         Claims claims = parseClaims(accessToken);
+        String authId = claims.getSubject();
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        User user = new User(claims.getSubject(), "", authorities);
+        User user = new User(authId, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(user, "", authorities);
     }

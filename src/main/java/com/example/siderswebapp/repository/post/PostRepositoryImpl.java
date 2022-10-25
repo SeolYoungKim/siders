@@ -24,8 +24,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> pagingPost(Pageable pageable) {
-
-        // 모집 완료 글이 아닌 경우에만 노출
         JPAQuery<Post> find = jpaQueryFactory.selectFrom(post)
                 .where(post.isCompleted.eq(false));
 

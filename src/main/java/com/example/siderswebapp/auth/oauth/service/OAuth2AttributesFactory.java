@@ -6,6 +6,7 @@ import java.util.Map;
 import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.values;
 
 /**
+ * TODO: 팩토리 인터페이스화 생각
  * resistrationId와 attributes로 CommonAttributes를 만들어준다.
  * CommonAttributes를 이용해서 일급 컬렉션인 OAuth2Attributes를 만들어주는 로직이다.
  */

@@ -20,10 +20,15 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.example.siderswebapp.auth.jwt.JwtProvider.*;
+
 @Component
 @Transactional
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
+
+    public static final int COOKIE_MAX_AGE = 3600;
+    public static final String LOGIN_SUCCESS = "loginSuccess";
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
@@ -41,7 +46,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         if (findMember.isEmpty()) {
             String redirectionUri = uriBuilder
-                    .queryParam("loginSuccess", false)
+                    .queryParam(LOGIN_SUCCESS, false)
                     .build()
                     .toUriString();
 
@@ -53,7 +58,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         member.saveRefreshToken(jwtProvider.generateRefreshToken());
 
         String redirectionUri = uriBuilder
-                .queryParam("loginSuccess", true)
+                .queryParam(LOGIN_SUCCESS, true)
                 .build()
                 .toUriString();
 
@@ -66,7 +71,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtProvider.generateAccessToken(oauth2User);
 
         Cookie cookie = new Cookie(COOKIE_NAME, accessToken);
-        cookie.setMaxAge(3600);
+        cookie.setMaxAge(COOKIE_MAX_AGE);
         cookie.setPath("/");
 
         response.addCookie(cookie);
@@ -74,6 +79,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private String getAuthId(OAuth2User oauth2User) {
         Map<String, Object> attributes = oauth2User.getAttributes();
-        return (String) attributes.get("id");
+        return (String) attributes.get(AUTH_ID_KEY);
     }
 }

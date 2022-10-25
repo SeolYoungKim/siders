@@ -40,10 +40,8 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     // 모집 글 작성
-    // TODO: Enum을 직렬화 및 역직렬화해서 사용하려했는데, 이해를 못해서 일단 이렇게 구성함. 적용 하더라도, 공부 후 적용하자!
     public PostIdDto createPost(CreatePostRequest postDto,
                                 UsernamePasswordAuthenticationToken authentication) {
-
         // 멤버를 찾는다.
         String authId = getAuthId(authentication);
         Member member = memberRepository.findByAuthId(authId)
