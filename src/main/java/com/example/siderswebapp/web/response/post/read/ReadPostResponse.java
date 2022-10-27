@@ -8,6 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * TODO 리팩토링 최우선 대상.......
+ */
+
 @Getter
 public class ReadPostResponse {
     private final Long id;

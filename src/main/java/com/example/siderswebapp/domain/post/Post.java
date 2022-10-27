@@ -45,7 +45,6 @@ public class Post extends BaseTimeEntity {
 
     //모집 완료 여부 -> 이에 따라 글 노출 여부 결정 (true - 글 목록에는 노출X, 마이페이지 노출O | false - 둘 다 노출)
     //TODO: 나중에는 isCompleted를 DB 컬럼 따로 빼서 적용해보자.
-    // 자바 빈 정의에 맞게 작성해보자.. private Boolean completed; -> isCompleted()가 getter임.
     @Column
     private Boolean isCompleted;
 
