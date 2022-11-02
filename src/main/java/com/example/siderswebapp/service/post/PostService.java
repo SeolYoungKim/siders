@@ -66,8 +66,6 @@ public class PostService {
         return new PostIdDto(post.getId());
     }
 
-
-
     @Transactional(readOnly = true)
     public ReadPostResponse readPost(Long id, Authentication authentication) {
 
