@@ -43,7 +43,7 @@ public class Fields extends BaseTimeEntity {
     @OneToMany(mappedBy = "fields", cascade = ALL, orphanRemoval = true)
     private final List<TechStack> stacks = new ArrayList<>();
 
-    @Builder
+    @Builder  //TODO public -> default
     public Fields(String fieldsName, Integer recruitCount, Ability totalAbility, Post post) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;

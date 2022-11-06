@@ -55,7 +55,7 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = ALL, orphanRemoval = true)
     private final List<Fields> fieldsList = new ArrayList<>();
 
-    @Builder
+    @Builder  //TODO default 변경
     public Post(String title, RecruitType recruitType, String contact, String recruitIntroduction,
                 String expectedPeriod, Boolean isCompleted, Member member) {
 
