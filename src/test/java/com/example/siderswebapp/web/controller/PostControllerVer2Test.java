@@ -189,7 +189,7 @@ class PostControllerVer2Test {
         frontend.getStacks().addAll(frontendStack);
         backend.getStacks().addAll(backendStack);
 
-        mockMvc.perform(post("/api/recruitment")
+        mockMvc.perform(post("/api2/recruitment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post))
                         .with(user("악질유저").password("").roles("USER")))
@@ -263,7 +263,7 @@ class PostControllerVer2Test {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
+        mockMvc.perform(get("/api2/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
@@ -340,7 +340,7 @@ class PostControllerVer2Test {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
+        mockMvc.perform(get("/api2/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user("notSameUser").password("").roles("USER")))
                 .andExpect(status().isOk())
@@ -417,7 +417,7 @@ class PostControllerVer2Test {
 
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(get("/api/post/{id}", savedPost.getId())
+        mockMvc.perform(get("/api2/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user("notSameUser").password("").roles("USER")))
                 .andExpect(status().isOk())
@@ -470,7 +470,7 @@ class PostControllerVer2Test {
 
         postRepository.save(post);
 
-        mockMvc.perform(get("/api/posts")
+        mockMvc.perform(get("/api2/posts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0].title").value("title 30"))
@@ -507,7 +507,7 @@ class PostControllerVer2Test {
 
         postRepository.saveAll(postList);
 
-        mockMvc.perform(get("/api/posts")
+        mockMvc.perform(get("/api2/posts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0]").doesNotExist())
@@ -553,7 +553,7 @@ class PostControllerVer2Test {
 
         postRepository.save(post);
 
-        mockMvc.perform(get("/api/posts")
+        mockMvc.perform(get("/api2/posts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0].title").value("제목"))
@@ -651,7 +651,7 @@ class PostControllerVer2Test {
         postRepository.save(post2);
 
         // 전체 검색
-        mockMvc.perform(get("/api/search")
+        mockMvc.perform(get("/api2/search")
                         .param("recruitType", "total")
                         .param("keyword", "spring")
                         .param("page", "1")
@@ -663,7 +663,7 @@ class PostControllerVer2Test {
                 .andDo(print());
 
         // 스터디만 검색
-        mockMvc.perform(get("/api/search")
+        mockMvc.perform(get("/api2/search")
                         .param("recruitType", "study")
                         .param("keyword", "spring")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -672,7 +672,7 @@ class PostControllerVer2Test {
                 .andDo(print());
 
         // 프로젝트만 검색
-        mockMvc.perform(get("/api/search")
+        mockMvc.perform(get("/api2/search")
                         .param("recruitType", "project")
                         .param("keyword", "spring")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -681,7 +681,7 @@ class PostControllerVer2Test {
                 .andDo(print());
 
         // 필드명 검색
-        mockMvc.perform(get("/api/search")
+        mockMvc.perform(get("/api2/search")
                         .param("recruitType", "total")
                         .param("keyword", "프론트")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -690,7 +690,7 @@ class PostControllerVer2Test {
                 .andDo(print());
 
         // 기술 스택 검색
-        mockMvc.perform(get("/api/search")
+        mockMvc.perform(get("/api2/search")
                         .param("recruitType", "total")
                         .param("keyword", "zeplin")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -783,7 +783,7 @@ class PostControllerVer2Test {
         updateForPost.getFieldsList().add(newField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(put("/api/post/{id}", post.getId())
+        mockMvc.perform(put("/api2/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost))
                         .with(user("savedAuthId").password("").roles("USER")))
@@ -915,7 +915,7 @@ class PostControllerVer2Test {
         updateForPost.getFieldsList().add(updateField);
         updateForPost.getFieldsList().add(updateForBack);
 
-        mockMvc.perform(put("/api/post/{id}", post.getId())
+        mockMvc.perform(put("/api2/post/{id}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateForPost))
                         .with(user("savedAuthId").password("").roles("USER")))
@@ -967,7 +967,7 @@ class PostControllerVer2Test {
 
         IsCompletedDto isCompletedDto = new IsCompletedDto(true);
 
-        mockMvc.perform(patch("/api/post/{id}", savedPost.getId())
+        mockMvc.perform(patch("/api2/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(isCompletedDto))
                         .with(user("savedAuthId").password("").roles("USER")))
@@ -1039,7 +1039,7 @@ class PostControllerVer2Test {
         memberRepository.save(member);
         Post savedPost = postRepository.save(post);
 
-        mockMvc.perform(delete("/api/post/{id}", savedPost.getId())
+        mockMvc.perform(delete("/api2/post/{id}", savedPost.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user("savedAuthId").password("").roles("USER")))
                 .andExpect(status().isOk())
@@ -1082,7 +1082,7 @@ class PostControllerVer2Test {
 
         memberRepository.save(member);
 
-        mockMvc.perform(post("/api/recruitment")
+        mockMvc.perform(post("/api2/recruitment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post))
                         .with(user("savedAuthId").password("").roles("USER")))
@@ -1097,7 +1097,7 @@ class PostControllerVer2Test {
     @DisplayName("없는 글 조회 시 PostNotExistException이 발생한다.")
     @Test
     void exceptionTest() throws Exception {
-        mockMvc.perform(get("/api/post/{id}", Integer.MAX_VALUE)
+        mockMvc.perform(get("/api2/post/{id}", Integer.MAX_VALUE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))

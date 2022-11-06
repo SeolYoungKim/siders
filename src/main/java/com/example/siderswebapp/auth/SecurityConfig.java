@@ -56,8 +56,12 @@ public class SecurityConfig {
                 .cors(withDefaults())
 
                 .authorizeRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
+                        .mvcMatchers("/api2/posts").permitAll()  // TODO Test용
+                        .mvcMatchers("/api2/search").permitAll() // TODO Test용
                         .mvcMatchers("/api/posts").permitAll()
                         .mvcMatchers("/api/search").permitAll()
+                        .mvcMatchers(HttpMethod.GET, "/api2/member").permitAll()  // TODO Test용
+                        .mvcMatchers(HttpMethod.GET, "/api2/post/**").permitAll() // TODO Test용
                         .mvcMatchers(HttpMethod.GET, "/api/member").permitAll()
                         .mvcMatchers(HttpMethod.GET, "/api/post/**").permitAll()
                         .anyRequest().authenticated())

@@ -1,18 +1,38 @@
 package com.example.siderswebapp.domain.fields;
 
+import com.example.siderswebapp.domain.Ability;
 import com.example.siderswebapp.domain.post.Post;
 import com.example.siderswebapp.web.request.post.create.CreateFieldsRequest;
+import com.example.siderswebapp.web.request.post.update.UpdateFieldsRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FieldsFactory {
+    public static Fields newInstance(Post post, UpdateFieldsRequest fieldsRequest) {
+        return newInstance(
+                post,
+                fieldsRequest.getFieldsName(),
+                fieldsRequest.getRecruitCount(),
+                fieldsRequest.totalAbilityToEnum()
+        );
+    }
+
     private static Fields newInstance(Post post, CreateFieldsRequest fieldsRequest) {
+        return newInstance(
+                post,
+                fieldsRequest.getFieldsName(),
+                fieldsRequest.getRecruitCount(),
+                fieldsRequest.totalAbilityToEnum()
+        );
+    }
+
+    private static Fields newInstance(Post post, String fieldsName, Integer recruitCount, Ability totalAbility) {
         return Fields.builder()
                 .post(post)
-                .fieldsName(fieldsRequest.getFieldsName())
-                .recruitCount(fieldsRequest.getRecruitCount())
-                .totalAbility(fieldsRequest.totalAbilityToEnum())
+                .fieldsName(fieldsName)
+                .recruitCount(recruitCount)
+                .totalAbility(totalAbility)
                 .build();
     }
 

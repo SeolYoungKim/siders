@@ -72,4 +72,8 @@ public class Fields extends BaseTimeEntity {
 
     }
 
+    public void clearStacks() {
+        stacks.clear();
+    }
+
 }

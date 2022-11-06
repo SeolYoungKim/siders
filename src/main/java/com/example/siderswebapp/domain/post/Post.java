@@ -70,7 +70,7 @@ public class Post extends BaseTimeEntity {
         this.member.addPost(this);
     }
 
-    public Boolean isWriter(String authId) {
+    public Boolean writtenBy(String authId) {
         return member.getAuthId().equals(authId);
     }
 
@@ -98,6 +98,10 @@ public class Post extends BaseTimeEntity {
         this.expectedPeriod = postDto.getExpectedPeriod() != null
                 ? postDto.getExpectedPeriod()
                 : expectedPeriod;
+    }
+
+    public void removeFields(Fields fields) {
+        fieldsList.remove(fields);
     }
 
     public void changeCompletion(Boolean isCompleted) {

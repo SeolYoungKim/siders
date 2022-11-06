@@ -76,7 +76,7 @@ public class PostService {
         // 조회 화면에서는 인증된 유저가 넘어오지 않을 수도 있다. NPE 방지를 위해 아래와 같이 구성.
         String authId = getAuthId(authentication);
 
-        return new ReadPostResponse(post, post.isWriter(authId));
+        return new ReadPostResponse(post, post.writtenBy(authId));
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +96,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.isWriter(authId))
+        if (!post.writtenBy(authId))
             throw new IsNotOwnerException();
 
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
@@ -147,7 +147,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.isWriter(authId))
+        if (!post.writtenBy(authId))
             throw new IsNotOwnerException();
 
         post.changeCompletion(isCompletedDto.getIsCompleted());
@@ -163,7 +163,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.isWriter(authId))
+        if (!post.writtenBy(authId))
             throw new IsNotOwnerException();
 
         // member의 orphanremoval 옵션 때문에, member의 List에서 제거해줘야 post가 삭제 됨

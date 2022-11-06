@@ -67,4 +67,7 @@ public class Member extends BaseTimeEntity {
         this.refreshToken = refreshToken;
     }
 
+    public void removePost(Post post) {
+        postList.remove(post);
+    }
 }
