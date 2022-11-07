@@ -4,6 +4,7 @@ import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.RecruitType;
 import com.example.siderswebapp.domain.fields.Fields;
 import com.example.siderswebapp.domain.member.Member;
+import com.example.siderswebapp.exception.IsNotOwnerException;
 import com.example.siderswebapp.web.request.post.update.UpdatePostRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -79,6 +80,32 @@ public class Post extends BaseTimeEntity {
     }
 
     public void updatePost(UpdatePostRequest postDto) {
+        this.title = postDto.getTitle() != null
+                ? postDto.getTitle()
+                : title;
+
+        this.recruitType = postDto.recruitTypeToEnum() != null
+                ? postDto.recruitTypeToEnum()
+                : recruitType;
+
+        this.contact = postDto.getContact() != null
+                ? postDto.getContact()
+                : contact;
+
+        this.recruitIntroduction = postDto.getRecruitIntroduction() != null
+                ? postDto.getRecruitIntroduction()
+                : recruitIntroduction;
+
+        this.expectedPeriod = postDto.getExpectedPeriod() != null
+                ? postDto.getExpectedPeriod()
+                : expectedPeriod;
+    }
+
+    public void updatePost(UpdatePostRequest postDto, String authId) {
+        if (!this.member.getAuthId().equals(authId)) {  // TODO Member 엔티티에 메시지를 보내는게 낫지 않을까?
+            throw new IsNotOwnerException();
+        }
+
         this.title = postDto.getTitle() != null
                 ? postDto.getTitle()
                 : title;

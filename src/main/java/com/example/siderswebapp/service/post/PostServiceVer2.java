@@ -91,11 +91,8 @@ public class PostServiceVer2 {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.writtenBy(authId))
-            throw new IsNotOwnerException();
-
         // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
-        post.updatePost(postDto);
+        post.updatePost(postDto, authId);
 
         List<UpdateFieldsRequest> fieldsDtoList = postDto.getFieldsList();
         for (UpdateFieldsRequest fieldDto : fieldsDtoList) {
