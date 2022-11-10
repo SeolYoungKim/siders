@@ -2,10 +2,8 @@ package com.example.siderswebapp.exception;
 
 import lombok.Getter;
 
-//TODO: Enum은 전역으로 사용이 가능하기 때문에, 나중에 유지보수가 어려울 수 있다고 한다.
-// 차라리 접근 제어자 작성이 가능한 static 필드로 관리하는게 나을 수 있다고 하니, 한번 생각해보자.
 @Getter
-public enum ErrorUtils {
+enum ErrorUtils {
 
     POST_NOT_FOUND(
             404,
