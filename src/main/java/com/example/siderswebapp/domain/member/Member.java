@@ -1,18 +1,23 @@
 package com.example.siderswebapp.domain.member;
 
+import static javax.persistence.CascadeType.ALL;
+
 import com.example.siderswebapp.domain.BaseTimeEntity;
 import com.example.siderswebapp.domain.post.Post;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.CascadeType.*;
 
 @Getter
 @Entity
@@ -24,13 +29,13 @@ public class Member extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String authId;
+    private String authId;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
     @Column
-    private String email;
+    private String email;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
     @Column(name = "member_name")
-    private String name;
+    private String name;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
     @Column
     private String picture;
