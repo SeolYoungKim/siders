@@ -1,13 +1,16 @@
 package com.example.siderswebapp.auth.oauth.service;
 
-import com.example.siderswebapp.exception.IsNotSupportedOAuth2Login;
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.KAKAO_ACCOUNT_KEY;
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.KAKAO_PROFILE_KEY;
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.NAVER_RESPONSE_KEY;
+import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.GITHUB;
+import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.GOOGLE;
+import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.KAKAO;
+import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.NAVER;
 
+import com.example.siderswebapp.exception.IsNotSupportedOAuth2Login;
 import java.util.Map;
 
-import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.*;
-import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.*;
-
-@SuppressWarnings({"unchecked"})
 public class CommonAttributesFactory {
 
     // Provider 정보를 받아서 CommonAttributes를 만들어준다.
@@ -34,6 +37,7 @@ public class CommonAttributesFactory {
     }
 
     private static CommonAttributes ofNaver(ProviderInfo providerInfo, Map<String, Object> attributes) {
+        @SuppressWarnings({"unchecked"})
         Map<String, Object> response = (Map<String, Object>) attributes.get(NAVER_RESPONSE_KEY);
 
         return CommonAttributes.builder()
@@ -45,7 +49,10 @@ public class CommonAttributesFactory {
     }
 
     private static CommonAttributes ofKaKao(ProviderInfo providerInfo, Map<String, Object> attributes) {
+        @SuppressWarnings({"unchecked"})
         Map<String, Object> response = (Map<String, Object>) attributes.get(KAKAO_ACCOUNT_KEY);
+
+        @SuppressWarnings({"unchecked"})
         Map<String, Object> profile = (Map<String, Object>) response.get(KAKAO_PROFILE_KEY);
 
         return CommonAttributes.builder()
