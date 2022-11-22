@@ -12,11 +12,9 @@ public class AuthMemberResponse {
     private final Boolean isAuthMember;
 
     public AuthMemberResponse(Member member) {
-        boolean isAuthMember = member != null;
-
-        this.authId = isAuthMember ? member.getAuthId().getValue() : null;
-        this.name = isAuthMember ? member.getName().getValue() : null;
-        this.picture = isAuthMember ? member.getPicture() : null;
-        this.isAuthMember = isAuthMember;
+        this.authId = member.getAuthId().getValue();
+        this.name = member.getName().getValue();
+        this.picture = member.getPicture();
+        this.isAuthMember = member.getRoleType().isNotGuest();
     }
 }

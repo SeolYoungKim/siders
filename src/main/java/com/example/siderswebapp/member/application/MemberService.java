@@ -1,13 +1,13 @@
 package com.example.siderswebapp.member.application;
 
 import com.example.siderswebapp.auth.jwt.JwtProvider;
+import com.example.siderswebapp.exception.domain.MemberNotFoundException;
+import com.example.siderswebapp.member.application.dto.SignUpDto;
 import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
+import com.example.siderswebapp.member.domain.MemberFactory;
 import com.example.siderswebapp.member.domain.Name;
-import com.example.siderswebapp.member.domain.RoleType;
-import com.example.siderswebapp.exception.domain.MemberNotFoundException;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
-import com.example.siderswebapp.member.application.dto.SignUpDto;
 import com.example.siderswebapp.member.presentation.dto.AuthMemberResponse;
 import com.example.siderswebapp.member.presentation.dto.DuplicateNameCheckDto;
 import com.example.siderswebapp.member.presentation.dto.MemberPostResponse;
@@ -39,18 +39,17 @@ public class MemberService {
         String accessToken = jwtProvider.generateAccessToken(user);
         String refreshToken = jwtProvider.generateRefreshToken();
 
-        Member member = getNewMember(signUpDto, refreshToken, authId);
+        Member member = MemberFactory.newInstance(signUpDto, refreshToken, authId);
         memberRepository.save(member);
 
         return new SignUpMemberResponse(member, accessToken);
     }
 
     public AuthMemberResponse getMemberInfo(Authentication authentication) {
-        // 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
         String authId = getAuthId(authentication);
 
         Member member = memberRepository.findByAuthId(new AuthId(authId))
-                .orElse(null);
+                .orElseGet(MemberFactory::guestMember);
 
         return new AuthMemberResponse(member);
     }
@@ -77,22 +76,11 @@ public class MemberService {
         return new MemberPostResponse(member);
     }
 
-
+    // Authentication이 null일 경우 "" 반환
     private String getAuthId(Authentication authentication) {
-        return authentication != null
-                ? authentication.getName()
-                : "";
+        if (authentication != null) {
+            return authentication.getName();
+        }
+        return "";
     }
-
-    private Member getNewMember(SignUpDto signUpDto, String refreshToken, String authId) {
-        return Member.builder()
-                .name(signUpDto.getName())
-                .authId(authId)
-                .email("")
-                .picture("")
-                .roleType(RoleType.USER)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
 }

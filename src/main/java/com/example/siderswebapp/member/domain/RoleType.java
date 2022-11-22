@@ -11,4 +11,8 @@ public enum RoleType {
     RoleType(String key) {
         this.key = key;
     }
+
+    public boolean isNotGuest() {
+        return this != GUEST;
+    }
 }
