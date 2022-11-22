@@ -1,7 +1,12 @@
 package com.example.siderswebapp.auth.oauth.service;
 
+import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.ID;
+import static com.example.siderswebapp.domain.member.RoleType.GUEST;
+
 import com.example.siderswebapp.domain.member.Member;
 import com.example.siderswebapp.repository.member.MemberRepository;
+import java.util.Collections;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -10,12 +15,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.Map;
-
-import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.*;
-import static com.example.siderswebapp.domain.member.RoleType.GUEST;
 
 /**
  * OAuth2LoginAuthenticationFilter가 AuthenticationManager로 인증을 위임
@@ -43,15 +42,11 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
 
         Member findMember = memberRepository
                 .findByAuthId((String) attributes.get(ID))
-                .orElse(null);
+                .orElseGet(() -> Member.builder()
+                        .roleType(GUEST)
+                        .build());
 
-        return new DefaultOAuth2User(
-                Collections.singleton(
-                        new SimpleGrantedAuthority(
-                                findMember == null
-                                        ? GUEST.getKey()
-                                        : findMember.getRoleTypeKey())),
-                attributes, ID);
-
+        return new DefaultOAuth2User(Collections.singleton(
+                new SimpleGrantedAuthority(findMember.getRoleTypeKey())), attributes, ID);
     }
 }
