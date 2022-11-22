@@ -1,9 +1,18 @@
 package com.example.siderswebapp.auth.oauth.handler;
 
+import static com.example.siderswebapp.auth.jwt.JwtProvider.AUTH_ID_KEY;
+
 import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
+import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -11,16 +20,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.example.siderswebapp.auth.jwt.JwtProvider.*;
 
 @Component
 @Transactional
@@ -35,9 +34,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        Optional<Member> findMember = memberRepository.findByAuthId(getAuthId(oauth2User));
+        Optional<Member> findMember = memberRepository.findByAuthId(new AuthId(getAuthId(oauth2User)));
 
         addJwtToCookie(oauth2User, response);
 

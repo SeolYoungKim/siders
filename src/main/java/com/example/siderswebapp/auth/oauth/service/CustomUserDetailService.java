@@ -3,6 +3,7 @@ package com.example.siderswebapp.auth.oauth.service;
 import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.ID;
 import static com.example.siderswebapp.member.domain.RoleType.GUEST;
 
+import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
 import java.util.Collections;
@@ -41,7 +42,7 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
                 .getAttributes();
 
         Member findMember = memberRepository
-                .findByAuthId((String) attributes.get(ID))
+                .findByAuthId(new AuthId((String) attributes.get(ID)))
                 .orElseGet(() -> Member.builder()
                         .roleType(GUEST)
                         .build());

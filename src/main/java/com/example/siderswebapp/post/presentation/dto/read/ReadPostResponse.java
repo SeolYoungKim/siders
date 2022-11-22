@@ -34,7 +34,7 @@ public class ReadPostResponse {
         this.contact = post.getContact();
         this.recruitIntroduction = post.getRecruitIntroduction();
         this.expectedPeriod = post.getExpectedPeriod();
-        this.authId = post.getMember().getAuthId();
+        this.authId = post.getMember().getAuthId().getValue();
         this.isCompleted = post.getIsCompleted();
         this.isWriter = isWriter;
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

@@ -12,8 +12,8 @@ public class SignUpMemberResponse {
     private final String accessToken;
 
     public SignUpMemberResponse(Member member, String accessToken) {
-        this.authId = member.getAuthId();
-        this.name = member.getName();
+        this.authId = member.getAuthId().getValue();
+        this.name = member.getName().getValue();
         this.picture = member.getPicture();
         this.accessToken = accessToken;
     }

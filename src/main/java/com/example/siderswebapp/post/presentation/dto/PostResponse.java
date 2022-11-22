@@ -28,7 +28,7 @@ public class PostResponse {
         this.contact = post.getContact();
         this.recruitIntroduction = post.getRecruitIntroduction();
         this.expectedPeriod = post.getExpectedPeriod();
-        this.authId = post.getMember().getAuthId();
+        this.authId = post.getMember().getAuthId().getValue();
         this.isCompleted = post.getIsCompleted();
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.modifiedDate = post.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

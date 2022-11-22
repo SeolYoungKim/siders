@@ -14,8 +14,8 @@ public class AuthMemberResponse {
     public AuthMemberResponse(Member member) {
         boolean isAuthMember = member != null;
 
-        this.authId = isAuthMember ? member.getAuthId() : null;
-        this.name = isAuthMember ? member.getName() : null;
+        this.authId = isAuthMember ? member.getAuthId().getValue() : null;
+        this.name = isAuthMember ? member.getName().getValue() : null;
         this.picture = isAuthMember ? member.getPicture() : null;
         this.isAuthMember = isAuthMember;
     }

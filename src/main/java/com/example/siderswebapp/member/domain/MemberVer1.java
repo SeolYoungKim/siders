@@ -7,7 +7,6 @@ import com.example.siderswebapp.post.domain.Post;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,23 +19,24 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Deprecated
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseTimeEntity {
+public class MemberVer1 extends BaseTimeEntity {
 
     @Id @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private AuthId authId;
+    @Column(nullable = false, unique = true)
+    private String authId;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
-    @Embedded
-    private Email email;
+    @Column
+    private String email;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
-    @Embedded
-    private Name name;
+    @Column(name = "member_name")
+    private String name;  //TODO: 이런걸 값 타입을 써보는게 어떨까? @Embedded, @Embeddable..!
 
     @Column
     private String picture;
@@ -52,11 +52,10 @@ public class Member extends BaseTimeEntity {
     private final List<Post> postList = new ArrayList<>();
 
     @Builder
-    public Member(String authId, String email, String name, String picture, RoleType roleType,
-            String refreshToken) {
-        this.authId = new AuthId(authId);
-        this.email = new Email(email);
-        this.name = new Name(name);
+    public MemberVer1(String authId, String email, String name, String picture, RoleType roleType, String refreshToken) {
+        this.authId = authId;
+        this.email = email;
+        this.name = name;
         this.picture = picture;
         this.roleType = roleType;
         this.refreshToken = refreshToken;
@@ -67,7 +66,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public boolean isSameMember(String authId) {
-        return this.authId.isSameMember(authId);
+        return this.authId.equals(authId);
     }
 
     public String getRoleTypeKey() {

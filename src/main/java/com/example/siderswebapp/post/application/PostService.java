@@ -2,6 +2,7 @@ package com.example.siderswebapp.post.application;
 
 import com.example.siderswebapp.exception.domain.MemberNotFoundException;
 import com.example.siderswebapp.exception.domain.PostNotFoundException;
+import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
 import com.example.siderswebapp.post.application.dto.completion.IsCompletedDto;
@@ -43,7 +44,7 @@ public class PostService {
     public PostIdDto createPost(CreatePostRequest postDto,
             UsernamePasswordAuthenticationToken authentication) {
         String authId = getAuthId(authentication);
-        Member member = memberRepository.findByAuthId(authId)
+        Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElseThrow(MemberNotFoundException::new);
 
         Post post = PostFactory.newInstance(postDto, member);
@@ -128,7 +129,7 @@ public class PostService {
 
         post.validateIsWriter(authId);
 
-        Member member = memberRepository.findByAuthId(authId)
+        Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElseThrow(MemberNotFoundException::new);
 
         member.removePost(post);

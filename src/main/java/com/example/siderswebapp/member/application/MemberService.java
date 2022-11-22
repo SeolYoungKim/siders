@@ -1,7 +1,9 @@
 package com.example.siderswebapp.member.application;
 
 import com.example.siderswebapp.auth.jwt.JwtProvider;
+import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
+import com.example.siderswebapp.member.domain.Name;
 import com.example.siderswebapp.member.domain.RoleType;
 import com.example.siderswebapp.exception.domain.MemberNotFoundException;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
@@ -30,7 +32,7 @@ public class MemberService {
         String authId = user.getName();
 
         // TODO: 어떻게 변경할지 나중에 다시 생각. authId 중복 가입은 이미 OAuth2 filter에서 막아주고 있음.
-        if (memberRepository.existsByAuthId(authId)) {
+        if (memberRepository.existsByAuthId(new AuthId(authId))) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
 
@@ -47,7 +49,7 @@ public class MemberService {
         // 멤버를 조회했는데 없으면 없다고 내려줘야 한다. 인증 없이 접근 가능한 홈 화면, 조회 화면 등에서 필요함.
         String authId = getAuthId(authentication);
 
-        Member member = memberRepository.findByAuthId(authId)
+        Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElse(null);
 
         return new AuthMemberResponse(member);
@@ -56,20 +58,20 @@ public class MemberService {
     public void deleteMember(Authentication authentication) {
         String authId = getAuthId(authentication);
 
-        Member member = memberRepository.findByAuthId(authId)
+        Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElseThrow(MemberNotFoundException::new);
 
         memberRepository.delete(member);
     }
 
     public DuplicateNameCheckDto duplicateNameCheck(String name) {
-        return new DuplicateNameCheckDto(memberRepository.existsByName(name));
+        return new DuplicateNameCheckDto(memberRepository.existsByName(new Name(name)));
     }
 
     public MemberPostResponse memberPosts(UsernamePasswordAuthenticationToken authentication) {
         String authId = getAuthId(authentication);
 
-        Member member = memberRepository.findByAuthId(authId)
+        Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElseThrow(MemberNotFoundException::new);
 
         return new MemberPostResponse(member);
