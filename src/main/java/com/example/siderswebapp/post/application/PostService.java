@@ -97,7 +97,6 @@ public class PostService {
             }
 
             fields.updateFields(fieldDto);
-            fields.clearStacks();
             fieldDto.getStacks()
                     .forEach(stackDto -> TechStackFactory.newInstance(fields, stackDto));
         }
@@ -128,7 +127,6 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         post.validateIsWriter(authId);
-
         Member member = memberRepository.findByAuthId(new AuthId(authId))
                 .orElseThrow(MemberNotFoundException::new);
 

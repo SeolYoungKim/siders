@@ -24,7 +24,7 @@ public class TechStack extends BaseTimeEntity {
     @JoinColumn(name = "fields_id")
     private Fields fields;
 
-    @Builder  // TODO default
+    @Builder
     public TechStack(String stackName, Fields fields) {
         this.stackName = stackName;
         this.fields = fields;

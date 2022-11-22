@@ -29,7 +29,8 @@ public class CreateFieldsRequest {
     private List<CreateTechStackRequest> stacks;
 
     @Builder
-    public CreateFieldsRequest(String fieldsName, Integer recruitCount, String totalAbility, List<CreateTechStackRequest> stacks) {
+    public CreateFieldsRequest(String fieldsName, Integer recruitCount, String totalAbility,
+            List<CreateTechStackRequest> stacks) {
         this.fieldsName = fieldsName;
         this.recruitCount = recruitCount;
         this.totalAbility = totalAbility;

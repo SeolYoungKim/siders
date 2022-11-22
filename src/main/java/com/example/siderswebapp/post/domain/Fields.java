@@ -1,18 +1,24 @@
 package com.example.siderswebapp.post.domain;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
 import com.example.siderswebapp.BaseTimeEntity;
 import com.example.siderswebapp.post.application.dto.update.UpdateFieldsRequest;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.*;
 
 @Getter
 @Entity
@@ -55,21 +61,27 @@ public class Fields extends BaseTimeEntity {
     }
 
     public void updateFields(UpdateFieldsRequest fieldsDto) {
-        this.fieldsName = fieldsDto.getFieldsName() != null
-                ? fieldsDto.getFieldsName()
-                : fieldsName;
+        this.fieldsName = updateValue(
+                fieldsDto.getFieldsName(), fieldsName);
 
-        this.recruitCount = fieldsDto.getRecruitCount() != null
-                ? fieldsDto.getRecruitCount()
-                : recruitCount;
+        this.recruitCount = updateValue(
+                fieldsDto.getRecruitCount(), recruitCount);
 
-        this.totalAbility = fieldsDto.getTotalAbility() != null
-                ? fieldsDto.totalAbilityToEnum()
-                : totalAbility;
+        this.totalAbility = updateValue(
+                fieldsDto.totalAbilityToEnum(), totalAbility);
 
+        clearStacks();
     }
 
-    public void clearStacks() {
+    private <T> T updateValue(T dtoValue, T entityValue) {
+        if (dtoValue == null) {
+            return entityValue;
+        }
+
+        return dtoValue;
+    }
+
+    private void clearStacks() {
         stacks.clear();
     }
 
