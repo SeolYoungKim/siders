@@ -1,24 +1,26 @@
 package com.example.siderswebapp.post.application;
 
-import com.example.siderswebapp.post.domain.Fields;
-import com.example.siderswebapp.member.domain.Member;
-import com.example.siderswebapp.post.domain.Post;
-import com.example.siderswebapp.post.domain.TechStack;
-import com.example.siderswebapp.exception.domain.IsNotOwnerException;
 import com.example.siderswebapp.exception.domain.MemberNotFoundException;
 import com.example.siderswebapp.exception.domain.PostNotFoundException;
-import com.example.siderswebapp.post.domain.repository.fields.FieldsRepository;
+import com.example.siderswebapp.member.domain.Member;
 import com.example.siderswebapp.member.domain.repository.MemberRepository;
-import com.example.siderswebapp.post.domain.repository.post.PostRepository;
 import com.example.siderswebapp.post.application.dto.completion.IsCompletedDto;
 import com.example.siderswebapp.post.application.dto.create.CreateFieldsRequest;
 import com.example.siderswebapp.post.application.dto.create.CreatePostRequest;
 import com.example.siderswebapp.post.application.dto.search.PostSearch;
 import com.example.siderswebapp.post.application.dto.update.UpdateFieldsRequest;
 import com.example.siderswebapp.post.application.dto.update.UpdatePostRequest;
+import com.example.siderswebapp.post.domain.Fields;
+import com.example.siderswebapp.post.domain.FieldsFactory;
+import com.example.siderswebapp.post.domain.Post;
+import com.example.siderswebapp.post.domain.PostFactory;
+import com.example.siderswebapp.post.domain.TechStackFactory;
+import com.example.siderswebapp.post.domain.repository.fields.FieldsRepository;
+import com.example.siderswebapp.post.domain.repository.post.PostRepository;
 import com.example.siderswebapp.post.presentation.dto.create.PostIdDto;
 import com.example.siderswebapp.post.presentation.dto.read.ReadPostResponse;
 import com.example.siderswebapp.post.presentation.dto.read.paging.PagingPostsResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,8 +29,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Transactional
@@ -41,25 +41,16 @@ public class PostService {
 
     // 모집 글 작성
     public PostIdDto createPost(CreatePostRequest postDto,
-                                UsernamePasswordAuthenticationToken authentication) {
-        // 멤버를 찾는다.
+            UsernamePasswordAuthenticationToken authentication) {
         String authId = getAuthId(authentication);
         Member member = memberRepository.findByAuthId(authId)
-                .orElseThrow(MemberNotFoundException::new);  // 나중에 커스텀 예외처리.
+                .orElseThrow(MemberNotFoundException::new);
 
-        Post post = getNewPost(postDto, member);
+        Post post = PostFactory.newInstance(postDto, member);
 
         List<CreateFieldsRequest> fieldsRequests = postDto.getFieldsList();
-
-        for (CreateFieldsRequest fieldsRequest : fieldsRequests) {
-            Fields fields = getNewFields(post, fieldsRequest);
-
-            fieldsRequest.getStacks()
-                    .forEach(techStackDto -> TechStack.builder()
-                            .fields(fields)
-                            .stackName(techStackDto.getStackName())
-                            .build());
-        }
+        List<Fields> fieldsList = FieldsFactory.fieldsList(fieldsRequests, post);
+        TechStackFactory.saveNewTechStackToFields(fieldsRequests, fieldsList);
 
         postRepository.save(post);
 
@@ -68,14 +59,10 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public ReadPostResponse readPost(Long id, Authentication authentication) {
-
-        // TODO: 아예 DTO로 조회해오는 로직이 있으면 한줄 더 감소할 것 같다.(영한님 강의 참고)
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        // 조회 화면에서는 인증된 유저가 넘어오지 않을 수도 있다. NPE 방지를 위해 아래와 같이 구성.
         String authId = getAuthId(authentication);
-
         return new ReadPostResponse(post, post.writtenBy(authId));
     }
 
@@ -90,113 +77,69 @@ public class PostService {
     }
 
     public PostIdDto updatePost(Long id, UpdatePostRequest postDto,
-                                Authentication authentication) {
+            Authentication authentication) {
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.writtenBy(authId))
-            throw new IsNotOwnerException();
-
-        // 이거는 있는것만 수정하기 때문에 추가 로직이 필요 없다.
-        post.updatePost(postDto);
+        post.updatePost(postDto, authId);
 
         List<UpdateFieldsRequest> fieldsDtoList = postDto.getFieldsList();
         for (UpdateFieldsRequest fieldDto : fieldsDtoList) {
+            Fields fields = fieldsRepository.findById(fieldDto.getId())
+                    .orElseGet(() -> FieldsFactory.newInstance(post, fieldDto));
 
-            Fields fields = fieldsRepository.findById(fieldDto.getId() != null ? fieldDto.getId() : -1L)  // id가 없는 경우, -1L로 찾으므로써 null 유도.
-                    .orElseGet(() -> Fields.builder()
-                            .post(post)
-                            .fieldsName(fieldDto.getFieldsName())
-                            .recruitCount(fieldDto.getRecruitCount())
-                            .totalAbility(fieldDto.totalAbilityToEnum())
-                            .build());
-
-            // 찾았는데 Dto의 isDelete가 true면 필드 삭제해버리고 다음필드 탐색 ㄱ
             if (fieldDto.getIsDelete()) {
-                post.getFieldsList().remove(fields);
+                post.removeFields(fields);
                 continue;
             }
 
             fields.updateFields(fieldDto);
-
-            // 기술 스택을 수정 데이터로 새로 갈아끼우기 위해 Fields의 List<TechStack>을 비운다
-            fields.getStacks().clear();
-
-            // 비운 List<TechStack>을 dto가 가져온 값으로 싹 갈아끼운다.
+            fields.clearStacks();
             fieldDto.getStacks()
-                    .forEach(stackDto ->
-                            TechStack.builder()
-                                    .stackName(stackDto.getStackName())
-                                    .fields(fields)
-                                    .build());
+                    .forEach(stackDto -> TechStackFactory.newInstance(fields, stackDto));
         }
 
-        postRepository.save(post);  // 새로운 필드나 스택이 추가될 수 있기 때문에 저장
+        postRepository.save(post);
 
         return new PostIdDto(id);
     }
 
 
     public PostIdDto changeCompletion(Long id, IsCompletedDto isCompletedDto,
-                                      UsernamePasswordAuthenticationToken authentication) {
-
+            UsernamePasswordAuthenticationToken authentication) {
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.writtenBy(authId))
-            throw new IsNotOwnerException();
-
+        post.validateIsWriter(authId);
         post.changeCompletion(isCompletedDto.getIsCompleted());
 
         return new PostIdDto(post.getId());
     }
-    
-    public void deletePost(Long id,
-                           UsernamePasswordAuthenticationToken authentication) {
 
+    public void deletePost(Long id, UsernamePasswordAuthenticationToken authentication) {
         String authId = getAuthId(authentication);
 
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.writtenBy(authId))
-            throw new IsNotOwnerException();
+        post.validateIsWriter(authId);
 
-        // member의 orphanremoval 옵션 때문에, member의 List에서 제거해줘야 post가 삭제 됨
         Member member = memberRepository.findByAuthId(authId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        member.getPostList().remove(post);
+        member.removePost(post);
     }
 
     // Authentication이 null일 경우 "" 반환
     private String getAuthId(Authentication authentication) {
-        return authentication != null ? authentication.getName() : "";
-    }
-
-    private Post getNewPost(CreatePostRequest postDto, Member member) {
-        return Post.builder()
-                .title(postDto.getTitle())
-                .recruitType(postDto.recruitTypeToEnum())
-                .contact(postDto.getContact())
-                .recruitIntroduction(postDto.getRecruitIntroduction())
-                .expectedPeriod(postDto.getExpectedPeriod())
-                .member(member)  // 멤버를 넣어준다.
-                .isCompleted(false)
-                .build();
-    }
-
-    private Fields getNewFields(Post post, CreateFieldsRequest fieldsRequest) {
-        return Fields.builder()
-                .post(post)
-                .fieldsName(fieldsRequest.getFieldsName())
-                .recruitCount(fieldsRequest.getRecruitCount())
-                .totalAbility(fieldsRequest.totalAbilityToEnum())
-                .build();
+        if (authentication != null) {
+            return authentication.getName();
+        }
+        return "";
     }
 }
 
