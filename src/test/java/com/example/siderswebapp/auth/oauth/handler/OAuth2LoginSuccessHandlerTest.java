@@ -1,6 +1,6 @@
 package com.example.siderswebapp.auth.oauth.handler;
 
-import com.example.siderswebapp.repository.member.MemberRepository;
+import com.example.siderswebapp.member.domain.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

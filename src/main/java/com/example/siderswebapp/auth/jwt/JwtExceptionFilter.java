@@ -1,7 +1,7 @@
 package com.example.siderswebapp.auth.jwt;
 
-import com.example.siderswebapp.exception.JwtNotAvailable;
-import com.example.siderswebapp.web.response.exception.ErrorResult;
+import com.example.siderswebapp.exception.domain.JwtNotAvailable;
+import com.example.siderswebapp.exception.presentation.dto.ErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

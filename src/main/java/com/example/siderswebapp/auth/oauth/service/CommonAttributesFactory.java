@@ -8,7 +8,7 @@ import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.GOOGLE;
 import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.KAKAO;
 import static com.example.siderswebapp.auth.oauth.service.ProviderInfo.NAVER;
 
-import com.example.siderswebapp.exception.IsNotSupportedOAuth2Login;
+import com.example.siderswebapp.exception.domain.IsNotSupportedOAuth2Login;
 import java.util.Map;
 
 public class CommonAttributesFactory {

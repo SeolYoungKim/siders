@@ -1,10 +1,10 @@
 package com.example.siderswebapp.auth.oauth.service;
 
 import static com.example.siderswebapp.auth.oauth.service.AttributeKeys.ID;
-import static com.example.siderswebapp.domain.member.RoleType.GUEST;
+import static com.example.siderswebapp.member.domain.RoleType.GUEST;
 
-import com.example.siderswebapp.domain.member.Member;
-import com.example.siderswebapp.repository.member.MemberRepository;
+import com.example.siderswebapp.member.domain.Member;
+import com.example.siderswebapp.member.domain.repository.MemberRepository;
 import java.util.Collections;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

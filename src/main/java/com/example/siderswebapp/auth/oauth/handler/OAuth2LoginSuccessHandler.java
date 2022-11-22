@@ -2,8 +2,8 @@ package com.example.siderswebapp.auth.oauth.handler;
 
 import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
-import com.example.siderswebapp.domain.member.Member;
-import com.example.siderswebapp.repository.member.MemberRepository;
+import com.example.siderswebapp.member.domain.Member;
+import com.example.siderswebapp.member.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;

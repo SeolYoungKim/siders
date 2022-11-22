@@ -1,6 +1,6 @@
 package com.example.siderswebapp.auth.jwt;
 
-import com.example.siderswebapp.exception.JwtNotAvailable;
+import com.example.siderswebapp.exception.domain.JwtNotAvailable;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
