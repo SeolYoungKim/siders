@@ -41,8 +41,6 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
         Map<String, Object> oauth2attributes = AttributesParser
                 .parseToOAuth2Attributes(registrationId, oauth2User.getAttributes());
 
-        log.info(String.valueOf(oauth2attributes.get(ID).getClass()));
-
         Member findMember = memberRepository
                 .findByAuthId(new AuthId((String) oauth2attributes.get(ID)))
                 .orElseGet(MemberFactory::guestMember);

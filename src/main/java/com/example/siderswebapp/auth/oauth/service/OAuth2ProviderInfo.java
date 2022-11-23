@@ -11,29 +11,29 @@ public enum OAuth2ProviderInfo {
     GOOGLE(
             "google",
             "sub",
-            "name",
             "email",
+            "name",
             "picture"
     ),
     GITHUB(
             "github",
             "id",
-            "name",
             "login",
+            "name",
             "avatar_url"
     ),
     NAVER(
             "naver",
             "id",
-            "name",
             "email",
+            "name",
             "profile_image"
     ),
     KAKAO(
             "kakao",
             "id",
-            "nickname",
             "email",
+            "nickname",
             "profile_image_url"
     );
 

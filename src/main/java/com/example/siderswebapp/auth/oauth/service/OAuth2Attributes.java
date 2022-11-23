@@ -24,27 +24,30 @@ public class OAuth2Attributes {
     @SuppressWarnings({"unchecked"})
     public Map<String, Object> parseToCommonAttributes() {
         if (oauth2ProviderInfo.isGoogleOrGitHub()) {
-            return parseAttributes(attributes, attributes);
+            return parseAttributes(attributes, attributes, attributes);
 
         } else if (oauth2ProviderInfo.isNaver()) {
             Map<String, Object> response = (Map<String, Object>) attributes.get(NAVER_RESPONSE_KEY);
-            return parseAttributes(response, response);
+            return parseAttributes(response, response, response);
 
         } else if (oauth2ProviderInfo.isKakao()) {
             Map<String, Object> account = (Map<String, Object>) attributes.get(KAKAO_ACCOUNT_KEY);
             Map<String, Object> profile = (Map<String, Object>) account.get(KAKAO_PROFILE_KEY);
-            return parseAttributes(account, profile);
+            return parseAttributes(attributes, account, profile);
         }
 
         throw new IsNotSupportedOAuth2Login();
     }
 
-    private Map<String, Object> parseAttributes(Map<String, Object> account, Map<String, Object> profile) {
+    private Map<String, Object> parseAttributes(
+            Map<String, Object> attributes,
+            Map<String, Object> account,
+            Map<String, Object> profile
+    ) {
         return Map.of(
                 ID, oauth2ProviderInfo.findAuthId(attributes),
                 SUB, oauth2ProviderInfo.findEmail(profile),
                 NAME, oauth2ProviderInfo.findName(account),
-                PICTURE, oauth2ProviderInfo.findPicture(profile)
-        );
+                PICTURE, oauth2ProviderInfo.findPicture(profile));
     }
 }
