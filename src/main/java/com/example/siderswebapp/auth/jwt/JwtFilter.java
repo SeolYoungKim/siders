@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } else {
-            log.info("미인증 사용자 입니다.");
+            log.info("JWT 미인증 사용자 입니다.");
         }
 
         // 토큰이 없으면 SecurityContext에 인증 객체 넣지 않고 그냥 필터 진행

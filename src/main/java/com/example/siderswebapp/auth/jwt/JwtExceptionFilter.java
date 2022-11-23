@@ -25,9 +25,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (JwtNotAvailable e) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding("UTF-8");
+            responseSetUp(response);
 
             ErrorResult errorResult = ErrorResult.builder()
                     .code(e.getErrorCode())
@@ -39,5 +37,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             // -> response.getWirter()를 통해 writer를 얻은 후, errorResult를 직렬화 해서 response 바디에 작성함
             objectMapper.writeValue(response.getWriter(), errorResult);
         }
+    }
+
+    private void responseSetUp(HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
     }
 }

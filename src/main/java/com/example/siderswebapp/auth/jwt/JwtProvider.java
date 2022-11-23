@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// https://hudi.blog/https-with-nginx-and-lets-encrypt/
+// TODO: Fake 객체로 해당 메서드들 테스트 될 것 같다!
 @Slf4j
 @Component
 public class JwtProvider {
@@ -54,9 +56,6 @@ public class JwtProvider {
 
     // 액세스 토큰 발급
     public String generateAccessToken(OAuth2User oAuth2User) {
-        long now = new Date().getTime();
-        Date accessTokenExpireTime = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         // Authorities를 Claim에 넣을 수 있도록 String으로 변경 (authority1,authority2,..)
@@ -64,27 +63,29 @@ public class JwtProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        return Jwts.builder()
+        return jwtBuilderForAccessToken()
                 .setSubject((String) attributes.get(AUTH_ID_KEY))
                 .claim(AUTHORITIES_KEY, authorities)
-                .setExpiration(accessTokenExpireTime)
-                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
     // 회원가입용 액세스 토큰
     public String generateAccessToken(UsernamePasswordAuthenticationToken user) {
+        String authId = user.getName();
+
+        return jwtBuilderForAccessToken()
+                .setSubject(authId)
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
+                .compact();
+    }
+
+    private JwtBuilder jwtBuilderForAccessToken() {
         long now = new Date().getTime();
         Date accessTokenExpireTime = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
-        String authId = user.getName();
-
         return Jwts.builder()
-                .setSubject(authId)
-                .claim(AUTHORITIES_KEY, "ROLE_USER")
                 .setExpiration(accessTokenExpireTime)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+                .signWith(key, SignatureAlgorithm.HS512);
     }
 
     // 리프레시 토큰 발급
@@ -102,7 +103,8 @@ public class JwtProvider {
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AccessTokenType.BEARER.getValue())) {
+        if (StringUtils.hasText(bearerToken)
+                && bearerToken.startsWith(AccessTokenType.BEARER.getValue())) {
             return bearerToken.substring(7);
         }
 
@@ -116,7 +118,8 @@ public class JwtProvider {
             return true;
         } catch (ExpiredJwtException e) {
             throw new JwtNotAvailable("토큰이 만료되었습니다. 다시 로그인 해주세요.");
-        } catch (SecurityException | MalformedJwtException | IllegalArgumentException | UnsupportedJwtException e) {
+        } catch (SecurityException | MalformedJwtException
+                 | IllegalArgumentException | UnsupportedJwtException e) {
             throw new JwtNotAvailable("올바르지 않은 토큰입니다.");
         }
     }
@@ -132,17 +135,16 @@ public class JwtProvider {
                 .collect(Collectors.toList());
 
         User user = new User(authId, "", authorities);
-
         return new UsernamePasswordAuthenticationToken(user, "", authorities);
     }
 
     // Claim을 파싱하는 메서드
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build()
+                    .parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
-
 }

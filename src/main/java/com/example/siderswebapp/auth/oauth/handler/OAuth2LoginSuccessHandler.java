@@ -1,8 +1,8 @@
 package com.example.siderswebapp.auth.oauth.handler;
 
 import static com.example.siderswebapp.auth.jwt.JwtProvider.AUTH_ID_KEY;
+import static com.example.siderswebapp.auth.oauth.handler.RedirectUri.*;
 
-import com.example.siderswebapp.auth.UriList;
 import com.example.siderswebapp.auth.jwt.JwtProvider;
 import com.example.siderswebapp.member.domain.AuthId;
 import com.example.siderswebapp.member.domain.Member;
@@ -19,15 +19,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Transactional
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    public static final int COOKIE_MAX_AGE = 3600;
-    public static final String LOGIN_SUCCESS = "loginSuccess";
+    private static final int COOKIE_MAX_AGE = 3600;
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
@@ -36,19 +34,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        Optional<Member> findMember = memberRepository.findByAuthId(new AuthId(getAuthId(oauth2User)));
+        Optional<Member> findMember = memberRepository.findByAuthId(
+                new AuthId(getAuthId(oauth2User)));
 
         addJwtToCookie(oauth2User, response);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString(UriList.FRONT_END.getUri());
-
         if (findMember.isEmpty()) {
-            String redirectionUri = uriBuilder
-                    .queryParam(LOGIN_SUCCESS, false)
-                    .build()
-                    .toUriString();
-
+            String redirectionUri = LOGIN_FAIL.redirectUri();
             response.sendRedirect(redirectionUri);
             return;
         }
@@ -56,13 +48,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = findMember.get();
         member.saveRefreshToken(jwtProvider.generateRefreshToken());
 
-        String redirectionUri = uriBuilder
-                .queryParam(LOGIN_SUCCESS, true)
-                .build()
-                .toUriString();
-
+        String redirectionUri = LOGIN_SUCCESS.redirectUri();
         response.sendRedirect(redirectionUri);
-
     }
 
     private void addJwtToCookie(OAuth2User oauth2User, HttpServletResponse response) {
