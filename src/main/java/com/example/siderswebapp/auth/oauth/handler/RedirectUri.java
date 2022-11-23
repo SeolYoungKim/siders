@@ -10,19 +10,16 @@ enum RedirectUri {
 
     private static final String PARAMETER_NAME = "loginSuccess";
 
-    private static final UriComponentsBuilder URI_BUILDER = UriComponentsBuilder
-            .fromUriString(UriList.FRONT_END.getUri());
-
-    private final boolean isLoginSuccess;
+    private final String redirectUri;
 
     RedirectUri(boolean isLoginSuccess) {
-        this.isLoginSuccess = isLoginSuccess;
-    }
-
-    String redirectUri() {
-        return URI_BUILDER
+        this.redirectUri = UriComponentsBuilder.fromUriString(UriList.FRONT_END.getUri())
                 .queryParam(PARAMETER_NAME, isLoginSuccess)
                 .build()
                 .toUriString();
+    }
+
+    String redirectUri() {
+        return redirectUri;
     }
 }
