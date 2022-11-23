@@ -79,18 +79,18 @@ public enum OAuth2ProviderInfo {
     }
 
     Object findAuthId(Map<String, Object> attributes) {
-        return attributes.get(authIdKey);
+        return String.valueOf(attributes.get(authIdKey));
     }
 
     Object findEmail(Map<String, Object> attributes) {
-        return attributes.get(emailKey);
+        return String.valueOf(attributes.get(emailKey));
     }
 
     Object findName(Map<String, Object> attributes) {
-        return attributes.get(nameKey);
+        return String.valueOf(attributes.get(nameKey));
     }
 
     Object findPicture(Map<String, Object> attributes) {
-        return attributes.get(pictureKey);
+        return String.valueOf(attributes.get(pictureKey));
     }
 }
