@@ -30,22 +30,20 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+        OAuth2User oauth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest
                 .getClientRegistration()
                 .getRegistrationId();
 
-        Map<String, Object> attributes = OAuth2AttributesFactory
-                .getOAuth2Attributes(registrationId, oAuth2User.getAttributes())
-                .getAttributes();
+        Map<String, Object> oauth2attributes = AttributesParser
+                .parseToOAuth2Attributes(registrationId, oauth2User.getAttributes());
 
         Member findMember = memberRepository
-                .findByAuthId(new AuthId((String) attributes.get(ID)))
+                .findByAuthId(new AuthId((String) oauth2attributes.get(ID)))
                 .orElseGet(MemberFactory::guestMember);
 
         return new DefaultOAuth2User(Collections.singleton(
-                new SimpleGrantedAuthority(findMember.getRoleTypeKey())), attributes, ID);
+                new SimpleGrantedAuthority(findMember.getRoleTypeKey())), oauth2attributes, ID);
     }
 }
